@@ -15,7 +15,10 @@ from pathlib import Path  # noqa: E402
 import pytest  # noqa: E402
 
 _FAKE_FILES = {
-    "pyproject.toml": '[tool.pytest.ini_options]\naddopts = ["--import-mode=importlib"]\n',
+    "pyproject.toml": (
+        '[tool.pytest.ini_options]\ntestpaths = ["tests"]\naddopts = ["--import-mode=importlib"]\n'
+    ),
+    "tests/test_course_tools.py": "def test_tools_work():\n    assert True\n",
     "conftest.py": 'pytest_plugins = ["introai.testing.plugin"]\n',
     "modules/99_fake/01_add/test_task.py": (
         "def test_add(impl):\n"
