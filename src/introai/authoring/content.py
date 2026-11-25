@@ -109,9 +109,20 @@ def _check_markdown(path: Path, repo_root: Path) -> list[str]:
     return problems
 
 
+def _cells(path: Path) -> list[dict]:
+    return json.loads(path.read_text(encoding="utf-8")).get("cells", [])
+
+
 def _code_cells(path: Path) -> list[dict]:
-    notebook = json.loads(path.read_text(encoding="utf-8"))
-    return [cell for cell in notebook.get("cells", []) if cell.get("cell_type") == "code"]
+    return [cell for cell in _cells(path) if cell.get("cell_type") == "code"]
+
+
+def _first_difference(mine: list, theirs: list) -> int:
+    """1-based index of the first differing element (or the first extra one)."""
+    return next(
+        (i for i, (a, b) in enumerate(zip(mine, theirs), start=1) if a != b),
+        min(len(mine), len(theirs)) + 1,
+    )
 
 
 def _source(cell: dict) -> str:
@@ -135,13 +146,17 @@ def _check_notebook(path: Path, repo_root: Path) -> list[str]:
         language = "English" if is_polish else "Polish"
         problems.append(f"{rel}: missing {language} pair {pair.name}")
     elif not is_polish:
+        my_types = [cell.get("cell_type") for cell in _cells(path)]
+        their_types = [cell.get("cell_type") for cell in _cells(pair)]
         mine = [_source(cell) for cell in cells]
         theirs = [_source(cell) for cell in _code_cells(pair)]
-        if mine != theirs:
-            first = next(
-                (i for i, (a, b) in enumerate(zip(mine, theirs), start=1) if a != b),
-                min(len(mine), len(theirs)) + 1,
+        if my_types != their_types:
+            first = _first_difference(my_types, their_types)
+            problems.append(
+                f"{rel}: cell structure differs from {pair.name} (first difference at cell {first})"
             )
+        elif mine != theirs:
+            first = _first_difference(mine, theirs)
             problems.append(
                 f"{rel}: code cells differ from {pair.name} (first difference at code cell {first})"
             )

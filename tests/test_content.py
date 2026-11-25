@@ -122,3 +122,22 @@ def test_main_exit_codes(tmp_path, capsys):
     write(tmp_path, "README.md", "# T\n")
     assert main(["--repo-root", str(tmp_path)]) == 1
     assert "missing Polish pair" in capsys.readouterr().out
+
+
+def write_cells(root, relative, cells):
+    """cells: list of ("md" | "code", source)."""
+    nb = nbformat.v4.new_notebook()
+    nb.cells = [
+        nbformat.v4.new_markdown_cell(s) if kind == "md" else nbformat.v4.new_code_cell(s)
+        for kind, s in cells
+    ]
+    path = root / relative
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, path)
+
+
+def test_notebook_cell_structure_must_match(tmp_path):
+    write_cells(tmp_path, "modules/a/e.ipynb", [("md", "Intro"), ("code", "x = 1"), ("md", "Bye")])
+    write_cells(tmp_path, "modules/a/e.pl.ipynb", [("md", "Wstęp"), ("code", "x = 1")])
+    problems = check_repository(tmp_path)
+    assert any("cell structure differs" in p and "cell 3" in p for p in problems)
