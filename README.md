@@ -6,6 +6,8 @@ A standalone, self-study introduction to artificial intelligence in Python. The 
 
 The course covers search, games and constraint satisfaction, nature-inspired algorithms, knowledge and inference, uncertainty, machine learning basics, reinforcement learning and modern AI. Every lesson combines theory, an example traced step by step, a programming task you can check yourself, and experiments. The tasks share one world: an automated warehouse with a delivery robot.
 
+**Start here:** [lesson 0.1 Setup and how to use the course](modules/00_start/01_setup/README.md).
+
 ## Who it is for
 
 For people who know Python at the level of object-oriented programming and have taken an introductory statistics course. The course introduces the mathematics it needs, such as logic and probability, on its own.

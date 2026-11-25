@@ -6,6 +6,8 @@ Samodzielny samouczek podstaw sztucznej inteligencji w Pythonie. Cały kurs krą
 
 Samouczek obejmuje przeszukiwanie, gry i problemy z ograniczeniami, algorytmy inspirowane naturą, wiedzę i wnioskowanie, niepewność, podstawy uczenia maszynowego, uczenie ze wzmocnieniem oraz współczesną AI. Każda lekcja łączy teorię, przykład prześledzony krok po kroku, zadanie programistyczne z samodzielnym sprawdzaniem i eksperymenty. Zadania rozgrywają się w jednym świecie: w zautomatyzowanym magazynie, po którym jeździ robot dostawczy.
 
+**Zacznij tutaj:** [lekcja 0.1 Instalacja i praca z samouczkiem](modules/00_start/01_setup/README.pl.md).
+
 ## Dla kogo
 
 Dla osób, które znają Pythona na poziomie programowania obiektowego i mają za sobą podstawy statystyki. Potrzebną matematykę, na przykład logikę i rachunek prawdopodobieństwa, samouczek wprowadza sam.

@@ -8,16 +8,16 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 0.1 | Setup and how to use this course | core | — | planned |
+| 0.1 | [Setup and how to use this course](modules/00_start/01_setup/README.md) | core | — | ready |
 
 ## M1 · Agents and problem representation
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 1.1 | What is AI | core | 0.1 | planned |
-| 1.2 | Agents and environments | core | 1.1 | planned |
-| 1.3 | Agent types and problem formulation | core | 1.2 | planned |
-| 1.4 | A short history of AI | optional | 1.3 | planned |
+| 1.1 | [What is AI](modules/01_agents/01_what_is_ai/README.md) | core | 0.1 | ready |
+| 1.2 | [Agents and environments](modules/01_agents/02_agents_and_environments/README.md) | core | 1.1 | ready |
+| 1.3 | [Agent types and problem formulation](modules/01_agents/03_problem_formulation/README.md) | core | 1.2 | ready |
+| 1.4 | [A short history of AI](modules/01_agents/04_history_of_ai/README.md) | optional | 1.3 | ready |
 
 ## M2 · Search
 
