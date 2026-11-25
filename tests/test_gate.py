@@ -5,6 +5,7 @@ from introai.authoring.gate import (
     gate_lesson,
     main,
     read_caught_by,
+    read_part_a_answers,
     run_lesson_tests,
 )
 
@@ -91,3 +92,59 @@ def test_main_reports_problems(fake_repo, capsys):
     (fake_repo / LESSON / "task.py").write_text("def add(a, b):\n    return a + b\n")
     assert main(["--repo-root", str(fake_repo)]) == 1
     assert "starter" in capsys.readouterr().out
+
+
+def test_read_caught_by_tolerates_bom(fake_repo):
+    path = fake_repo / SOLUTION / "mutants" / "abs_bug.py"
+    path.write_bytes(b"\xef\xbb\xbf" + path.read_bytes())
+    assert read_caught_by(path) == ("test_add_negative",)
+
+
+def test_run_lesson_tests_separates_errors(fake_repo):
+    (fake_repo / LESSON / "task.py").write_text("import nonexistent_module_xyz\n")
+    result = run_lesson_tests(fake_repo / LESSON, "task", fake_repo)
+    assert result.errored == {"test_add", "test_add_negative"}
+    assert result.failed == frozenset()
+
+
+def test_starter_that_cannot_be_imported_is_reported(fake_repo):
+    (fake_repo / LESSON / "task.py").write_text("import nonexistent_module_xyz\n")
+    problems = gate_lesson(fake_repo / LESSON, fake_repo)
+    assert any("starter" in p and "error" in p for p in problems)
+
+
+def test_mutant_that_crashes_on_import_is_reported(fake_repo):
+    (fake_repo / SOLUTION / "mutants" / "abs_bug.py").write_text(
+        'CAUGHT_BY = ("test_add_negative",)\n\nimport nonexistent_module_xyz\n'
+    )
+    problems = gate_lesson(fake_repo / LESSON, fake_repo)
+    assert any("mutant abs_bug" in p and "error" in p for p in problems)
+
+
+def test_starter_output_revealing_answers_is_reported(fake_repo):
+    lesson, solution = fake_repo / LESSON, fake_repo / SOLUTION
+    leaky_test = (
+        "\n\ndef test_answer(impl):\n    expected = [7, 8, 9]\n    assert impl.ANSWER == expected\n"
+    )
+    (lesson / "test_task.py").write_text((lesson / "test_task.py").read_text() + leaky_test)
+    (lesson / "task.py").write_text((lesson / "task.py").read_text() + "\nANSWER = None\n")
+    (solution / "task.py").write_text((solution / "task.py").read_text() + "\nANSWER = [7, 8, 9]\n")
+    problems = gate_lesson(lesson, fake_repo)
+    assert any("starter" in p and "reveals" in p and "ANSWER" in p for p in problems)
+
+
+def test_read_part_a_answers(tmp_path):
+    path = tmp_path / "task.py"
+    path.write_text(
+        'CAUGHT_BY = ("x",)\nPATH: list[str] | None = ["A", "B"]\nORDER = ["C"]\n'
+        "EMPTY = None\nlower = [1]\n"
+    )
+    assert read_part_a_answers(path) == {"PATH": ["A", "B"], "ORDER": ["C"]}
+
+
+def test_hanging_mutant_is_reported(fake_repo):
+    (fake_repo / SOLUTION / "mutants" / "abs_bug.py").write_text(
+        'CAUGHT_BY = ("test_add_negative",)\n\n\ndef add(a, b):\n    while True:\n        pass\n'
+    )
+    problems = gate_lesson(fake_repo / LESSON, fake_repo, timeout=5)
+    assert any("mutant abs_bug" in p and "timed out" in p for p in problems)
