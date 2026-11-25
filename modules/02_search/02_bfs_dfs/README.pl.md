@@ -145,7 +145,7 @@ W kroku 4 BFS rozwija `C` i generuje `G`. Wczesny test celu kończy przeszukiwan
 Ścieżka: S → A → C → B → D → G.
 <!-- /generated -->
 
-Po kroku 3 na stosie leżą dwie kopie `B`: dziecko `C` na wierzchu i dziecko `S` na samym dole. DFS najpierw rozwija tę z wierzchu. Gdyby kiedyś doszedł do tej dolnej, pominąłby ją, bo `B` jest już rozwinięty. Znaleziona ścieżka ma 5 kroków, choć istnieje trasa 3-krokowa: DFS nie szuka najkrótszej drogi.
+Po kroku 3 na stosie leżą dwie kopie `B`: dziecko węzła `C` na wierzchu i dziecko węzła `S` na samym dole. DFS najpierw rozwija tę z wierzchu. Gdyby kiedyś doszedł do tej dolnej, pominąłby ją, bo `B` jest już rozwinięty. Znaleziona ścieżka ma 5 kroków, choć istnieje trasa 3-krokowa: DFS nie szuka najkrótszej drogi.
 
 ### Twoja kolej
 
@@ -188,7 +188,7 @@ Oznaczenia: *b* to współczynnik rozgałęzienia (największa liczba dzieci wę
 
 **Dlaczego wczesny test celu nie psuje optymalności BFS?** BFS generuje węzły w kolejności niemalejącej głębokości. Zanim wygeneruje pierwszy węzeł o głębokości *k* + 1, rozwinął już wszystkie węzły o głębokości *k*. Dlatego pierwszy wygenerowany węzeł celu leży na najmniejszej możliwej głębokości. Ten argument działa jednak tylko wtedy, gdy każdy krok kosztuje tyle samo. Gdy kroki mają różne koszty, mniej kroków nie oznacza niższego kosztu. Tym zajmuje się lekcja 2.3.
 
-**Ograniczenia.** BFS trzyma w pamięci całą falę, więc na dużych przestrzeniach szybko brakuje mu pamięci. DFS zużywa mało pamięci tylko wtedy, gdy nie zapamiętuje odwiedzonych stanów. Wtedy jednak może krążyć po cyklach, a na nieskończonej przestrzeni stanów może zejść w nieskończenie długą gałąź i nigdy nie wrócić.
+**Ograniczenia.** BFS trzyma w pamięci całą falę, więc na dużych przestrzeniach szybko brakuje mu pamięci. DFS zużywa mało pamięci tylko wtedy, gdy nie zapamiętuje odwiedzonych stanów. Wtedy jednak może krążyć po cyklach, a na nieskończonej przestrzeni stanów może zejść w nieskończenie długą gałąź i nigdy nie wrócić. Kompromisem jest DFS, który sprawdza tylko, czy nowy stan nie leży już na bieżącej ścieżce. Taki DFS potrzebuje O(*b*·*m*) pamięci i zatrzymuje się na każdym skończonym grafie, ale ten sam stan, osiągnięty różnymi drogami, może rozwijać wielokrotnie.
 
 ## Częste błędy
 

@@ -60,7 +60,7 @@ A good answer contains:
 
 ### 2. DFS memory
 
-DFS without remembering states keeps only the current path and the not-yet-expanded neighbours of the nodes on it, about *b*·*m* nodes. BFS keeps the whole ripple, about *b*<sup>*d*</sup> nodes. DFS's advantage is huge on wide, deep trees. It disappears in graph search, because the set of expanded states grows with the number of states visited and can become as large as BFS's memory. It also shrinks when the maximum depth *m* is much larger than the goal depth *d*.
+DFS without remembering states keeps only the current path and the not-yet-expanded neighbours of the nodes on it, about *b*·*m* nodes. BFS keeps the whole ripple, about *b*<sup>*d*</sup> nodes. DFS's advantage is huge on wide, deep trees. It disappears in graph search, because the set of expanded states grows with the number of states visited and can become as large as BFS's memory. It also shrinks when the maximum depth *m* is much larger than the goal depth *d*. Part of the advantage survives if DFS checks for cycles only along the current path: memory stays O(*b*·*m*) and DFS stops on finite graphs, although it may expand the same states many times.
 
 A good answer contains:
 
@@ -91,7 +91,7 @@ A good answer contains:
 
 ### 5. The set of visited states in the warehouse
 
-In a tree there is exactly one path to every state, so no state ever appears twice. In the warehouse, moves can be undone (north and then south returns to the same field), and there are cycles around blocks of shelves. Without a set of visited states DFS can walk back and forth forever, and BFS expands the same fields more and more often, so the number of expansions grows exponentially. The set guarantees that every state is expanded at most once.
+In a tree there is exactly one path to every state, so no state ever appears twice. In the warehouse, moves can be undone (north and then south returns to the same cell), and there are cycles around blocks of shelves. Without a set of visited states DFS can walk back and forth forever, and BFS expands the same cells more and more often, so the number of expansions grows exponentially. The set guarantees that every state is expanded at most once.
 
 A good answer contains:
 
@@ -112,4 +112,4 @@ These are the results of the reference implementations. Your implementation may 
 
 - **Experiment 1.** BFS always finds the shortest route. With the order N, E, S, W, DFS first drives east, away from the dock, and finds a route more than four times longer.
 - **Experiment 2.** The length of the BFS route does not change. With the order W, S, E, N, DFS heads in the right direction straight away: 25 steps with only 25 expansions. That is luck, not a merit of the algorithm.
-- **Experiment 3.** In open space BFS floods the fields around the start until it reaches the nearby dock. DFS zigzags through almost the whole hall: its route has 138 steps, although 10 are enough.
+- **Experiment 3.** In open space BFS floods the cells around the start until it reaches the nearby dock. DFS zigzags through almost the whole hall: its route has 138 steps, although 10 are enough.

@@ -16,7 +16,7 @@ After this lesson you will be able to:
 
 ## Problem
 
-The robot stands on the field `R` and has to reach the dock `D`. Obstacles, meaning walls and shelves, are marked `#`:
+The robot stands on the cell `R` and has to reach the dock `D`. Obstacles, meaning walls and shelves, are marked `#`:
 
 ```text
 #######
@@ -31,7 +31,7 @@ The robot can move north, east, south or west (`N`, `E`, `S`, `W`), and every mo
 A computer does not "see" this map the way we do. It sees a **search problem**, which in the course's code is an object of the class `Problem`:
 
 - `problem.initial` is the initial state; in the warehouse it is the cell `(row, col)` where the robot stands;
-- `problem.actions(s)` returns the actions available in state `s`, that is, moves onto free fields;
+- `problem.actions(s)` returns the actions available in state `s`, that is, moves onto free cells;
 - `problem.result(s, a)` returns the state that action `a` leads to (the transition model);
 - `problem.is_goal(s)` says whether `s` is a goal (the goal test);
 - `problem.action_cost(s, a, s2)` gives the cost of a step; in this lesson every step costs 1.
@@ -42,7 +42,7 @@ This whole lesson answers one question: **which node should we take from the fro
 
 ## Intuition
 
-**BFS spreads like a ripple on water.** It first checks all fields one step from the start, then all fields two steps away, and so on. When the ripple first reaches the goal, it has travelled the smallest possible number of steps. That is why the first route BFS finds is the shortest.
+**BFS spreads like a ripple on water.** It first checks all cells one step from the start, then all cells two steps away, and so on. When the ripple first reaches the goal, it has travelled the smallest possible number of steps. That is why the first route BFS finds is the shortest.
 
 **DFS explores a maze one corridor at a time.** It goes as far as it can, and when it hits a dead end it backs up to the last junction and tries again. It remembers little, but the route it finds can be long and winding.
 
@@ -52,7 +52,7 @@ The two strategies differ in a single decision. BFS keeps the frontier in a **FI
 
 ### Graph search
 
-The warehouse is not a tree: you can come back along the same aisle, and many fields can be reached in several ways. An algorithm that does not remember visited states expands the same states many times, and on a graph with cycles it may go round in circles forever. That is why both algorithms in this lesson are **graph searches**: they remember states and expand each of them at most once.
+The warehouse is not a tree: you can come back along the same aisle, and many cells can be reached in several ways. An algorithm that does not remember visited states expands the same states many times, and on a graph with cycles it may go round in circles forever. That is why both algorithms in this lesson are **graph searches**: they remember states and expand each of them at most once.
 
 ### BFS
 
@@ -188,7 +188,7 @@ Notation: *b* is the branching factor (the largest number of children of a node)
 
 **Why does the early goal test not break BFS's optimality?** BFS generates nodes in order of non-decreasing depth. Before it generates the first node at depth *k* + 1, it has already expanded every node at depth *k*. So the first goal node it generates lies at the smallest possible depth. This argument only works when every step costs the same. When steps have different costs, fewer steps do not mean a lower cost. Lesson 2.3 deals with that.
 
-**Limitations.** BFS keeps the whole ripple in memory, so on large spaces it quickly runs out of memory. DFS uses little memory only when it does not remember visited states. Then, however, it can go round cycles, and on an infinite state space it can descend an infinitely long branch and never come back.
+**Limitations.** BFS keeps the whole ripple in memory, so on large spaces it quickly runs out of memory. DFS uses little memory only when it does not remember visited states. Then, however, it can go round cycles, and on an infinite state space it can descend an infinitely long branch and never come back. A middle ground is a DFS that only checks whether a new state already lies on the current path. Such a DFS needs O(*b*·*m*) memory and stops on every finite graph, but it may expand a state reached along different paths many times.
 
 ## Common mistakes
 
@@ -244,7 +244,7 @@ You can also go into the lesson's directory and run plain `uv run pytest`. The e
 
 Open [experiments.ipynb](experiments.ipynb). Before each experiment, write down your prediction, then check it:
 
-1. On the map with aisles: which method finds the shorter route, and which expands more fields?
+1. On the map with aisles: which method finds the shorter route, and which expands more cells?
 2. What happens to the DFS route, and what to the BFS route, if the robot tries its moves in a different order?
 3. How does the number of expansions of both methods change in open space compared with narrow aisles?
 
