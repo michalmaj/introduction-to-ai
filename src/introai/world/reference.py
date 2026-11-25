@@ -1,6 +1,6 @@
 """Reference problem formulations over the warehouse world.
 
-This is the course's own version of what lesson 1.3 asks you to write.
+These are the course's own versions of what lessons 0.1 and 1.3 ask you to write.
 Your ``task.py`` must not import this module.
 """
 
@@ -11,6 +11,12 @@ from introai.world.warehouse import Cell, WarehouseMap
 
 State = tuple[Cell, frozenset[Cell]]
 _MOVES: dict[str, tuple[int, int]] = {"N": (-1, 0), "E": (0, 1), "S": (1, 0), "W": (0, -1)}
+
+
+def free_neighbours(warehouse: WarehouseMap, cell: Cell) -> list[Cell]:
+    """The free cells next to ``cell``, in the order N, E, S, W (reference for lesson 0.1)."""
+    neighbours = [(cell[0] + d_row, cell[1] + d_col) for d_row, d_col in _MOVES.values()]
+    return [n for n in neighbours if warehouse.is_free(n)]
 
 
 class ParcelPickupProblem(Problem):

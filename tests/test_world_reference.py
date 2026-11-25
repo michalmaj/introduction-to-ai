@@ -6,7 +6,8 @@ from introai.search.reference import bfs
 from introai.world.reference import ParcelPickupProblem
 from introai.world.warehouse import WarehouseMap
 
-MAP = WarehouseMap.from_file(Path(__file__).resolve().parents[1] / "data" / "maps" / "parcels.txt")
+MAP_DIR = Path(__file__).resolve().parents[1] / "data" / "maps"
+MAP = WarehouseMap.from_file(MAP_DIR / "parcels.txt")
 A, B, C = (1, 3), (1, 5), (3, 3)
 
 
@@ -44,3 +45,11 @@ def test_is_goal():
 def test_bfs_finds_the_hand_computed_optimum(parcels, optimal):
     problem = ParcelPickupProblem(MAP.with_parcels(parcels))
     assert len(bfs(problem).solution()) == optimal
+
+
+def test_reference_free_neighbours():
+    from introai.world.reference import free_neighbours
+
+    small = WarehouseMap.from_file(MAP_DIR / "small.txt")
+    assert free_neighbours(small, (2, 3)) == [(1, 3), (2, 4), (3, 3)]
+    assert free_neighbours(WarehouseMap.from_text("R..\n.#.\n..D"), (0, 0)) == [(0, 1), (1, 0)]
