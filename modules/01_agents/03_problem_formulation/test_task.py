@@ -18,6 +18,10 @@ from introai.world.reference import ParcelPickupProblem as ReferenceProblem
 from introai.world.warehouse import WarehouseMap
 
 MAPS = Path(__file__).resolve().parents[3] / "data" / "maps"
+FROZENSET_HINT = (
+    "cannot be put in a set, so a search cannot remember it — keep the parcels in a "
+    "frozenset, not a set or a list (parcels - {cell} gives a new frozenset)"
+)
 PARCELS = WarehouseMap.from_file(MAPS / "parcels.txt")
 A, B, C = (1, 3), (1, 5), (3, 3)
 
@@ -99,6 +103,11 @@ def test_result_pick_removes_parcel(impl):
     problem = make(impl)
     after = guarded(impl, problem.result, (A, frozenset({A, C})), "PICK")
     assert after == (A, frozenset({C})), "PICK removes the parcel from the robot's cell"
+    if not isinstance(after[1], frozenset):
+        pytest.fail(
+            f"after PICK the parcels are a {type(after[1]).__name__}: {FROZENSET_HINT}",
+            pytrace=False,
+        )
 
 
 def test_result_does_not_change_its_input(impl):
@@ -115,16 +124,14 @@ def test_result_does_not_change_its_input(impl):
 
 def test_states_are_hashable(impl):
     problem = make(impl)
-    states = [problem.initial, guarded(impl, problem.result, problem.initial, "E")]
+    states = [problem.initial]
+    for action in ("E", "E", "PICK"):  # a move, another move, then a pick on the parcel (1, 3)
+        states.append(guarded(impl, problem.result, states[-1], action))
     for state in states:
         try:
             hash(state)
         except TypeError:
-            pytest.fail(
-                f"the state {state!r} cannot be put in a set, so a search cannot remember it — "
-                "keep the parcels in a frozenset, not a set or a list",
-                pytrace=False,
-            )
+            pytest.fail(f"the state {state!r} {FROZENSET_HINT}", pytrace=False)
 
 
 def test_is_goal(impl):
@@ -147,6 +154,10 @@ def test_bfs_finds_optimal_plan(impl, parcels):
             node = bfs(problem)
     except (TraceLimitExceeded, StepBudgetExceeded):
         failure = "breadth-first search on your problem did not finish — check actions and result"
+    except TypeError as error:
+        if "unhashable" not in str(error):
+            raise
+        failure = f"a state of your problem {FROZENSET_HINT}"
     if failure:
         pytest.fail(failure, pytrace=False)
     if node is None:
