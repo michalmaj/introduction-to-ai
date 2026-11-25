@@ -24,3 +24,9 @@ def test_find_reference_imports(tmp_path, source, expected):
     path = tmp_path / "task.py"
     path.write_text(source)
     assert find_reference_imports(path) == expected
+
+
+def test_find_reference_imports_tolerates_bom(tmp_path):
+    path = tmp_path / "task.py"
+    path.write_bytes("﻿from introai.search.reference import bfs\n".encode())
+    assert find_reference_imports(path) == ["introai.search.reference.bfs"]
