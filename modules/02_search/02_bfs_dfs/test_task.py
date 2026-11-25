@@ -10,6 +10,7 @@ particular way of writing the code. The lesson's "What the tests do not check"
 section lists what is left for you to judge.
 """
 
+import contextlib
 from pathlib import Path
 
 import pytest
@@ -19,6 +20,7 @@ from introai.search.problems import GraphProblem
 from introai.search.reference import bfs as reference_bfs
 from introai.search.reference import dfs as reference_dfs
 from introai.testing.ast_checks import find_reference_imports
+from introai.testing.budget import StepBudgetExceeded, step_budget
 from introai.testing.search import (
     assert_valid_solution,
     duplicate_expansions,
@@ -30,7 +32,8 @@ from introai.trace import TraceLimitExceeded, record
 from introai.world.warehouse import RouteProblem, WarehouseMap
 
 MAPS = Path(__file__).resolve().parents[3] / "data" / "maps"
-LIMIT = 10_000
+LIMIT = 10_000  # expansions
+STEP_BUDGET = 500_000  # lines executed in task.py during one search
 
 PROBLEMS = {
     "worked_example": worked_example,
@@ -41,15 +44,26 @@ PROBLEMS = {
 
 
 def search(algorithm, problem, limit=LIMIT, hint=""):
-    """Run a search, recording its expansions; turn endless loops into failures."""
+    """Run a search, recording its expansions; turn endless loops into quick failures."""
+    name = getattr(algorithm, "__name__", "the search")
+    code = getattr(algorithm, "__code__", None)
+    budget = step_budget(code.co_filename, STEP_BUDGET) if code else contextlib.nullcontext()
+    failure = None
     try:
-        with record(limit=limit) as trace:
+        with record(limit=limit) as trace, budget:
             result = algorithm(problem)
     except (TraceLimitExceeded, RecursionError):
-        pytest.fail(
-            f"{algorithm.__name__} made more than {limit} expansions {hint}(or recursed too "
-            "deeply) — do you keep track of the states you have already reached or expanded?"
+        failure = (
+            f"{name} made more than {limit} expansions {hint}(or recursed too deeply) "
+            "— do you keep track of the states you have already reached or expanded?"
         )
+    except StepBudgetExceeded:
+        failure = (
+            f"{name} ran for too long without finishing — is there a loop that never ends, "
+            "for example one that looks at the frontier without removing a node?"
+        )
+    if failure:
+        pytest.fail(failure, pytrace=False)
     return result, expanded_nodes(trace)
 
 
@@ -63,13 +77,21 @@ def reference_answer(algorithm):
 
 
 def check_part_a(value, expected, name):
+    # pytrace=False: no traceback at all, so pytest cannot print `expected` as a frame
+    # argument or local variable. The message must never reveal the answer.
     if value is None:
-        pytest.fail(f"Part A: fill in {name} in task.py")
+        pytest.fail(f"Part A: fill in {name} in task.py", pytrace=False)
+    if not isinstance(value, list | tuple):
+        pytest.fail(
+            f"Part A: {name} must be a list of state names, "
+            f'for example ["A", "B"], not {type(value).__name__}',
+            pytrace=False,
+        )
     if list(value) != expected:
-        # Deliberately no diff: the message must not reveal the answer.
         pytest.fail(
             f"Part A: {name} is not right yet (the correct list has {len(expected)} states). "
-            "Trace the exercise graph again, following the rules in the lesson."
+            "Trace the exercise graph again, following the rules in the lesson.",
+            pytrace=False,
         )
 
 
