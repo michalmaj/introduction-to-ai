@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from introai.authoring.blocks import main, process_file, render_block
 
 BFS_PL = """\
@@ -126,3 +128,28 @@ def test_main_check_mode(tmp_path, capsys):
     assert main(["--check", "--repo-root", str(tmp_path)]) == 1
     assert main(["--repo-root", str(tmp_path)]) == 0
     assert main(["--check", "--repo-root", str(tmp_path)]) == 0
+
+
+REFLEX_PL = """\
+| Krok | Pole robota | Percepcja: paczka; wolne kierunki | Akcja | Punkty po kroku |
+|---|---|---|---|---|
+| 1 | (1, 1) | nie; E, S | E | -1 |
+| 2 | (1, 2) | nie; E, W | E | -2 |
+| 3 | (1, 3) | tak; S, W | PICK | 7 |
+| 4 | (1, 3) | nie; S, W | S | 6 |
+| 5 | (2, 3) | nie; N, E, S | N | 5 |
+| 6 | (1, 3) | nie; S, W | S | 4 |
+
+Po 6 krokach: zebrane paczki 1, wynik 4."""
+
+
+def test_episode_table_reflex_agent(tmp_path):
+    repo = Path(__file__).resolve().parents[1]
+    params = {"agent": "reflex", "map": "parcels", "steps": "6", "lang": "pl"}
+    assert render_block("episode-table", params, repo_root=repo) == REFLEX_PL
+    english = render_block("episode-table", {**params, "lang": "en"}, repo_root=repo)
+    assert english.splitlines()[0] == (
+        "| Step | Robot's cell | Percept: parcel; free directions | Action | Score after the step |"
+    )
+    assert "| 3 | (1, 3) | yes; S, W | PICK | 7 |" in english
+    assert english.endswith("After 6 steps: parcels collected 1, score 4.")
