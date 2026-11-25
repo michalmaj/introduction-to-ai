@@ -15,7 +15,7 @@ from collections import deque
 from collections.abc import Iterable
 
 from introai.search.core import Node, Problem, State, expand
-from introai.trace import emit
+from introai.trace import emit, wants
 
 
 def bfs(problem: Problem) -> Node | None:
@@ -42,12 +42,14 @@ def bfs(problem: Problem) -> Node | None:
             if child.state in reached:
                 continue
             if problem.is_goal(child.state):
-                _bfs_step(node, frontier, reached)
+                if wants("step"):
+                    _bfs_step(node, frontier, reached)
                 emit("goal", node=child)
                 return child
             reached.add(child.state)
             frontier.append(child)
-        _bfs_step(node, frontier, reached)
+        if wants("step"):  # building step data costs time: only when recorded
+            _bfs_step(node, frontier, reached)
 
     return None
 
@@ -69,16 +71,19 @@ def dfs(problem: Problem) -> Node | None:
     while frontier:
         node = frontier.pop()
         if node.state in expanded:
-            _dfs_step(node, "skipped", frontier, expanded)
+            if wants("step"):
+                _dfs_step(node, "skipped", frontier, expanded)
             continue
         if problem.is_goal(node.state):
-            _dfs_step(node, "goal", frontier, expanded)
+            if wants("step"):
+                _dfs_step(node, "goal", frontier, expanded)
             emit("goal", node=node)
             return node
         expanded.add(node.state)
         children = [child for child in expand(problem, node) if child.state not in expanded]
         frontier.extend(reversed(children))
-        _dfs_step(node, "expanded", frontier, expanded)
+        if wants("step"):
+            _dfs_step(node, "expanded", frontier, expanded)
 
     return None
 

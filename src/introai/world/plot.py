@@ -2,7 +2,7 @@
 
 Colors follow a validated palette: expanded cells use categorical slot 1 (blue),
 the path slot 2 (orange); obstacles are neutral ink and free floor is the
-chart surface. A legend always names the three marks.
+chart surface. The legend names the marks that are actually drawn.
 """
 
 from __future__ import annotations
@@ -43,7 +43,8 @@ def plot_map(
         _, ax = plt.subplots(figsize=(warehouse.cols * 0.35 + 1.8, warehouse.rows * 0.35 + 0.6))
 
     grid = np.full((warehouse.rows, warehouse.cols), _FLOOR)
-    for cell in expanded:
+    expanded_cells = list(expanded)
+    for cell in expanded_cells:
         grid[cell] = _EXPANDED
     for cell in path:
         grid[cell] = _PATH
@@ -61,7 +62,9 @@ def plot_map(
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-    for label, (row, col) in (("R", warehouse.start), ("D", warehouse.dock)):
+    labels = [("R", warehouse.start), ("D", warehouse.dock)]
+    labels += [("P", cell) for cell in sorted(warehouse.parcels)]
+    for label, (row, col) in labels:
         ax.text(
             col,
             row,
@@ -74,12 +77,13 @@ def plot_map(
             bbox={"boxstyle": "round,pad=0.15", "facecolor": SURFACE, "edgecolor": "none"},
         )
 
+    handles = [Patch(facecolor=OBSTACLE, label="obstacle")]
+    if expanded_cells:
+        handles.append(Patch(facecolor=EXPANDED, label="expanded"))
+    if path:
+        handles.append(Patch(facecolor=PATH, label="path"))
     ax.legend(
-        handles=[
-            Patch(facecolor=OBSTACLE, label="obstacle"),
-            Patch(facecolor=EXPANDED, label="expanded"),
-            Patch(facecolor=PATH, label="path"),
-        ],
+        handles=handles,
         loc="upper left",
         bbox_to_anchor=(1.01, 1.0),
         frameon=False,

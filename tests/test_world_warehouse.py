@@ -82,7 +82,7 @@ def test_render_text_without_marks_round_trips():
 
 
 def test_bundled_maps_load_and_are_solvable():
-    for name in ("small", "aisles", "open_floor"):
+    for name in ("small", "aisles", "open_floor", "parcels"):
         m = WarehouseMap.from_file(REPO_ROOT / "data" / "maps" / f"{name}.txt")
         assert m.rows <= 15 and m.cols <= 30
         assert bfs(RouteProblem(m)) is not None
@@ -95,3 +95,39 @@ def test_from_file_explains_a_wrong_encoding(tmp_path):
     f.write_text(SMALL, encoding="utf-16")  # e.g. Notepad "UTF-16 LE" or PowerShell 5.1 ">"
     with pytest.raises(ValueError, match="save the map as UTF-8"):
         WarehouseMap.from_file(f)
+
+
+PARCELS = "#######\n#R.P#P#\n#.#...#\n#..P#D#\n#######"
+
+
+def test_parcels_are_parsed():
+    m = WarehouseMap.from_text(PARCELS)
+    assert m.parcels == {(1, 3), (1, 5), (3, 3)}
+    assert m.is_free((1, 3))
+
+
+def test_maps_without_parcels_have_none():
+    assert WarehouseMap.from_text(SMALL).parcels == frozenset()
+
+
+def test_with_parcels_places_and_validates():
+    m = WarehouseMap.from_text(SMALL)
+    assert m.with_parcels([(2, 3)]).parcels == {(2, 3)}
+    assert m.with_parcels([(2, 3)]).walls == m.walls
+    with pytest.raises(
+        ValueError, match=re.escape("cannot place a parcel on an obstacle at (0, 0)")
+    ):
+        m.with_parcels([(0, 0)])
+    with pytest.raises(ValueError, match=re.escape("on an obstacle at (9, 9)")):
+        m.with_parcels([(9, 9)])
+    with pytest.raises(ValueError, match="cannot place a parcel on the robot's start"):
+        m.with_parcels([m.start])
+
+
+def test_render_text_round_trips_parcels():
+    assert render_text(WarehouseMap.from_text(PARCELS)) == PARCELS
+
+
+def test_parcels_map_file():
+    path = REPO_ROOT / "data" / "maps" / "parcels.txt"
+    assert WarehouseMap.from_file(path) == WarehouseMap.from_text(PARCELS)

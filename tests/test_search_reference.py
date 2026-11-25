@@ -85,3 +85,12 @@ def test_dfs_reports_skipped_pops():
         dfs(EXAMPLES["cyclic"]())
     outcomes = [e.data["outcome"] for e in t.of_kind("step")]
     assert outcomes.count("expanded") == 4 and "skipped" in outcomes
+
+
+def test_reference_skips_step_events_when_not_wanted():
+    with record() as full:
+        bfs(worked_example())
+    with record(kinds={"expand"}) as lean:
+        bfs(worked_example())
+    assert lean.of_kind("step") == [] and lean.of_kind("goal") == []
+    assert expanded(lean) == expanded(full)

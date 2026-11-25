@@ -4,7 +4,9 @@
 
 A standalone, self-study introduction to artificial intelligence in Python. The whole course revolves around one question: **how does a machine represent problems, reason, make decisions and solve problems?**
 
-The course covers search, games and constraint satisfaction, nature-inspired algorithms, knowledge and inference, uncertainty, machine learning basics, reinforcement learning and modern AI. Every lesson combines theory, an example traced step by step, a programming task you can check yourself, and experiments. The tasks share one world: an automated warehouse with a delivery robot.
+The course covers search, games and constraint satisfaction, nature-inspired algorithms, knowledge and inference, uncertainty, machine learning basics, reinforcement learning and modern AI. Most lessons combine theory, an example traced step by step, a programming task you can check yourself, and experiments. Conceptual lessons consist of text, questions and model answers. The tasks share one world: an automated warehouse with a delivery robot.
+
+**Start here:** [lesson 0.1 Setup and how to use the course](modules/00_start/01_setup/README.md).
 
 ## Who it is for
 

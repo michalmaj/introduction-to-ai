@@ -16,3 +16,17 @@ def test_plot_map_has_legend_and_start_dock_labels():
     legend_labels = [t.get_text() for t in ax.get_legend().get_texts()]
     assert legend_labels == ["obstacle", "expanded", "path"]
     assert {t.get_text() for t in ax.texts} == {"R", "D"}
+
+
+def test_plot_map_labels_parcels():
+    m = WarehouseMap.from_text("#######\n#R.P#P#\n#.#...#\n#..P#D#\n#######")
+    ax = plot_map(m)
+    assert sorted(t.get_text() for t in ax.texts) == ["D", "P", "P", "P", "R"]
+
+
+def test_plot_map_legend_lists_only_what_is_drawn():
+    m = WarehouseMap.from_text(SMALL)
+    labels = lambda ax: [t.get_text() for t in ax.get_legend().get_texts()]  # noqa: E731
+    assert labels(plot_map(m)) == ["obstacle"]
+    assert labels(plot_map(m, expanded=[(2, 1)])) == ["obstacle", "expanded"]
+    assert labels(plot_map(m, path=[(1, 1)])) == ["obstacle", "path"]

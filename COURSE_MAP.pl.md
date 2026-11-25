@@ -8,16 +8,16 @@ Plik generowany z `course.toml` — nie edytuj go ręcznie. Lekcje **core** twor
 
 | ID | Lekcja | Rodzaj | Wymaga | Status |
 |---|---|---|---|---|
-| 0.1 | Instalacja i praca z samouczkiem | core | — | w przygotowaniu |
+| 0.1 | [Instalacja i praca z samouczkiem](modules/00_start/01_setup/README.pl.md) | core | — | gotowa |
 
 ## M1 · Agenci i reprezentacja problemu
 
 | ID | Lekcja | Rodzaj | Wymaga | Status |
 |---|---|---|---|---|
-| 1.1 | Czym jest AI | core | 0.1 | w przygotowaniu |
-| 1.2 | Agent i środowisko | core | 1.1 | w przygotowaniu |
-| 1.3 | Typy agentów i sformułowanie problemu | core | 1.2 | w przygotowaniu |
-| 1.4 | Krótka historia AI | opcjonalna | 1.3 | w przygotowaniu |
+| 1.1 | [Czym jest AI](modules/01_agents/01_what_is_ai/README.pl.md) | core | 0.1 | gotowa |
+| 1.2 | [Agent i środowisko](modules/01_agents/02_agents_and_environments/README.pl.md) | core | 1.1 | gotowa |
+| 1.3 | [Typy agentów i sformułowanie problemu](modules/01_agents/03_problem_formulation/README.pl.md) | core | 1.2 | gotowa |
+| 1.4 | [Krótka historia AI](modules/01_agents/04_history_of_ai/README.pl.md) | opcjonalna | 1.3 | gotowa |
 
 ## M2 · Przeszukiwanie
 

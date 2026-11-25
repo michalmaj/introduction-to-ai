@@ -130,8 +130,75 @@ _RENDERERS: dict[str, Callable[[dict[str, str]], str]] = {
 }
 
 
-def render_block(kind: str, params: dict[str, str]) -> str:
+_EPISODE_TEXT = {
+    "pl": {
+        "header": (
+            "| Krok | Pole robota | Percepcja: paczka; wolne kierunki | Akcja | Punkty po kroku |"
+        ),
+        "yes": "tak",
+        "no": "nie",
+        "summary": "Po {steps} krokach: zebrane paczki {collected}, wynik {score}.",
+    },
+    "en": {
+        "header": (
+            "| Step | Robot's cell | Percept: parcel; free directions | Action "
+            "| Score after the step |"
+        ),
+        "yes": "yes",
+        "no": "no",
+        "summary": "After {steps} steps: parcels collected {collected}, score {score}.",
+    },
+}
+
+
+def _render_episode_table(params: dict[str, str], repo_root: Path | None) -> str:
+    """A step-by-step table of a reference agent acting in the parcel world."""
+    from introai.agents.reference import ModelBasedAgent, reflex_agent
+    from introai.agents.world import ParcelWorld
+    from introai.world.warehouse import WarehouseMap
+
+    agents = {"reflex": lambda: reflex_agent, "model_based": ModelBasedAgent}
+    if params.get("agent") not in agents:
+        raise BlockError(f"unknown agent {params.get('agent')!r}")
+    if params.get("lang") not in _EPISODE_TEXT:
+        raise BlockError(f"unknown lang {params.get('lang')!r}")
+    if repo_root is None:
+        raise BlockError("episode tables need the repository root to load maps")
+    map_path = Path(repo_root) / "data" / "maps" / f"{params.get('map')}.txt"
+    if not map_path.exists():
+        raise BlockError(f"unknown map {params.get('map')!r}")
+    try:
+        steps = int(params.get("steps", ""))
+    except ValueError:
+        raise BlockError(f"steps must be a number, got {params.get('steps')!r}") from None
+
+    text = _EPISODE_TEXT[params["lang"]]
+    agent = agents[params["agent"]]()
+    world = ParcelWorld(WarehouseMap.from_file(map_path))
+    rows = []
+    for step in range(1, steps + 1):
+        if world.done:
+            break
+        cell = world.robot
+        percept = world.percept()
+        action = agent(percept)
+        world.step(action)
+        seen = text["yes"] if percept.parcel_here else text["no"]
+        rows.append(
+            f"| {step} | ({cell[0]}, {cell[1]}) | {seen}; {_states(percept.free)} "
+            f"| {action} | {world.score} |"
+        )
+    separator = "|" + "---|" * (text["header"].count("|") - 1)
+    summary = text["summary"].format(
+        steps=world.steps, collected=world.collected, score=world.score
+    )
+    return "\n".join([text["header"], separator, *rows]) + "\n\n" + summary
+
+
+def render_block(kind: str, params: dict[str, str], repo_root: Path | None = None) -> str:
     """Render the content of one generated block."""
+    if kind == "episode-table":
+        return _render_episode_table(params, repo_root)
     if kind not in _RENDERERS:
         raise BlockError(f"unknown generated block kind {kind!r}")
     return _RENDERERS[kind](params)
@@ -166,7 +233,7 @@ def process_file(path: Path, *, check: bool, repo_root: Path) -> list[str]:
                 raise BlockError(
                     f"trace tables for {params.get('example')!r} would reveal Part A answers"
                 )
-            rendered = render_block(kind, params)
+            rendered = render_block(kind, params, repo_root=Path(repo_root))
         except BlockError as error:
             problems.append(f"{rel}: line {start + 1}: {error}")
             rendered = current
