@@ -76,7 +76,13 @@ class WarehouseMap:
     @classmethod
     def from_file(cls, path: str | Path) -> WarehouseMap:
         """Read a map from a text file (UTF-8, with or without a BOM)."""
-        return cls.from_text(Path(path).read_text(encoding="utf-8-sig"))
+        try:
+            text = Path(path).read_text(encoding="utf-8-sig")
+        except UnicodeDecodeError:
+            raise ValueError(
+                f"cannot read {path}: save the map as UTF-8 text (not UTF-16 or another encoding)"
+            ) from None
+        return cls.from_text(text)
 
     def is_free(self, cell: Cell) -> bool:
         """Whether the robot may stand on ``cell``."""

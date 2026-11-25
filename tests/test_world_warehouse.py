@@ -88,3 +88,10 @@ def test_bundled_maps_load_and_are_solvable():
         assert bfs(RouteProblem(m)) is not None
     small = WarehouseMap.from_file(REPO_ROOT / "data" / "maps" / "small.txt")
     assert small == WarehouseMap.from_text(SMALL)
+
+
+def test_from_file_explains_a_wrong_encoding(tmp_path):
+    f = tmp_path / "m.txt"
+    f.write_text(SMALL, encoding="utf-16")  # e.g. Notepad "UTF-16 LE" or PowerShell 5.1 ">"
+    with pytest.raises(ValueError, match="save the map as UTF-8"):
+        WarehouseMap.from_file(f)
