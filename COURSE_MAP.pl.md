@@ -24,7 +24,7 @@ Plik generowany z `course.toml` — nie edytuj go ręcznie. Lekcje **core** twor
 | ID | Lekcja | Rodzaj | Wymaga | Status |
 |---|---|---|---|---|
 | 2.1 | Przestrzeń stanów i drzewo przeszukiwania | core | 1.3 | w przygotowaniu |
-| 2.2 | BFS i DFS | core | 2.1 | w przygotowaniu |
+| 2.2 | [BFS i DFS](modules/02_search/02_bfs_dfs/README.pl.md) | core | 2.1 | gotowa |
 | 2.3 | Przeszukiwanie kosztowe (UCS) | core | 2.2 | w przygotowaniu |
 | 2.4 | Heurystyki, greedy best-first i A* | core | 2.3 | w przygotowaniu |
 | 2.5 | Porównanie strategii przeszukiwania | core | 2.4 | w przygotowaniu |

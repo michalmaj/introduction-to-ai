@@ -24,7 +24,7 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
 | 2.1 | State spaces and search trees | core | 1.3 | planned |
-| 2.2 | BFS and DFS | core | 2.1 | planned |
+| 2.2 | [BFS and DFS](modules/02_search/02_bfs_dfs/README.md) | core | 2.1 | ready |
 | 2.3 | Uniform-cost search (UCS) | core | 2.2 | planned |
 | 2.4 | Heuristics, greedy best-first search and A* | core | 2.3 | planned |
 | 2.5 | Comparing search strategies | core | 2.4 | planned |

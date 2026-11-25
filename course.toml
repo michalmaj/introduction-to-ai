@@ -70,7 +70,7 @@ id = "2.2"
 dir = "02_bfs_dfs"
 title = { pl = "BFS i DFS", en = "BFS and DFS" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["2.1"]
 
 [[module.lesson]]
