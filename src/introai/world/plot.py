@@ -1,0 +1,91 @@
+"""Drawing warehouse maps with matplotlib.
+
+Colors follow a validated palette: expanded cells use categorical slot 1 (blue),
+the path slot 2 (orange); obstacles are neutral ink and free floor is the
+chart surface. A legend always names the three marks.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
+
+import numpy as np
+
+from introai.world.warehouse import Cell, WarehouseMap
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
+
+SURFACE = "#fcfcfb"
+OBSTACLE = "#52514e"
+EXPANDED = "#2a78d6"
+PATH = "#eb6834"
+INK = "#0b0b0b"
+
+_FLOOR, _OBSTACLE, _EXPANDED, _PATH = range(4)
+
+
+def plot_map(
+    warehouse: WarehouseMap,
+    *,
+    path: Sequence[Cell] = (),
+    expanded: Iterable[Cell] = (),
+    title: str | None = None,
+    ax: Axes | None = None,
+) -> Axes:
+    """Draw the map, the expanded cells and the path; return the axes."""
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import ListedColormap
+    from matplotlib.patches import Patch
+
+    if ax is None:
+        _, ax = plt.subplots(figsize=(warehouse.cols * 0.35 + 1.8, warehouse.rows * 0.35 + 0.6))
+
+    grid = np.full((warehouse.rows, warehouse.cols), _FLOOR)
+    for cell in expanded:
+        grid[cell] = _EXPANDED
+    for cell in path:
+        grid[cell] = _PATH
+    for cell in warehouse.walls:
+        grid[cell] = _OBSTACLE
+
+    cmap = ListedColormap([SURFACE, OBSTACLE, EXPANDED, PATH])
+    ax.imshow(grid, cmap=cmap, vmin=0, vmax=3, interpolation="nearest")
+
+    # A thin surface-colored gap between cells keeps neighbouring fills apart.
+    ax.set_xticks(np.arange(-0.5, warehouse.cols, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, warehouse.rows, 1), minor=True)
+    ax.grid(which="minor", color=SURFACE, linewidth=1.5)
+    ax.tick_params(which="both", length=0, labelbottom=False, labelleft=False)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    for label, (row, col) in (("R", warehouse.start), ("D", warehouse.dock)):
+        ax.text(
+            col,
+            row,
+            label,
+            ha="center",
+            va="center",
+            fontsize=8,
+            fontweight="bold",
+            color=INK,
+            bbox={"boxstyle": "round,pad=0.15", "facecolor": SURFACE, "edgecolor": "none"},
+        )
+
+    ax.legend(
+        handles=[
+            Patch(facecolor=OBSTACLE, label="obstacle"),
+            Patch(facecolor=EXPANDED, label="expanded"),
+            Patch(facecolor=PATH, label="path"),
+        ],
+        loc="upper left",
+        bbox_to_anchor=(1.01, 1.0),
+        frameon=False,
+        fontsize=8,
+        labelcolor=INK,
+    )
+    if title is not None:
+        ax.set_title(title, fontsize=10, color=INK)
+    return ax

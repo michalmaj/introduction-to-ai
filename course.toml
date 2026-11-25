@@ -1,0 +1,477 @@
+# Course structure: the single source of truth for modules and lessons.
+# COURSE_MAP.md and COURSE_MAP.pl.md are generated from this file:
+#   uv run python tools/course_map.py
+
+[[module]]
+id = "M0"
+dir = "modules/00_start"
+title = { pl = "Start", en = "Getting started" }
+
+[[module.lesson]]
+id = "0.1"
+dir = "01_setup"
+title = { pl = "Instalacja i praca z samouczkiem", en = "Setup and how to use this course" }
+kind = "core"
+status = "planned"
+requires = []
+
+[[module]]
+id = "M1"
+dir = "modules/01_agents"
+title = { pl = "Agenci i reprezentacja problemu", en = "Agents and problem representation" }
+
+[[module.lesson]]
+id = "1.1"
+dir = "01_what_is_ai"
+title = { pl = "Czym jest AI", en = "What is AI" }
+kind = "core"
+status = "planned"
+requires = ["0.1"]
+
+[[module.lesson]]
+id = "1.2"
+dir = "02_agents_and_environments"
+title = { pl = "Agent i środowisko", en = "Agents and environments" }
+kind = "core"
+status = "planned"
+requires = ["1.1"]
+
+[[module.lesson]]
+id = "1.3"
+dir = "03_problem_formulation"
+title = { pl = "Typy agentów i sformułowanie problemu", en = "Agent types and problem formulation" }
+kind = "core"
+status = "planned"
+requires = ["1.2"]
+
+[[module.lesson]]
+id = "1.4"
+dir = "04_history_of_ai"
+title = { pl = "Krótka historia AI", en = "A short history of AI" }
+kind = "optional"
+status = "planned"
+requires = ["1.3"]
+
+[[module]]
+id = "M2"
+dir = "modules/02_search"
+title = { pl = "Przeszukiwanie", en = "Search" }
+
+[[module.lesson]]
+id = "2.1"
+dir = "01_state_space"
+title = { pl = "Przestrzeń stanów i drzewo przeszukiwania", en = "State spaces and search trees" }
+kind = "core"
+status = "planned"
+requires = ["1.3"]
+
+[[module.lesson]]
+id = "2.2"
+dir = "02_bfs_dfs"
+title = { pl = "BFS i DFS", en = "BFS and DFS" }
+kind = "core"
+status = "planned"
+requires = ["2.1"]
+
+[[module.lesson]]
+id = "2.3"
+dir = "03_uniform_cost_search"
+title = { pl = "Przeszukiwanie kosztowe (UCS)", en = "Uniform-cost search (UCS)" }
+kind = "core"
+status = "planned"
+requires = ["2.2"]
+
+[[module.lesson]]
+id = "2.4"
+dir = "04_heuristics_and_a_star"
+title = { pl = "Heurystyki, greedy best-first i A*", en = "Heuristics, greedy best-first search and A*" }
+kind = "core"
+status = "planned"
+requires = ["2.3"]
+
+[[module.lesson]]
+id = "2.5"
+dir = "05_comparing_strategies"
+title = { pl = "Porównanie strategii przeszukiwania", en = "Comparing search strategies" }
+kind = "core"
+status = "planned"
+requires = ["2.4"]
+
+[[module.lesson]]
+id = "2.6"
+dir = "06_iterative_deepening"
+title = { pl = "Iteracyjne pogłębianie", en = "Iterative deepening" }
+kind = "optional"
+status = "planned"
+requires = ["2.5"]
+
+[[module.lesson]]
+id = "2.7"
+dir = "07_designing_heuristics"
+title = { pl = "Projektowanie heurystyk", en = "Designing heuristics" }
+kind = "optional"
+status = "planned"
+requires = ["2.5"]
+
+[[module]]
+id = "M3"
+dir = "modules/03_games_and_csp"
+title = { pl = "Gry i problemy z ograniczeniami", en = "Games and constraint satisfaction" }
+
+[[module.lesson]]
+id = "3.1"
+dir = "01_minimax"
+title = { pl = "Gry i minimax", en = "Games and minimax" }
+kind = "core"
+status = "planned"
+requires = ["2.5"]
+
+[[module.lesson]]
+id = "3.2"
+dir = "02_alpha_beta"
+title = { pl = "Przycinanie alfa-beta", en = "Alpha-beta pruning" }
+kind = "core"
+status = "planned"
+requires = ["3.1"]
+
+[[module.lesson]]
+id = "3.3"
+dir = "03_evaluation_functions"
+title = { pl = "Funkcje oceny i ograniczona głębokość", en = "Evaluation functions and depth limits" }
+kind = "core"
+status = "planned"
+requires = ["3.2"]
+
+[[module.lesson]]
+id = "3.4"
+dir = "04_csp_modelling"
+title = { pl = "Modelowanie problemów z ograniczeniami", en = "Modelling constraint satisfaction problems" }
+kind = "core"
+status = "planned"
+requires = ["2.5"]
+
+[[module.lesson]]
+id = "3.5"
+dir = "05_backtracking"
+title = { pl = "Backtracking z heurystykami i forward checking", en = "Backtracking with heuristics and forward checking" }
+kind = "core"
+status = "planned"
+requires = ["3.4"]
+
+[[module.lesson]]
+id = "3.6"
+dir = "06_ac3"
+title = { pl = "Propagacja ograniczeń AC-3", en = "Constraint propagation with AC-3" }
+kind = "optional"
+status = "planned"
+requires = ["3.5"]
+
+[[module.lesson]]
+id = "3.7"
+dir = "07_expectimax"
+title = { pl = "Expectimax: gry z losowością", en = "Expectimax: games with chance" }
+kind = "optional"
+status = "planned"
+requires = ["3.3"]
+
+[[module.lesson]]
+id = "3.8"
+dir = "08_mcts"
+title = { pl = "Monte Carlo Tree Search", en = "Monte Carlo tree search" }
+kind = "optional"
+status = "planned"
+requires = ["3.3"]
+
+[[module]]
+id = "M4"
+dir = "modules/04_nature_inspired"
+title = { pl = "Algorytmy inspirowane naturą", en = "Nature-inspired algorithms" }
+
+[[module.lesson]]
+id = "4.1"
+dir = "01_local_search"
+title = { pl = "Przeszukiwanie lokalne i symulowane wyżarzanie", en = "Local search and simulated annealing" }
+kind = "core"
+status = "planned"
+requires = ["2.5"]
+
+[[module.lesson]]
+id = "4.2"
+dir = "02_genetic_algorithms"
+title = { pl = "Algorytmy genetyczne", en = "Genetic algorithms" }
+kind = "core"
+status = "planned"
+requires = ["4.1"]
+
+[[module.lesson]]
+id = "4.3"
+dir = "03_ant_colony_optimization"
+title = { pl = "Optymalizacja mrowiskowa (ACO)", en = "Ant colony optimization (ACO)" }
+kind = "core"
+status = "planned"
+requires = ["4.2"]
+
+[[module.lesson]]
+id = "4.4"
+dir = "04_particle_swarm"
+title = { pl = "Optymalizacja rojem cząstek (PSO)", en = "Particle swarm optimization (PSO)" }
+kind = "optional"
+status = "planned"
+requires = ["4.3"]
+
+[[module.lesson]]
+id = "4.5"
+dir = "05_ga_for_scheduling"
+title = { pl = "Algorytm genetyczny dla harmonogramu", en = "A genetic algorithm for scheduling" }
+kind = "optional"
+status = "planned"
+requires = ["4.3", "3.5"]
+
+[[module.lesson]]
+id = "4.6"
+dir = "06_boids"
+title = { pl = "Boidy i emergencja", en = "Boids and emergence" }
+kind = "optional"
+status = "planned"
+requires = ["4.3"]
+
+[[module.lesson]]
+id = "4.7"
+dir = "07_metaphor_zoo"
+title = { pl = "Krytycznie o „zoo metafor”", en = "A critical look at the metaphor zoo" }
+kind = "optional"
+status = "planned"
+requires = ["4.3"]
+
+[[module]]
+id = "M5"
+dir = "modules/05_knowledge_and_logic"
+title = { pl = "Wiedza, logika i wnioskowanie", en = "Knowledge, logic and inference" }
+
+[[module.lesson]]
+id = "5.1"
+dir = "01_propositional_logic"
+title = { pl = "Reprezentacja wiedzy i logika zdań", en = "Knowledge representation and propositional logic" }
+kind = "core"
+status = "planned"
+requires = ["1.3"]
+
+[[module.lesson]]
+id = "5.2"
+dir = "02_forward_chaining"
+title = { pl = "Reguły i wnioskowanie w przód", en = "Rules and forward chaining" }
+kind = "core"
+status = "planned"
+requires = ["5.1"]
+
+[[module.lesson]]
+id = "5.3"
+dir = "03_backward_chaining"
+title = { pl = "Wnioskowanie wstecz i system ekspertowy", en = "Backward chaining and an expert system" }
+kind = "core"
+status = "planned"
+requires = ["5.2"]
+
+[[module.lesson]]
+id = "5.4"
+dir = "04_resolution"
+title = { pl = "Rezolucja", en = "Resolution" }
+kind = "optional"
+status = "planned"
+requires = ["5.3"]
+
+[[module.lesson]]
+id = "5.5"
+dir = "05_first_order_logic"
+title = { pl = "Wprowadzenie do logiki pierwszego rzędu", en = "Introduction to first-order logic" }
+kind = "optional"
+status = "planned"
+requires = ["5.3"]
+
+[[module]]
+id = "M6"
+dir = "modules/06_uncertainty"
+title = { pl = "Niepewność i prawdopodobieństwo", en = "Uncertainty and probability" }
+
+[[module.lesson]]
+id = "6.1"
+dir = "01_bayes_rule"
+title = { pl = "Prawdopodobieństwo warunkowe i twierdzenie Bayesa", en = "Conditional probability and Bayes' rule" }
+kind = "core"
+status = "planned"
+requires = ["0.1"]
+
+[[module.lesson]]
+id = "6.2"
+dir = "02_bayesian_networks"
+title = { pl = "Wnioskowanie probabilistyczne i sieci bayesowskie", en = "Probabilistic inference and Bayesian networks" }
+kind = "core"
+status = "planned"
+requires = ["6.1"]
+
+[[module.lesson]]
+id = "6.3"
+dir = "03_expected_utility"
+title = { pl = "Decyzje przy niepewności", en = "Decisions under uncertainty" }
+kind = "core"
+status = "planned"
+requires = ["6.2"]
+
+[[module.lesson]]
+id = "6.4"
+dir = "04_bayes_filter"
+title = { pl = "Lokalizacja robota filtrem Bayesa", en = "Robot localization with a Bayes filter" }
+kind = "optional"
+status = "planned"
+requires = ["6.3"]
+
+[[module.lesson]]
+id = "6.5"
+dir = "05_value_of_information"
+title = { pl = "Wartość informacji", en = "Value of information" }
+kind = "optional"
+status = "planned"
+requires = ["6.3"]
+
+[[module.lesson]]
+id = "6.6"
+dir = "06_naive_bayes"
+title = { pl = "Naiwny klasyfikator Bayesa", en = "Naive Bayes classifier" }
+kind = "optional"
+status = "planned"
+requires = ["6.3"]
+
+[[module]]
+id = "M7"
+dir = "modules/07_machine_learning"
+title = { pl = "Podstawy uczenia maszynowego i sieci neuronowych", en = "Machine learning and neural network basics" }
+
+[[module.lesson]]
+id = "7.1"
+dir = "01_learning_from_data"
+title = { pl = "Uczenie z danych i kNN", en = "Learning from data and kNN" }
+kind = "core"
+status = "planned"
+requires = ["5.3"]
+
+[[module.lesson]]
+id = "7.2"
+dir = "02_generalization"
+title = { pl = "Generalizacja i przeuczenie", en = "Generalization and overfitting" }
+kind = "core"
+status = "planned"
+requires = ["7.1"]
+
+[[module.lesson]]
+id = "7.3"
+dir = "03_perceptron"
+title = { pl = "Perceptron i mała sieć neuronowa", en = "The perceptron and a small neural network" }
+kind = "core"
+status = "planned"
+requires = ["7.2"]
+
+[[module.lesson]]
+id = "7.4"
+dir = "04_k_means"
+title = { pl = "Grupowanie k-means", en = "k-means clustering" }
+kind = "optional"
+status = "planned"
+requires = ["7.3"]
+
+[[module.lesson]]
+id = "7.5"
+dir = "05_decision_trees"
+title = { pl = "Drzewa decyzyjne", en = "Decision trees" }
+kind = "optional"
+status = "planned"
+requires = ["7.3"]
+
+[[module.lesson]]
+id = "7.6"
+dir = "06_linear_regression"
+title = { pl = "Regresja liniowa", en = "Linear regression" }
+kind = "optional"
+status = "planned"
+requires = ["7.3"]
+
+[[module.lesson]]
+id = "7.7"
+dir = "07_neuroevolution"
+title = { pl = "Neuroewolucja", en = "Neuroevolution" }
+kind = "optional"
+status = "planned"
+requires = ["7.3", "4.2"]
+
+[[module]]
+id = "M8"
+dir = "modules/08_reinforcement_learning"
+title = { pl = "Uczenie ze wzmocnieniem", en = "Reinforcement learning" }
+
+[[module.lesson]]
+id = "8.1"
+dir = "01_bandits"
+title = { pl = "Eksploracja i eksploatacja: wielorękie bandyty", en = "Exploration and exploitation: multi-armed bandits" }
+kind = "core"
+status = "planned"
+requires = ["2.5", "6.3"]
+
+[[module.lesson]]
+id = "8.2"
+dir = "02_q_learning"
+title = { pl = "MDP i Q-learning", en = "MDPs and Q-learning" }
+kind = "core"
+status = "planned"
+requires = ["8.1"]
+
+[[module.lesson]]
+id = "8.3"
+dir = "03_value_iteration"
+title = { pl = "Iteracja wartości", en = "Value iteration" }
+kind = "optional"
+status = "planned"
+requires = ["8.2"]
+
+[[module.lesson]]
+id = "8.4"
+dir = "04_reward_shaping"
+title = { pl = "Kształtowanie nagrody i niezamierzone zachowania", en = "Reward shaping and unintended behaviour" }
+kind = "optional"
+status = "planned"
+requires = ["8.2"]
+
+[[module]]
+id = "M9"
+dir = "modules/09_modern_ai"
+title = { pl = "Współczesna AI i odpowiedzialność", en = "Modern AI and responsibility" }
+
+[[module.lesson]]
+id = "9.1"
+dir = "01_language_models"
+title = { pl = "Modele generatywne i językowe", en = "Generative and language models" }
+kind = "core"
+status = "planned"
+requires = ["6.3", "7.3"]
+
+[[module.lesson]]
+id = "9.2"
+dir = "02_limits_and_responsibility"
+title = { pl = "Ograniczenia i odpowiedzialność", en = "Limits and responsibility" }
+kind = "core"
+status = "planned"
+requires = ["9.1"]
+
+[[module.lesson]]
+id = "9.3"
+dir = "03_tokenization"
+title = { pl = "Tokenizacja", en = "Tokenization" }
+kind = "optional"
+status = "planned"
+requires = ["9.2"]
+
+[[module.lesson]]
+id = "9.4"
+dir = "04_evaluating_ai_answers"
+title = { pl = "Ocena odpowiedzi systemów AI", en = "Evaluating AI answers" }
+kind = "optional"
+status = "planned"
+requires = ["9.2"]
