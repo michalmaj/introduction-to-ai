@@ -1,10 +1,14 @@
-"""Shared test setup: headless, isolated matplotlib."""
+"""Shared test setup: headless, isolated matplotlib that cleans up after itself."""
 
+import atexit
 import os
+import shutil
 import tempfile
 
+_MPL_DIR = tempfile.mkdtemp(prefix="introai-mpl-")
+atexit.register(shutil.rmtree, _MPL_DIR, ignore_errors=True)
 os.environ["MPLBACKEND"] = "Agg"
-os.environ["MPLCONFIGDIR"] = tempfile.mkdtemp(prefix="introai-mpl-")
+os.environ["MPLCONFIGDIR"] = _MPL_DIR
 
 from pathlib import Path  # noqa: E402
 

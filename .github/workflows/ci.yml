@@ -9,6 +9,7 @@ jobs:
   tests:
     name: Tests (Python ${{ matrix.python }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +33,7 @@ jobs:
   course:
     name: Course quality
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
 

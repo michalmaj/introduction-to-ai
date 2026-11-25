@@ -17,7 +17,8 @@ def find_reference_imports(path: Path) -> list[str]:
     Lessons ask you to write an algorithm yourself, so ``task.py`` must not
     import the course's reference version of it.
     """
-    tree = ast.parse(Path(path).read_text(encoding="utf-8"))
+    # Parse bytes, not text: Python then honours a UTF-8 BOM (Notepad, Visual Studio).
+    tree = ast.parse(Path(path).read_bytes())
     found: list[str] = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
