@@ -96,7 +96,7 @@ To dwa opisy potrzebne do części A zadania.
 
 **Wariant 2** to ta sama hala, ale:
 
-- robot dostaje w każdym kroku obraz z kamery pod sufitem, który pokazuje całą halę, wszystkie paczki i przeszkody;
+- robot dostaje w każdym kroku obraz z kamery pod sufitem, który pokazuje całą halę: wszystkie paczki, przeszkody i inne roboty;
 - w hali jeżdżą jednocześnie inne roboty, które też zbierają paczki;
 - koła się ślizgają: w 10% przypadków ruch się nie udaje i robot zostaje na miejscu;
 - inne roboty poruszają się również wtedy, gdy nasz robot decyduje, co zrobić;

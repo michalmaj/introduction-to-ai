@@ -50,8 +50,10 @@ Racjonalność to nie wszechwiedza. Liczy się najlepszy wybór przy wiedzy, kt�
 
 ## Dwie tradycje: symboliczna i ucząca się
 
-- **Podejście symboliczne:** wiedza i procedury są zapisane jawnie, jako reguły, logika albo opis problemu do przeszukania. Tak działają moduły 2–5 tego kursu. Zaletą jest przejrzystość, bo da się wyjaśnić, dlaczego system zdecydował tak, a nie inaczej. Wadami są kruchość wobec sytuacji, których nikt nie przewidział, i żmudne ręczne zapisywanie wiedzy.
+- **Podejście symboliczne:** wiedza i procedury są zapisane jawnie, jako reguły, logika albo opis problemu do przeszukania. Tak działają moduły 2, 3 i 5 tego kursu. Zaletą jest przejrzystość, bo da się wyjaśnić, dlaczego system zdecydował tak, a nie inaczej. Wadami są kruchość wobec sytuacji, których nikt nie przewidział, i żmudne ręczne zapisywanie wiedzy.
 - **Podejście uczące się:** zachowanie jest wyuczone z danych, na przykład przez sieć neuronową. Tak działają moduły 7–9. Zaletą jest radzenie sobie z percepcją i nieostrymi wzorcami. Wadami są potrzeba dużej ilości danych i trudniejsze wyjaśnianie decyzji.
+
+Moduły 4 (algorytmy inspirowane naturą) i 6 (niepewność i prawdopodobieństwo) leżą pomiędzy: opierają się na jawnie opisanych modelach, ale korzystają też z losowości, a moduł 6 także z danych.
 
 Wiele współczesnych systemów łączy obie tradycje. Na przykład AlphaGo (2016) łączył sieci neuronowe z przeszukiwaniem drzewa gry (Monte Carlo Tree Search).
 

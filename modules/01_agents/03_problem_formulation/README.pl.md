@@ -102,7 +102,7 @@ Mapa `aisles` ma 155 wolnych pól:
 | 10 | 158 720 |
 | 20 | 162 529 280 |
 
-Każda dodatkowa paczka podwaja liczbę stanów. Nie wszystkie stany są osiągalne, ale algorytm szukający najlepszego planu musi wiele z nich odwiedzić. To **eksplozja przestrzeni stanów**, z którą zmierzymy się w modułach 2 i 4.
+Każda dodatkowa paczka podwaja liczbę stanów. Na spójnej mapie każdy z tych stanów jest osiągalny: robot może zebrać dowolny podzbiór paczek, a potem dojechać do dowolnego pola. Algorytm szukający najlepszego planu może więc musieć rozważyć je wszystkie. To **eksplozja przestrzeni stanów**, z którą zmierzymy się w modułach 2 i 4.
 
 ## Częste błędy
 

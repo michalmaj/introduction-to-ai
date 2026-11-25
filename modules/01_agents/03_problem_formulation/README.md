@@ -102,7 +102,7 @@ The `aisles` map has 155 free cells:
 | 10 | 158,720 |
 | 20 | 162,529,280 |
 
-Every extra parcel doubles the number of states. Not every state is reachable, but an algorithm looking for the best plan has to visit many of them. This is the **state-space explosion**, which modules 2 and 4 deal with.
+Every extra parcel doubles the number of states. On a connected map every one of these states is reachable: the robot can collect any subset of the parcels and then drive to any cell. So an algorithm looking for the best plan may have to consider all of them. This is the **state-space explosion**, which modules 2 and 4 deal with.
 
 ## Common mistakes
 

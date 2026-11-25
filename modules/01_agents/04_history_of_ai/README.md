@@ -2,7 +2,7 @@
 
 # Lesson 1.4 — A short history of AI
 
-**Optional** · Prerequisites: 1.1 What is AI. This is a conceptual lesson without a programming task.
+**Optional** · Prerequisites: 1.3 Agent types and problem formulation. This is a conceptual lesson without a programming task.
 
 ## Learning goals
 

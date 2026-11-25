@@ -50,8 +50,10 @@ Rationality is not omniscience. What counts is the best choice given what the ag
 
 ## Two traditions: symbolic and learning
 
-- **The symbolic approach:** knowledge and procedures are written down explicitly, as rules, logic or a problem description to search through. Modules 2–5 of this course work this way. The advantage is transparency, because you can explain why the system decided what it did. The disadvantages are brittleness in situations nobody foresaw and the laborious work of writing knowledge down by hand.
+- **The symbolic approach:** knowledge and procedures are written down explicitly, as rules, logic or a problem description to search through. Modules 2, 3 and 5 of this course work this way. The advantage is transparency, because you can explain why the system decided what it did. The disadvantages are brittleness in situations nobody foresaw and the laborious work of writing knowledge down by hand.
 - **The learning approach:** behaviour is learned from data, for example by a neural network. Modules 7–9 work this way. The advantage is handling perception and fuzzy patterns. The disadvantages are the need for a lot of data and decisions that are harder to explain.
+
+Modules 4 (nature-inspired algorithms) and 6 (uncertainty and probability) sit in between: they rest on explicitly described models, but they also use randomness, and module 6 uses data too.
 
 Many modern systems combine both traditions. For example, AlphaGo (2016) combined neural networks with game-tree search (Monte Carlo Tree Search).
 

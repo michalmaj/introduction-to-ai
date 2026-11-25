@@ -44,7 +44,7 @@ cd introduction-to-ai
 uv sync
 ```
 
-`uv sync` pobiera odpowiednią wersję Pythona i biblioteki do katalogu `.venv` wewnątrz projektu. Nic nie instaluje w systemie i nie zmienia innych projektów.
+`uv sync` tworzy w katalogu kursu środowisko `.venv` z odpowiednią wersją Pythona i bibliotekami. Samego Pythona i pobrane pakiety uv przechowuje we własnym katalogu w Twoim profilu użytkownika, a nie w systemie, i nie zmienia innych projektów. Jeśli kiedyś zechcesz posprzątać po kursie, poza usunięciem jego katalogu wyczyść pamięć podręczną uv poleceniem `uv cache clean`, a pobrane przez uv wersje Pythona usuń poleceniem `uv python uninstall 3.12`.
 
 ### 3. Pierwsze uruchomienie testów
 
@@ -75,9 +75,11 @@ Każda lekcja to katalog w `modules/`:
 | `test_task.py` | testy, które sprawdzają `task.py`; nie musisz ich czytać ani zmieniać |
 | `experiments.pl.ipynb` | eksperymenty: najpierw przewidujesz, potem uruchamiasz i porównujesz |
 
+Lekcje koncepcyjne, na przykład 1.1, nie mają `task.py`, testów ani notebooka. Składają się z tekstu, pytań i odpowiedzi wzorcowych.
+
 Rozwiązania i odpowiedzi do pytań leżą w osobnym katalogu `solutions/`. Są publiczne, ale zaglądaj do nich dopiero po własnej próbie.
 
-Rytm pracy jest zawsze ten sam:
+W lekcjach z zadaniem rytm pracy jest zawsze ten sam:
 
 1. Przeczytaj `README.pl.md`.
 2. Uzupełnij `task.py`.
@@ -92,8 +94,10 @@ Lekcje **core** tworzą ścieżkę minimalną, a lekcje **opcjonalne** ją rozsz
 Przykładowy wynik na nierozwiązanym zadaniu:
 
 ```text
-FAILED modules/00_start/01_setup/test_task.py::test_part_a_start - Part A: fill in START in task.py
+FAILED modules/00_start/01_setup/test_task.py::test_part_a_start - Failed: Part A: fill in START in task.py
 ```
+
+W wąskim oknie terminala ta linia bywa ucięta. Pełny komunikat każdego testu znajdziesz wyżej, w sekcji `FAILURES`.
 
 - Nazwa testu (`test_part_a_start`) mówi, co jest sprawdzane. Testy `test_part_a_...` sprawdzają odpowiedzi z części A, a pozostałe sprawdzają kod.
 - Po myślniku jest wskazówka. Komunikaty są po angielsku, jak cały kod kursu.
@@ -115,7 +119,7 @@ Większość zadań w kursie rozgrywa się w zautomatyzowanym magazynie. Mapa to
 
 - `#` to przeszkoda, czyli ściana albo regał;
 - `.` to wolna podłoga;
-- `R` to pole, na którym startuje robot;
+- `R` to pole, w którym startuje robot;
 - `D` to rampa, do której robot często ma dojechać.
 
 W dalszych lekcjach dojdą jeszcze paczki, oznaczane `P`.
@@ -141,7 +145,7 @@ Lewy górny róg to `(0, 0)`, a pole `(2, 3)` leży w wierszu 2 i kolumnie 3. Na
 - `S` (południe): wiersz + 1;
 - `W` (zachód): kolumna − 1.
 
-W kodzie mapę wczytasz poleceniem `WarehouseMap.from_file(...)`. Wywołanie `warehouse.is_free(pole)` mówi, czy robot może stanąć na danym polu: czy leży ono na mapie i czy nie jest przeszkodą.
+W kodzie mapę wczytasz poleceniem `WarehouseMap.from_file(...)`. Wywołanie `warehouse.is_free(pole)` mówi, czy robot może stanąć w danym polu: czy leży ono na mapie i czy nie jest przeszkodą.
 
 ## Częste błędy
 
@@ -212,7 +216,7 @@ Zapisz `task.py` przed uruchomieniem testów. W notebooku pierwsza komórka wł�
 ## Co zapamiętać
 
 - Kurs uruchamiasz trzema poleceniami: `git clone`, `uv sync`, `uv run ...`.
-- Każda lekcja ma ten sam rytm: README, `task.py`, testy, eksperymenty, pytania kontrolne, rozwiązania.
+- Każda lekcja z zadaniem ma ten sam rytm: README, `task.py`, testy, eksperymenty, pytania kontrolne, rozwiązania.
 - Pole to para `(wiersz, kolumna)` liczona od zera od lewego górnego rogu.
 - Przechodzące testy to warunek konieczny, ale nie dowód zrozumienia.
 

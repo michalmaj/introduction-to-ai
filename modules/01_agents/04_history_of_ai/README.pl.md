@@ -2,7 +2,7 @@
 
 # Lekcja 1.4 — Krótka historia AI
 
-**Opcjonalna** · Wymagania: 1.1 Czym jest AI. To lekcja koncepcyjna, bez zadania programistycznego.
+**Opcjonalna** · Wymagania: 1.3 Typy agentów i sformułowanie problemu. To lekcja koncepcyjna, bez zadania programistycznego.
 
 ## Cele lekcji
 

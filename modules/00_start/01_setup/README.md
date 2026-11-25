@@ -44,7 +44,7 @@ cd introduction-to-ai
 uv sync
 ```
 
-`uv sync` downloads the right Python version and the libraries into the `.venv` directory inside the project. It installs nothing system-wide and does not touch other projects.
+`uv sync` creates a `.venv` environment in the course directory with the right Python version and libraries. uv keeps Python itself and the downloaded packages in its own directory in your user profile, not system-wide, and it does not touch other projects. If you ever want to clean up after the course, besides deleting its directory, clear uv's cache with `uv cache clean` and remove the Python versions uv downloaded with `uv python uninstall 3.12`.
 
 ### 3. Running the tests for the first time
 
@@ -75,9 +75,11 @@ Every lesson is a directory under `modules/`:
 | `test_task.py` | tests that check `task.py`; you do not need to read or change them |
 | `experiments.ipynb` | experiments: first you predict, then you run and compare |
 
+Conceptual lessons, such as 1.1, have no `task.py`, tests or notebook. They consist of text, questions and model answers.
+
 Solutions and answers to the questions live in a separate directory, `solutions/`. They are public, but only look at them after your own attempt.
 
-The workflow is always the same:
+In lessons with a task, the workflow is always the same:
 
 1. Read `README.md`.
 2. Fill in `task.py`.
@@ -92,8 +94,10 @@ The workflow is always the same:
 An example result on an unsolved task:
 
 ```text
-FAILED modules/00_start/01_setup/test_task.py::test_part_a_start - Part A: fill in START in task.py
+FAILED modules/00_start/01_setup/test_task.py::test_part_a_start - Failed: Part A: fill in START in task.py
 ```
+
+In a narrow terminal window this line may be cut off. The full message of every test is further up, in the `FAILURES` section.
 
 - The test's name (`test_part_a_start`) says what is being checked. Tests named `test_part_a_...` check your Part A answers; the others check your code.
 - After the dash comes a hint.
@@ -212,7 +216,7 @@ Save `task.py` before running the tests. In the notebook, the first cell turns o
 ## What to remember
 
 - You set up the course with three commands: `git clone`, `uv sync` and `uv run ...`.
-- Every lesson has the same rhythm: README, `task.py`, tests, experiments, review questions, solutions.
+- Every lesson with a task has the same rhythm: README, `task.py`, tests, experiments, review questions, solutions.
 - A cell is a pair `(row, col)`, counted from zero from the top-left corner.
 - Passing tests are necessary, but they do not prove understanding.
 

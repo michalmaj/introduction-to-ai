@@ -96,7 +96,7 @@ These are the two descriptions you need for Part A of the task.
 
 **Variant 2** is the same hall, except that:
 
-- at every step the robot receives a picture from a ceiling camera that shows the whole hall, all parcels and all obstacles;
+- at every step the robot receives a picture from a ceiling camera that shows the whole hall: all parcels, all obstacles and the other robots;
 - other robots drive around the hall at the same time, also collecting parcels;
 - the wheels slip: 10% of moves fail and the robot stays where it is;
 - the other robots keep moving while our robot decides what to do;
