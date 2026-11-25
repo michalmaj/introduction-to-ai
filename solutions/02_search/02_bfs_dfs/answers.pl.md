@@ -60,7 +60,7 @@ Dobra odpowiedź zawiera:
 
 ### 2. Pamięć DFS
 
-DFS bez zapamiętywania stanów trzyma tylko bieżącą ścieżkę i nierozwiniętych jeszcze sąsiadów węzłów na tej ścieżce, czyli około *b*·*m* węzłów. BFS trzyma całą falę, czyli około *b*<sup>*d*</sup> węzłów. Przewaga DFS jest ogromna w szerokich, głębokich drzewach. Znika w przeszukiwaniu grafu, bo zbiór rozwiniętych stanów rośnie z liczbą odwiedzonych stanów i może być tak duży jak pamięć BFS. Słabnie też wtedy, gdy maksymalna głębokość *m* jest dużo większa od głębokości celu *d*.
+DFS bez zapamiętywania stanów trzyma tylko bieżącą ścieżkę i nierozwiniętych jeszcze sąsiadów węzłów na tej ścieżce, czyli około *b*·*m* węzłów. BFS trzyma całą falę, czyli około *b*<sup>*d*</sup> węzłów. Przewaga DFS jest ogromna w szerokich, głębokich drzewach. Znika w przeszukiwaniu grafu, bo zbiór rozwiniętych stanów rośnie z liczbą odwiedzonych stanów i może być tak duży jak pamięć BFS. Słabnie też wtedy, gdy maksymalna głębokość *m* jest dużo większa od głębokości celu *d*. Część przewagi da się zachować, sprawdzając cykle tylko na bieżącej ścieżce: pamięć zostaje O(*b*·*m*), a DFS zatrzymuje się na skończonych grafach, choć może wielokrotnie rozwijać te same stany.
 
 Dobra odpowiedź zawiera:
 

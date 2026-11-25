@@ -26,6 +26,20 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
+LESSON_HINT = (
+    "This ran the course's own tests (tests/), not a lesson. To check a lesson, run:\n"
+    "    uv run pytest modules/<module>/<lesson>"
+)
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config: pytest.Config) -> None:
+    """After a bare ``pytest`` from the repository root, say how to check a lesson."""
+    if config.args_source == pytest.Config.ArgsSource.TESTPATHS:
+        terminalreporter.write_line("")
+        for line in LESSON_HINT.splitlines():
+            terminalreporter.write_line(line)
+
+
 @pytest.fixture(scope="module")
 def impl_path(request: pytest.FixtureRequest) -> Path:
     """The file the lesson's tests run against."""
