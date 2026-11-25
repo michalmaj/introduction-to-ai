@@ -12,7 +12,7 @@ the events into a :class:`Trace`.
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
@@ -37,6 +37,7 @@ class Trace:
 
     events: list[Event] = field(default_factory=list)
     limit: int | None = None
+    kinds: frozenset[str] | None = None
 
     def of_kind(self, kind: str) -> list[Event]:
         """Return only the events of the given kind, in order."""
@@ -47,14 +48,16 @@ _current: ContextVar[Trace | None] = ContextVar("introai_current_trace", default
 
 
 @contextmanager
-def record(limit: int | None = None) -> Iterator[Trace]:
+def record(limit: int | None = None, kinds: Iterable[str] | None = None) -> Iterator[Trace]:
     """Collect every event emitted inside the ``with`` block.
 
     ``limit`` caps the number of events; exceeding it raises
     :class:`TraceLimitExceeded`, which turns an endless loop into a quick failure.
+    ``kinds`` keeps only events of those kinds (for example ``{"expand"}``); code
+    that builds expensive event data can ask :func:`wants` first and skip it.
     Nested blocks record separately: the inner block sees only its own events.
     """
-    trace = Trace(limit=limit)
+    trace = Trace(limit=limit, kinds=frozenset(kinds) if kinds is not None else None)
     token = _current.set(trace)
     try:
         yield trace
@@ -62,10 +65,16 @@ def record(limit: int | None = None) -> Iterator[Trace]:
         _current.reset(token)
 
 
+def wants(kind: str) -> bool:
+    """Whether an active recording keeps events of this kind."""
+    trace = _current.get()
+    return trace is not None and (trace.kinds is None or kind in trace.kinds)
+
+
 def emit(kind: str, **data: Any) -> None:
     """Report an event to the active recording, if there is one."""
     trace = _current.get()
-    if trace is None:
+    if trace is None or (trace.kinds is not None and kind not in trace.kinds):
         return
     if trace.limit is not None and len(trace.events) >= trace.limit:
         raise TraceLimitExceeded(f"more than {trace.limit} events were recorded")

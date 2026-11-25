@@ -45,3 +45,17 @@ def test_recording_stops_after_block():
         emit("a")
     emit("b")
     assert [e.kind for e in t.events] == ["a"]
+
+
+def test_record_can_filter_kinds():
+    from introai.trace import wants
+
+    assert not wants("a")
+    with record(kinds={"a"}) as t:
+        assert wants("a") and not wants("b")
+        emit("a", x=1)
+        emit("b", x=2)
+    assert [e.kind for e in t.events] == ["a"]
+    with record() as everything:
+        assert wants("anything")
+    assert everything.events == []
