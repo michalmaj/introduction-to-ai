@@ -9,14 +9,14 @@ Maps are plain text files you can edit yourself::
     #######
 
 ``#`` is an obstacle (wall or shelf), ``.`` is free floor, ``R`` is where the
-robot starts and ``D`` is the dock it has to reach. A map must be rectangular
-and contain exactly one ``R`` and one ``D``.
+robot starts, ``D`` is the dock it has to reach and ``P`` is a parcel lying on
+free floor. A map must be rectangular and contain exactly one ``R`` and one ``D``.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from introai.search.core import Problem
@@ -24,7 +24,7 @@ from introai.search.core import Problem
 Cell = tuple[int, int]
 """A grid cell as ``(row, col)``, counted from 0 at the top-left corner."""
 
-_ALLOWED = {"#", ".", "R", "D"}
+_ALLOWED = {"#", ".", "R", "D", "P"}
 _MOVES: dict[str, tuple[int, int]] = {"N": (-1, 0), "E": (0, 1), "S": (1, 0), "W": (0, -1)}
 
 
@@ -37,6 +37,7 @@ class WarehouseMap:
     walls: frozenset[Cell]
     start: Cell
     dock: Cell
+    parcels: frozenset[Cell] = frozenset()
 
     @classmethod
     def from_text(cls, text: str) -> WarehouseMap:
@@ -51,7 +52,7 @@ class WarehouseMap:
 
         cols = len(numbered[0][1])
         walls: set[Cell] = set()
-        found: dict[str, list[Cell]] = {"R": [], "D": []}
+        found: dict[str, list[Cell]] = {"R": [], "D": [], "P": []}
         for row, (line_no, line) in enumerate(numbered):
             if len(line) != cols:
                 raise ValueError(f"line {line_no} has {len(line)} characters, expected {cols}")
@@ -71,7 +72,14 @@ class WarehouseMap:
                     f"map must contain exactly one {marker!r} (found {len(found[marker])})"
                 )
 
-        return cls(len(numbered), cols, frozenset(walls), found["R"][0], found["D"][0])
+        return cls(
+            len(numbered),
+            cols,
+            frozenset(walls),
+            found["R"][0],
+            found["D"][0],
+            frozenset(found["P"]),
+        )
 
     @classmethod
     def from_file(cls, path: str | Path) -> WarehouseMap:
@@ -83,6 +91,16 @@ class WarehouseMap:
                 f"cannot read {path}: save the map as UTF-8 text (not UTF-16 or another encoding)"
             ) from None
         return cls.from_text(text)
+
+    def with_parcels(self, cells: Iterable[Cell]) -> WarehouseMap:
+        """A copy of the map with parcels on exactly the given cells."""
+        parcels = frozenset(cells)
+        for cell in sorted(parcels):
+            if not self.is_free(cell):
+                raise ValueError(f"cannot place a parcel on an obstacle at {cell}")
+            if cell == self.start:
+                raise ValueError("cannot place a parcel on the robot's start")
+        return replace(self, parcels=parcels)
 
     def is_free(self, cell: Cell) -> bool:
         """Whether the robot may stand on ``cell``."""
@@ -125,7 +143,7 @@ def _move(cell: Cell, action: str) -> Cell:
 def render_text(
     warehouse: WarehouseMap, path: Sequence[Cell] = (), expanded: Iterable[Cell] = ()
 ) -> str:
-    """Draw the map as text: ``*`` marks the path, ``o`` other expanded cells."""
+    """Draw the map as text: ``*`` marks the path, ``o`` other expanded cells, ``P`` parcels."""
     grid = [
         ["#" if (row, col) in warehouse.walls else "." for col in range(warehouse.cols)]
         for row in range(warehouse.rows)
@@ -134,6 +152,8 @@ def render_text(
         grid[row][col] = "o"
     for row, col in path:
         grid[row][col] = "*"
+    for row, col in warehouse.parcels:
+        grid[row][col] = "P"
     grid[warehouse.start[0]][warehouse.start[1]] = "R"
     grid[warehouse.dock[0]][warehouse.dock[1]] = "D"
     return "\n".join("".join(line) for line in grid)

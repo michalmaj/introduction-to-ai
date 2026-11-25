@@ -16,3 +16,9 @@ def test_plot_map_has_legend_and_start_dock_labels():
     legend_labels = [t.get_text() for t in ax.get_legend().get_texts()]
     assert legend_labels == ["obstacle", "expanded", "path"]
     assert {t.get_text() for t in ax.texts} == {"R", "D"}
+
+
+def test_plot_map_labels_parcels():
+    m = WarehouseMap.from_text("#######\n#R.P#P#\n#.#...#\n#..P#D#\n#######")
+    ax = plot_map(m)
+    assert sorted(t.get_text() for t in ax.texts) == ["D", "P", "P", "P", "R"]

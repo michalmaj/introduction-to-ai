@@ -61,7 +61,9 @@ def plot_map(
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-    for label, (row, col) in (("R", warehouse.start), ("D", warehouse.dock)):
+    labels = [("R", warehouse.start), ("D", warehouse.dock)]
+    labels += [("P", cell) for cell in sorted(warehouse.parcels)]
+    for label, (row, col) in labels:
         ax.text(
             col,
             row,
