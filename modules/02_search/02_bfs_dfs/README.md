@@ -171,7 +171,7 @@ The rules are exactly the same as in the example:
 
 1. Consider neighbours in alphabetical order.
 2. BFS tests for the goal when it generates a child and ignores states it has already reached.
-3. DFS expands the child of the first neighbour first, tests for the goal when it removes a node from the frontier, and skips states it has already expanded.
+3. Among the children, DFS first expands the one for the first neighbour (alphabetically). It tests for the goal when it removes a node from the frontier, and skips states it has already expanded.
 
 Draw a table like the one in the example and write the results in Part A of `task.py`. The expansion order is the states in the order the algorithm expands them; the goal itself is not expanded. The path is the states from `A` to `H`.
 

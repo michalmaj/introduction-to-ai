@@ -171,7 +171,7 @@ Zasady są dokładnie takie jak w przykładzie:
 
 1. Sąsiadów rozpatrujesz w kolejności alfabetycznej.
 2. BFS sprawdza cel przy generowaniu dziecka, a stany już osiągnięte pomija.
-3. DFS jako pierwsze rozwija dziecko pierwszego sąsiada, sprawdza cel przy zdejmowaniu węzła z frontier i pomija stany już rozwinięte.
+3. Spośród dzieci DFS jako pierwsze rozwija to, które odpowiada pierwszemu (alfabetycznie) sąsiadowi. Cel sprawdza przy zdejmowaniu węzła z frontier, a stany już rozwinięte pomija.
 
 Narysuj tabelę taką jak w przykładzie i wpisz wyniki w części A pliku `task.py`. Kolejność rozwijania to stany w kolejności, w jakiej algorytm je rozwija; sam cel nie jest rozwijany. Ścieżka to stany od `A` do `H`.
 
@@ -186,7 +186,7 @@ Oznaczenia: *b* to współczynnik rozgałęzienia (największa liczba dzieci wę
 | Czas | O(*b*<sup>*d*</sup>) | O(*b*<sup>*m*</sup>); w przeszukiwaniu grafu najwyżej tyle, ile jest stanów |
 | Pamięć | O(*b*<sup>*d*</sup>): cała „fala” naraz | O(*b*·*m*) bez zapamiętywania stanów; z nim tyle, ile stanów rozwinięto |
 
-**Dlaczego wczesny test celu nie psuje optymalności BFS?** BFS generuje węzły w kolejności nierosnącej głębokości. Zanim wygeneruje pierwszy węzeł o głębokości *k* + 1, rozwinął już wszystkie węzły o głębokości *k*. Dlatego pierwszy wygenerowany węzeł celu leży na najmniejszej możliwej głębokości. Ten argument działa jednak tylko wtedy, gdy każdy krok kosztuje tyle samo. Gdy kroki mają różne koszty, mniej kroków nie oznacza niższego kosztu. Tym zajmuje się lekcja 2.3.
+**Dlaczego wczesny test celu nie psuje optymalności BFS?** BFS generuje węzły w kolejności niemalejącej głębokości. Zanim wygeneruje pierwszy węzeł o głębokości *k* + 1, rozwinął już wszystkie węzły o głębokości *k*. Dlatego pierwszy wygenerowany węzeł celu leży na najmniejszej możliwej głębokości. Ten argument działa jednak tylko wtedy, gdy każdy krok kosztuje tyle samo. Gdy kroki mają różne koszty, mniej kroków nie oznacza niższego kosztu. Tym zajmuje się lekcja 2.3.
 
 **Ograniczenia.** BFS trzyma w pamięci całą falę, więc na dużych przestrzeniach szybko brakuje mu pamięci. DFS zużywa mało pamięci tylko wtedy, gdy nie zapamiętuje odwiedzonych stanów. Wtedy jednak może krążyć po cyklach, a na nieskończonej przestrzeni stanów może zejść w nieskończenie długą gałąź i nigdy nie wrócić.
 

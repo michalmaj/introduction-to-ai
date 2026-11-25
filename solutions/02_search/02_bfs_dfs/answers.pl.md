@@ -49,7 +49,7 @@ Warto zauważyć dwie rzeczy. Po rozwinięciu `F` cel `H` leży na stosie, ale p
 
 ### 1. Wczesny test celu w BFS
 
-BFS generuje węzły w kolejności nierosnącej głębokości. Zanim wygeneruje pierwszy węzeł o głębokości *k* + 1, rozwinął już wszystkie węzły o głębokości *k*. Gdyby jakiś cel leżał płycej, zostałby wygenerowany wcześniej. Pierwszy wygenerowany cel ma więc najmniejszą możliwą liczbę kroków, a czekanie z testem do momentu zdjęcia z frontier niczego nie poprawia. Przy różnych kosztach kroków to rozumowanie się załamuje: trasa z większą liczbą kroków może być tańsza. Wcześnie wygenerowany cel nie musi więc leżeć na najtańszej ścieżce i test celu trzeba przenieść na moment zdejmowania węzła z frontier (lekcja 2.3).
+BFS generuje węzły w kolejności niemalejącej głębokości. Zanim wygeneruje pierwszy węzeł o głębokości *k* + 1, rozwinął już wszystkie węzły o głębokości *k*. Gdyby jakiś cel leżał płycej, zostałby wygenerowany wcześniej. Pierwszy wygenerowany cel ma więc najmniejszą możliwą liczbę kroków, a czekanie z testem do momentu zdjęcia z frontier niczego nie poprawia. Przy różnych kosztach kroków to rozumowanie się załamuje: trasa z większą liczbą kroków może być tańsza. Wcześnie wygenerowany cel nie musi więc leżeć na najtańszej ścieżce i test celu trzeba przenieść na moment zdejmowania węzła z frontier (lekcja 2.3).
 
 Dobra odpowiedź zawiera:
 
