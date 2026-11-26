@@ -69,8 +69,9 @@ def test_examples_registry():
         "disconnected",
         "weighted_example",
         "weighted_exercise",
+        "astar_exercise",
     }
-    assert EXERCISE_EXAMPLES == frozenset({"exercise", "weighted_exercise"})
+    assert EXERCISE_EXAMPLES == frozenset({"exercise", "weighted_exercise", "astar_exercise"})
     assert binary_tree().directed and not cyclic().directed
 
 
@@ -94,10 +95,25 @@ def test_weighted_examples():
     assert (wx.initial, wx.goal) == ("A", "H") and wx.action_cost("E", "G", "G") == 5
 
 
-@pytest.mark.parametrize("name", ["weighted_example", "weighted_exercise"])
+@pytest.mark.parametrize("name", ["weighted_example", "weighted_exercise", "astar_exercise"])
 def test_example_heuristics_are_consistent(name):
     problem, h = EXAMPLES[name](), HEURISTICS[name]
     assert h[problem.goal] == 0
     for a, b in problem.edges():
         cost = problem.weight(a, b)
         assert h[a] <= cost + h[b] and h[b] <= cost + h[a], (a, b)
+
+
+def test_astar_exercise():
+    problem = EXAMPLES["astar_exercise"]()
+    assert (problem.initial, problem.goal) == ("A", "G")
+    assert problem.edges() == [
+        ("A", "B"),
+        ("A", "C"),
+        ("A", "D"),
+        ("B", "F"),
+        ("C", "E"),
+        ("D", "G"),
+        ("F", "G"),
+    ]
+    assert HEURISTICS["astar_exercise"] == {"A": 7, "B": 6, "C": 8, "D": 4, "E": 9, "F": 2, "G": 0}

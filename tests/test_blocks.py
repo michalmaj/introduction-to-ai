@@ -245,3 +245,23 @@ def test_tree_blocks_need_a_whole_depth():
             assert "depth" in str(error)
         else:
             raise AssertionError(f"{kind} accepted a depth that is not a number")
+
+
+def test_heuristic_block_lists_h_for_every_state():
+    table = render_block("heuristic", {"example": "weighted_example", "lang": "pl"})
+    assert (
+        table == "| Stan | A | B | C | D | G | S |\n|---|---|---|---|---|---|---|\n"
+        "| h | 5 | 3 | 2 | 1 | 0 | 5 |"
+    )
+    english = render_block("heuristic", {"example": "weighted_example", "lang": "en"})
+    assert english.startswith("| State | A |")
+
+
+def test_heuristic_of_an_exercise_is_allowed_in_lessons(tmp_path):
+    lesson = tmp_path / "modules/02/04/README.md"
+    lesson.parent.mkdir(parents=True)
+    lesson.write_text(
+        "<!-- generated:heuristic example=astar_exercise lang=en -->\n<!-- /generated -->\n"
+    )
+    assert process_file(lesson, check=False, repo_root=tmp_path) == []
+    assert "| h | 7 | 6 | 8 | 4 | 9 | 2 | 0 |" in lesson.read_text()

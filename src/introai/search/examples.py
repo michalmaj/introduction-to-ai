@@ -93,6 +93,25 @@ def weighted_exercise() -> GraphProblem:
     return GraphProblem.undirected_weighted(edges, "A", "H")
 
 
+def astar_exercise() -> GraphProblem:
+    """The weighted graph students trace with greedy best-first and A* in lesson 2.4.
+
+    With ``ASTAR_EXERCISE_HEURISTIC`` the three best-first searches part ways:
+    UCS expands 6 nodes, A* only 4 (it never looks at C and E, which lie the
+    wrong way), and greedy best-first returns a more expensive path.
+    """
+    edges = [
+        ("A", "B", 2),
+        ("A", "C", 1),
+        ("A", "D", 3),
+        ("B", "F", 4),
+        ("C", "E", 1),
+        ("D", "G", 6),
+        ("F", "G", 2),
+    ]
+    return GraphProblem.undirected_weighted(edges, "A", "G")
+
+
 # Consistent heuristics (never more than an edge's cost plus the neighbour's estimate).
 WEIGHTED_HEURISTIC: dict[str, float] = {"S": 5, "A": 5, "B": 3, "C": 2, "D": 1, "G": 0}
 EXERCISE_HEURISTIC: dict[str, float] = {
@@ -106,6 +125,16 @@ EXERCISE_HEURISTIC: dict[str, float] = {
     "H": 0,
 }
 
+ASTAR_EXERCISE_HEURISTIC: dict[str, float] = {
+    "A": 7,
+    "B": 6,
+    "C": 8,
+    "D": 4,
+    "E": 9,
+    "F": 2,
+    "G": 0,
+}
+
 EXAMPLES: dict[str, Callable[[], GraphProblem]] = {
     "worked_example": worked_example,
     "exercise": exercise,
@@ -114,11 +143,13 @@ EXAMPLES: dict[str, Callable[[], GraphProblem]] = {
     "disconnected": disconnected,
     "weighted_example": weighted_example,
     "weighted_exercise": weighted_exercise,
+    "astar_exercise": astar_exercise,
 }
 
 HEURISTICS: dict[str, dict[str, float]] = {
     "weighted_example": WEIGHTED_HEURISTIC,
     "weighted_exercise": EXERCISE_HEURISTIC,
+    "astar_exercise": ASTAR_EXERCISE_HEURISTIC,
 }
 
-EXERCISE_EXAMPLES: frozenset[str] = frozenset({"exercise", "weighted_exercise"})
+EXERCISE_EXAMPLES: frozenset[str] = frozenset({"exercise", "weighted_exercise", "astar_exercise"})

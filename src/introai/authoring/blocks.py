@@ -166,6 +166,21 @@ def _render_tree_levels(params: dict[str, str]) -> str:
     return "\n".join([header, "|" + "---|" * (header.count("|") - 1), *rows])
 
 
+def _render_heuristic(params: dict[str, str]) -> str:
+    """The values of an example's heuristic, one column per state."""
+    name = params.get("example")
+    if name not in HEURISTICS:
+        raise BlockError(f"no heuristic for example {name!r}")
+    lang = params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    table = HEURISTICS[name]
+    states = sorted(table)
+    header = "| " + ("Stan" if lang == "pl" else "State") + " | " + " | ".join(states) + " |"
+    values = "| h | " + " | ".join(_number(table[state]) for state in states) + " |"
+    return "\n".join([header, "|" + "---|" * (len(states) + 1), values])
+
+
 def _render_search_tree(params: dict[str, str]) -> str:
     """A Mermaid drawing of the tree; nodes whose state is already in the tree are dashed."""
     ids: dict[int, str] = {}
@@ -245,6 +260,7 @@ _RENDERERS: dict[str, Callable[[dict[str, str]], str]] = {
     "trace-table": _render_trace_table,
     "tree-levels": _render_tree_levels,
     "search-tree": _render_search_tree,
+    "heuristic": _render_heuristic,
 }
 _REVEALING = {"trace-table", "tree-levels", "search-tree"}
 

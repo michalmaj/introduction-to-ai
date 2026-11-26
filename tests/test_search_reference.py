@@ -178,3 +178,19 @@ def test_reference_expand_is_the_course_expand():
     from introai.search import expand, reference
 
     assert reference.expand is expand
+
+
+def test_astar_exercise_separates_ucs_a_star_and_greedy():
+    from introai.search.examples import astar_exercise
+
+    with record() as t:
+        node = ucs(astar_exercise())
+    assert expanded(t) == ["A", "C", "B", "E", "D", "F"] and node.path_cost == 8
+    with record() as t:
+        node = a_star(astar_exercise(), h_of("astar_exercise"))
+    assert expanded(t) == ["A", "D", "B", "F"]
+    assert node.states() == ["A", "B", "F", "G"] and node.path_cost == 8
+    with record() as t:
+        node = greedy_best_first(astar_exercise(), h_of("astar_exercise"))
+    assert expanded(t) == ["A", "D"]
+    assert node.states() == ["A", "D", "G"] and node.path_cost == 9
