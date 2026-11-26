@@ -21,9 +21,10 @@ SURFACE = "#fcfcfb"
 OBSTACLE = "#52514e"
 EXPANDED = "#2a78d6"
 PATH = "#eb6834"
+SLOW = "#1baf7a"
 INK = "#0b0b0b"
 
-_FLOOR, _OBSTACLE, _EXPANDED, _PATH = range(4)
+_FLOOR, _OBSTACLE, _EXPANDED, _PATH, _SLOW = range(5)
 
 
 def plot_map(
@@ -38,12 +39,14 @@ def plot_map(
     """Draw the map, the expanded cells and the path; return the axes."""
     import matplotlib.pyplot as plt
     from matplotlib.colors import ListedColormap
-    from matplotlib.patches import Patch
+    from matplotlib.patches import Patch, Rectangle
 
     if ax is None:
         _, ax = plt.subplots(figsize=(warehouse.cols * 0.35 + 1.8, warehouse.rows * 0.35 + 0.6))
 
     grid = np.full((warehouse.rows, warehouse.cols), _FLOOR)
+    for cell in warehouse.slow:
+        grid[cell] = _SLOW
     expanded_cells = list(expanded)
     for cell in expanded_cells:
         grid[cell] = _EXPANDED
@@ -52,8 +55,22 @@ def plot_map(
     for cell in warehouse.walls:
         grid[cell] = _OBSTACLE
 
-    cmap = ListedColormap([SURFACE, OBSTACLE, EXPANDED, PATH])
-    ax.imshow(grid, cmap=cmap, vmin=0, vmax=3, interpolation="nearest")
+    cmap = ListedColormap([SURFACE, OBSTACLE, EXPANDED, PATH, SLOW])
+    ax.imshow(grid, cmap=cmap, vmin=0, vmax=4, interpolation="nearest")
+    # Slow zones also get a hatch, so they stay visible under the path and expanded marks.
+    for row, col in sorted(warehouse.slow):
+        ax.add_patch(
+            Rectangle(
+                (col - 0.5, row - 0.5),
+                1,
+                1,
+                fill=False,
+                hatch="///",
+                edgecolor=INK,
+                linewidth=0,
+                alpha=0.35,
+            )
+        )
 
     # A thin surface-colored gap between cells keeps neighbouring fills apart.
     ax.set_xticks(np.arange(-0.5, warehouse.cols, 1), minor=True)
@@ -79,6 +96,8 @@ def plot_map(
         )
 
     handles = [Patch(facecolor=OBSTACLE, label="obstacle")]
+    if warehouse.slow:
+        handles.append(Patch(facecolor=SLOW, hatch="///", label="slow zone"))
     if expanded_cells:
         handles.append(Patch(facecolor=EXPANDED, label=expanded_label))
     if path:

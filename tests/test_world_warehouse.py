@@ -82,7 +82,7 @@ def test_render_text_without_marks_round_trips():
 
 
 def test_bundled_maps_load_and_are_solvable():
-    for name in ("small", "aisles", "open_floor", "parcels"):
+    for name in ("small", "aisles", "open_floor", "parcels", "congested"):
         m = WarehouseMap.from_file(REPO_ROOT / "data" / "maps" / f"{name}.txt")
         assert m.rows <= 15 and m.cols <= 30
         assert bfs(RouteProblem(m)) is not None
@@ -131,3 +131,34 @@ def test_render_text_round_trips_parcels():
 def test_parcels_map_file():
     path = REPO_ROOT / "data" / "maps" / "parcels.txt"
     assert WarehouseMap.from_file(path) == WarehouseMap.from_text(PARCELS)
+
+
+COSTLY = "#####\n#R~D#\n#####"
+
+
+def test_slow_zones_are_parsed_and_cost_three():
+    m = WarehouseMap.from_text(COSTLY)
+    assert m.slow == {(1, 2)} and m.is_free((1, 2))
+    assert (m.cost((1, 2)), m.cost((1, 3)), m.cost((1, 1))) == (3, 1, 1)
+
+
+def test_maps_without_slow_zones_have_none():
+    assert WarehouseMap.from_text(SMALL).slow == frozenset()
+
+
+def test_route_problem_uses_cell_costs():
+    p = RouteProblem(WarehouseMap.from_text(COSTLY))
+    assert p.action_cost((1, 1), "E", (1, 2)) == 3
+    assert p.action_cost((1, 2), "E", (1, 3)) == 1
+
+
+def test_render_text_round_trips_slow_zones():
+    assert render_text(WarehouseMap.from_text(COSTLY)) == COSTLY
+    assert (
+        render_text(WarehouseMap.from_text(COSTLY), path=[(1, 1), (1, 2)]) == "#####\n#R*D#\n#####"
+    )
+
+
+def test_congested_map_has_slow_zones():
+    m = WarehouseMap.from_file(REPO_ROOT / "data" / "maps" / "congested.txt")
+    assert m.slow and m.rows <= 15 and m.cols <= 30

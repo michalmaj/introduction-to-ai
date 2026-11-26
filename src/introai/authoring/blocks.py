@@ -64,7 +64,13 @@ def _render_graph(params: dict[str, str]) -> str:
     problem = _example(params)
     arrow = "-->" if problem.directed else "---"
     lines = ["```mermaid", "graph LR"]
-    lines += [f"    {a} {arrow} {b}" for a, b in problem.edges()]
+    for a, b in problem.edges():
+        if problem.weights:
+            weight = problem.weight(a, b)
+            label = int(weight) if float(weight).is_integer() else weight
+            lines.append(f"    {a} {arrow}|{label}| {b}")
+        else:
+            lines.append(f"    {a} {arrow} {b}")
     lines.append("```")
     return "\n".join(lines)
 

@@ -153,3 +153,8 @@ def test_episode_table_reflex_agent(tmp_path):
     )
     assert "| 3 | (1, 3) | yes; S, W | PICK | 7 |" in english
     assert english.endswith("After 6 steps: parcels collected 1, score 4.")
+
+
+def test_graph_block_shows_weights():
+    text = render_block("graph", {"example": "weighted_example"})
+    assert "    A ---|2| B" in text and "    S ---|6| B" not in text and "    B ---|6| S" in text
