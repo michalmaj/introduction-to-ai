@@ -122,7 +122,7 @@ Większość zadań w kursie rozgrywa się w zautomatyzowanym magazynie. Mapa to
 - `R` to pole, w którym startuje robot;
 - `D` to rampa, do której robot często ma dojechać.
 
-W dalszych lekcjach dojdą jeszcze paczki, oznaczane `P`.
+W dalszych lekcjach dojdą jeszcze paczki, oznaczane `P`, oraz strefy wolnego ruchu, oznaczane `~`: to wolna podłoga, ale wjazd na nią kosztuje więcej (lekcja 2.3).
 
 **Współrzędne.** Pole opisujemy parą `(wiersz, kolumna)`. Wiersze liczymy od góry, kolumny od lewej, oba od zera:
 

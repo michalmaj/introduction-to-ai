@@ -122,7 +122,7 @@ Most tasks in the course take place in an automated warehouse. A map is a plain 
 - `R` is the cell where the robot starts;
 - `D` is the dock, which the robot often has to reach.
 
-Later lessons add parcels, marked `P`.
+Later lessons add parcels, marked `P`, and slow zones, marked `~`: free floor that costs more to drive onto (lesson 2.3).
 
 **Coordinates.** A cell is a pair `(row, col)`. Rows are counted from the top, columns from the left, both from zero:
 

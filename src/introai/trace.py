@@ -57,6 +57,8 @@ def record(limit: int | None = None, kinds: Iterable[str] | None = None) -> Iter
     that builds expensive event data can ask :func:`wants` first and skip it.
     Nested blocks record separately: the inner block sees only its own events.
     """
+    if isinstance(kinds, str):
+        raise TypeError("kinds must be a collection of event kinds, not a string")
     trace = Trace(limit=limit, kinds=frozenset(kinds) if kinds is not None else None)
     token = _current.set(trace)
     try:

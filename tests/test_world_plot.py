@@ -30,3 +30,15 @@ def test_plot_map_legend_lists_only_what_is_drawn():
     assert labels(plot_map(m)) == ["obstacle"]
     assert labels(plot_map(m, expanded=[(2, 1)])) == ["obstacle", "expanded"]
     assert labels(plot_map(m, path=[(1, 1)])) == ["obstacle", "path"]
+
+
+def test_plot_map_can_rename_the_expanded_mark():
+    m = WarehouseMap.from_text(SMALL)
+    ax = plot_map(m, expanded=[(2, 1)], expanded_label="visited")
+    assert [t.get_text() for t in ax.get_legend().get_texts()] == ["obstacle", "visited"]
+
+
+def test_plot_map_shows_slow_zones_in_the_legend():
+    m = WarehouseMap.from_text("#####\n#R~D#\n#####")
+    ax = plot_map(m, path=[(1, 1), (1, 2)])
+    assert [t.get_text() for t in ax.get_legend().get_texts()] == ["obstacle", "slow zone", "path"]

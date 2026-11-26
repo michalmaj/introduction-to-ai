@@ -9,8 +9,9 @@ Maps are plain text files you can edit yourself::
     #######
 
 ``#`` is an obstacle (wall or shelf), ``.`` is free floor, ``R`` is where the
-robot starts, ``D`` is the dock it has to reach and ``P`` is a parcel lying on
-free floor. A map must be rectangular and contain exactly one ``R`` and one ``D``.
+robot starts, ``D`` is the dock it has to reach, ``P`` is a parcel lying on
+free floor and ``~`` is a slow zone: free floor where entering costs 3 instead
+of 1. A map must be rectangular and contain exactly one ``R`` and one ``D``.
 """
 
 from __future__ import annotations
@@ -24,7 +25,8 @@ from introai.search.core import Problem
 Cell = tuple[int, int]
 """A grid cell as ``(row, col)``, counted from 0 at the top-left corner."""
 
-_ALLOWED = {"#", ".", "R", "D", "P"}
+_ALLOWED = {"#", ".", "R", "D", "P", "~"}
+SLOW_COST = 3
 _MOVES: dict[str, tuple[int, int]] = {"N": (-1, 0), "E": (0, 1), "S": (1, 0), "W": (0, -1)}
 
 
@@ -38,6 +40,7 @@ class WarehouseMap:
     start: Cell
     dock: Cell
     parcels: frozenset[Cell] = frozenset()
+    slow: frozenset[Cell] = frozenset()
 
     @classmethod
     def from_text(cls, text: str) -> WarehouseMap:
@@ -52,7 +55,7 @@ class WarehouseMap:
 
         cols = len(numbered[0][1])
         walls: set[Cell] = set()
-        found: dict[str, list[Cell]] = {"R": [], "D": [], "P": []}
+        found: dict[str, list[Cell]] = {"R": [], "D": [], "P": [], "~": []}
         for row, (line_no, line) in enumerate(numbered):
             if len(line) != cols:
                 raise ValueError(f"line {line_no} has {len(line)} characters, expected {cols}")
@@ -79,6 +82,7 @@ class WarehouseMap:
             found["R"][0],
             found["D"][0],
             frozenset(found["P"]),
+            frozenset(found["~"]),
         )
 
     @classmethod
@@ -102,6 +106,10 @@ class WarehouseMap:
                 raise ValueError("cannot place a parcel on the robot's start")
         return replace(self, parcels=parcels)
 
+    def cost(self, cell: Cell) -> int:
+        """The cost of driving onto ``cell``: 3 in a slow zone, otherwise 1."""
+        return SLOW_COST if cell in self.slow else 1
+
     def is_free(self, cell: Cell) -> bool:
         """Whether the robot may stand on ``cell``."""
         row, col = cell
@@ -109,7 +117,7 @@ class WarehouseMap:
 
 
 class RouteProblem(Problem):
-    """Drive the robot from ``R`` to ``D``; every move costs 1.
+    """Drive the robot from ``R`` to ``D``; a move costs the cost of the cell entered.
 
     States are cells; actions are compass moves ``"N"``, ``"E"``, ``"S"``, ``"W"``,
     tried in ``action_order``.
@@ -134,6 +142,9 @@ class RouteProblem(Problem):
     def is_goal(self, state: Cell) -> bool:
         return state == self.warehouse.dock
 
+    def action_cost(self, state: Cell, action: str, next_state: Cell) -> float:
+        return self.warehouse.cost(next_state)
+
 
 def _move(cell: Cell, action: str) -> Cell:
     d_row, d_col = _MOVES[action]
@@ -145,7 +156,10 @@ def render_text(
 ) -> str:
     """Draw the map as text: ``*`` marks the path, ``o`` other expanded cells, ``P`` parcels."""
     grid = [
-        ["#" if (row, col) in warehouse.walls else "." for col in range(warehouse.cols)]
+        [
+            "#" if (row, col) in warehouse.walls else "~" if (row, col) in warehouse.slow else "."
+            for col in range(warehouse.cols)
+        ]
         for row in range(warehouse.rows)
     ]
     for row, col in expanded:

@@ -100,3 +100,11 @@ def test_random_agent_is_reproducible():
     again = run_episode(random_agent(0), MAP, max_steps=50)
     other = run_episode(random_agent(1), MAP, max_steps=50)
     assert first == again and first != other
+
+
+def test_robot_cannot_leave_a_map_without_border_walls():
+    world = ParcelWorld(WarehouseMap.from_text("RP.\n...\n..D"))
+    assert world.percept() == Percept(False, ("E", "S"))
+    for action in ("N", "W"):
+        world.step(action)
+        assert world.robot == (0, 0), f"{action} from the corner must bump, not leave the map"

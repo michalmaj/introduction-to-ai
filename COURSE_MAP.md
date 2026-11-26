@@ -8,7 +8,7 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 0.1 | [Setup and how to use this course](modules/00_start/01_setup/README.md) | core | — | ready |
+| 0.1 | [Setup and how to use the course](modules/00_start/01_setup/README.md) | core | — | ready |
 
 ## M1 · Agents and problem representation
 
@@ -23,10 +23,10 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 2.1 | State spaces and search trees | core | 1.3 | planned |
+| 2.1 | [State spaces and search trees](modules/02_search/01_state_space/README.md) | core | 1.3 | ready |
 | 2.2 | [BFS and DFS](modules/02_search/02_bfs_dfs/README.md) | core | 2.1 | ready |
-| 2.3 | Uniform-cost search (UCS) | core | 2.2 | planned |
-| 2.4 | Heuristics, greedy best-first search and A* | core | 2.3 | planned |
+| 2.3 | [Uniform-cost search (UCS)](modules/02_search/03_uniform_cost_search/README.md) | core | 2.2 | ready |
+| 2.4 | [Heuristics, greedy best-first search and A*](modules/02_search/04_heuristics_and_a_star/README.md) | core | 2.3 | ready |
 | 2.5 | Comparing search strategies | core | 2.4 | planned |
 | 2.6 | Iterative deepening | optional | 2.5 | planned |
 | 2.7 | Designing heuristics | optional | 2.5 | planned |

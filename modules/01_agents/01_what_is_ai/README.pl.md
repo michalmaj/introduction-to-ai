@@ -102,7 +102,7 @@ Ta lekcja nie ma testów automatycznych, bo odpowiedzi są opisowe. Po własnej 
 - AI można definiować przez myślenie albo działanie, z człowiekiem albo racjonalnością jako wzorcem.
 - Ten kurs patrzy na AI jak na projektowanie racjonalnych agentów: wybierać działania, które według wiedzy agenta dają najlepszy oczekiwany wynik.
 - Racjonalność to nie wszechwiedza ani nieomylność.
-- AI to więcej niż uczenie maszynowe. Tradycje symboliczna i ucząca się się uzupełniają.
+- AI to więcej niż uczenie maszynowe. Tradycja symboliczna i tradycja ucząca się uzupełniają się nawzajem.
 
 ## Co dalej
 

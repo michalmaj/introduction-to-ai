@@ -74,4 +74,6 @@ BFS on the reference formulation. The `aisles` map has 155 free cells. Parcels a
 | 7 | 19,840 | 16,901 | 66 |
 | 8 | 39,680 | 36,140 | 73 |
 
+Your formulation may give slightly different expansion counts if it returns the actions in a different order (for example `PICK` first), but the plan length will be the same.
+
 From three parcels on, the number of expansions roughly doubles with every extra parcel, just like the number of states. Meanwhile the plan length grows slowly. The plan is short, but finding it becomes very expensive. With 20 parcels the state space has over 162 million states. Module 2 shows smarter search (heuristics, A*), and module 4 shows approximate methods.

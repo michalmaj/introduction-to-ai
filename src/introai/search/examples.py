@@ -60,12 +60,91 @@ def disconnected() -> GraphProblem:
     return GraphProblem.undirected([("A", "B"), ("C", "D")], "A", "D")
 
 
+def weighted_example() -> GraphProblem:
+    """A weighted graph traced step by step in the lessons on UCS and A*."""
+    edges = [
+        ("S", "A", 1),
+        ("S", "B", 6),
+        ("A", "B", 2),
+        ("A", "D", 7),
+        ("B", "C", 2),
+        ("C", "G", 2),
+        ("D", "G", 1),
+        ("B", "G", 6),
+    ]
+    return GraphProblem.undirected_weighted(edges, "S", "G")
+
+
+def weighted_exercise() -> GraphProblem:
+    """The weighted graph students trace by hand in lessons 2.3 and 2.4."""
+    edges = [
+        ("A", "B", 2),
+        ("A", "C", 4),
+        ("B", "C", 1),
+        ("B", "D", 7),
+        ("C", "E", 3),
+        ("D", "F", 1),
+        ("E", "D", 1),
+        ("E", "F", 6),
+        ("F", "H", 2),
+        ("E", "G", 5),
+        ("G", "H", 1),
+    ]
+    return GraphProblem.undirected_weighted(edges, "A", "H")
+
+
+def astar_exercise() -> GraphProblem:
+    """The weighted graph students trace with greedy best-first search and A* in lesson 2.4."""
+    edges = [
+        ("A", "B", 2),
+        ("A", "C", 1),
+        ("A", "D", 3),
+        ("B", "F", 4),
+        ("C", "E", 1),
+        ("D", "G", 6),
+        ("F", "G", 2),
+    ]
+    return GraphProblem.undirected_weighted(edges, "A", "G")
+
+
+# Consistent heuristics (never more than an edge's cost plus the neighbour's estimate).
+WEIGHTED_HEURISTIC: dict[str, float] = {"S": 5, "A": 5, "B": 3, "C": 2, "D": 1, "G": 0}
+EXERCISE_HEURISTIC: dict[str, float] = {
+    "A": 8,
+    "B": 7,
+    "C": 6,
+    "D": 3,
+    "E": 4,
+    "F": 2,
+    "G": 1,
+    "H": 0,
+}
+
+ASTAR_EXERCISE_HEURISTIC: dict[str, float] = {
+    "A": 7,
+    "B": 6,
+    "C": 8,
+    "D": 4,
+    "E": 9,
+    "F": 2,
+    "G": 0,
+}
+
 EXAMPLES: dict[str, Callable[[], GraphProblem]] = {
     "worked_example": worked_example,
     "exercise": exercise,
     "binary_tree": binary_tree,
     "cyclic": cyclic,
     "disconnected": disconnected,
+    "weighted_example": weighted_example,
+    "weighted_exercise": weighted_exercise,
+    "astar_exercise": astar_exercise,
 }
 
-EXERCISE_EXAMPLES: frozenset[str] = frozenset({"exercise"})
+HEURISTICS: dict[str, dict[str, float]] = {
+    "weighted_example": WEIGHTED_HEURISTIC,
+    "weighted_exercise": EXERCISE_HEURISTIC,
+    "astar_exercise": ASTAR_EXERCISE_HEURISTIC,
+}
+
+EXERCISE_EXAMPLES: frozenset[str] = frozenset({"exercise", "weighted_exercise", "astar_exercise"})

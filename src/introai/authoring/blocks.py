@@ -8,7 +8,7 @@ Lesson pages contain blocks like::
 
 The content is produced from the reference implementations, so a worked
 example in the text can never disagree with the code. ``--check`` fails when a
-block is out of date. Trace tables of exercise graphs are refused in lesson
+block is out of date. Trace tables and search trees of exercise graphs are refused in lesson
 pages (they would give away Part A answers) but allowed in ``solutions/``.
 """
 
@@ -20,7 +20,8 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from introai.search import reference
-from introai.search.examples import EXAMPLES, EXERCISE_EXAMPLES
+from introai.search.core import Node, expand
+from introai.search.examples import EXAMPLES, EXERCISE_EXAMPLES, HEURISTICS
 from introai.trace import Trace, record
 
 _OPEN = re.compile(r"^<!-- generated:(\S+)((?:\s+[\w-]+=\S+)*)\s*-->\s*$")
@@ -39,6 +40,11 @@ _TEXT = {
         "initial_goal": "Stan początkowy **{goal}** jest celem. Ścieżka: {path}.",
         "path": "Ścieżka: {path}.",
         "unreachable": "Frontier jest pusty: cel jest nieosiągalny.",
+        "best_header": (
+            "| Krok | Zdjęty | g | f | Wynik | Frontier: stan f, w kolejności zdejmowania "
+            "| Najlepsze znane g |"
+        ),
+        "reached_cost": "Cel **{goal}** osiągnięty kosztem {cost}. Ścieżka: {path}.",
     },
     "en": {
         "bfs_header": "| Step | Expanded node | Frontier (in removal order) | Reached set |",
@@ -48,12 +54,21 @@ _TEXT = {
         "initial_goal": "The initial state **{goal}** is a goal. Path: {path}.",
         "path": "Path: {path}.",
         "unreachable": "The frontier is empty: the goal cannot be reached.",
+        "best_header": "| Step | Popped | g | f | Outcome | Frontier: state f, in removal order "
+        "| Best known g |",
+        "reached_cost": "Goal **{goal}** reached at cost {cost}. Path: {path}.",
     },
 }
 
 
 class BlockError(ValueError):
     """A block that cannot be rendered (unknown kind, example, parameter...)."""
+
+
+_TREE_TEXT = {
+    "pl": "| Głębokość | Węzły (ich stany) | Liczba węzłów | Różne stany |",
+    "en": "| Depth | Nodes (their states) | Nodes | Distinct states |",
+}
 
 
 def _states(items: Sequence) -> str:
@@ -64,7 +79,13 @@ def _render_graph(params: dict[str, str]) -> str:
     problem = _example(params)
     arrow = "-->" if problem.directed else "---"
     lines = ["```mermaid", "graph LR"]
-    lines += [f"    {a} {arrow} {b}" for a, b in problem.edges()]
+    for a, b in problem.edges():
+        if problem.weights:
+            weight = problem.weight(a, b)
+            label = int(weight) if float(weight).is_integer() else weight
+            lines.append(f"    {a} {arrow}|{label}| {b}")
+        else:
+            lines.append(f"    {a} {arrow} {b}")
     lines.append("```")
     return "\n".join(lines)
 
@@ -76,8 +97,118 @@ def _example(params: dict[str, str]):
     return EXAMPLES[name]()
 
 
+def _number(value: float) -> str:
+    return f"{value:g}"
+
+
+def _pairs(pairs) -> str:
+    return ", ".join(f"{state} {_number(value)}" for state, value in pairs) if pairs else "—"
+
+
+def _render_best_first_table(params: dict[str, str]) -> str:
+    algorithm, lang = params["algorithm"], params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    problem = _example(params)
+    text = _TEXT[lang]
+    with record() as trace:
+        if algorithm == "ucs":
+            result = reference.ucs(problem)
+        else:
+            name = params.get("heuristic", params["example"])
+            if name not in HEURISTICS:
+                raise BlockError(f"unknown heuristic {name!r}")
+            table = HEURISTICS[name]
+            search = reference.a_star if algorithm == "astar" else reference.greedy_best_first
+            result = search(problem, lambda state: table[state])
+    rows = [
+        f"| {i} | {e.data['popped']} | {_number(e.data['g'])} | {_number(e.data['f'])} "
+        f"| {text['outcomes'][e.data['outcome']]} | {_pairs(e.data['frontier'])} "
+        f"| {_pairs(e.data['reached'])} |"
+        for i, e in enumerate(trace.of_kind("step"), start=1)
+    ]
+    header = text["best_header"]
+    separator = "|" + "---|" * (header.count("|") - 1)
+    if result is None:
+        summary = text["unreachable"]
+    else:
+        path = " → ".join(str(state) for state in result.states())
+        summary = text["reached_cost"].format(
+            goal=result.state, cost=_number(result.path_cost), path=path
+        )
+    return "\n".join([header, separator, *rows]) + "\n\n" + summary
+
+
+def _tree_levels(params: dict[str, str]) -> list[list[Node]]:
+    """The search tree level by level, with no reached set (every path is kept)."""
+    try:
+        depth = int(params.get("depth", ""))
+    except ValueError:
+        raise BlockError(f"depth must be a whole number, got {params.get('depth')!r}") from None
+    problem = _example(params)
+    levels = [[Node(problem.initial)]]
+    for _ in range(depth):
+        levels.append([child for node in levels[-1] for child in expand(problem, node)])
+    return levels
+
+
+def _render_tree_levels(params: dict[str, str]) -> str:
+    levels = _tree_levels(params)
+    lang = params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    header = _TREE_TEXT[lang]
+    rows = [
+        f"| {depth} | {_states([node.state for node in level])} | {len(level)} "
+        f"| {len({node.state for node in level})} |"
+        for depth, level in enumerate(levels)
+    ]
+    return "\n".join([header, "|" + "---|" * (header.count("|") - 1), *rows])
+
+
+def _render_heuristic(params: dict[str, str]) -> str:
+    """The values of an example's heuristic, one column per state."""
+    name = params.get("example")
+    if name not in HEURISTICS:
+        raise BlockError(f"no heuristic for example {name!r}")
+    lang = params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    table = HEURISTICS[name]
+    states = sorted(table)
+    header = "| " + ("Stan" if lang == "pl" else "State") + " | " + " | ".join(states) + " |"
+    values = "| h | " + " | ".join(_number(table[state]) for state in states) + " |"
+    return "\n".join([header, "|" + "---|" * (len(states) + 1), values])
+
+
+def _render_search_tree(params: dict[str, str]) -> str:
+    """A Mermaid drawing of the tree; nodes whose state is already in the tree are dashed."""
+    ids: dict[int, str] = {}
+    seen: set = set()
+    lines, repeated = ["```mermaid", "graph TD"], []
+    for level in _tree_levels(params):
+        for node in level:
+            ids[id(node)] = name = f"n{len(ids)}"
+            if node.state in seen:
+                repeated.append(name)
+            seen.add(node.state)
+            if node.parent is not None:
+                lines.append(
+                    f"    {ids[id(node.parent)]}[{node.parent.state}] --> {name}[{node.state}]"
+                )
+    if repeated:
+        lines += [
+            "    classDef repeated stroke-dasharray: 5 4",
+            f"    class {','.join(repeated)} repeated",
+        ]
+    lines.append("```")
+    return "\n".join(lines)
+
+
 def _render_trace_table(params: dict[str, str]) -> str:
     algorithm = params.get("algorithm")
+    if algorithm in ("ucs", "greedy", "astar"):
+        return _render_best_first_table(params)
     if algorithm not in _ALGORITHMS:
         raise BlockError(f"unknown algorithm {algorithm!r}")
     lang = params.get("lang")
@@ -127,7 +258,11 @@ def _dfs_rows(trace: Trace, text: dict) -> list[str]:
 _RENDERERS: dict[str, Callable[[dict[str, str]], str]] = {
     "graph": _render_graph,
     "trace-table": _render_trace_table,
+    "tree-levels": _render_tree_levels,
+    "search-tree": _render_search_tree,
+    "heuristic": _render_heuristic,
 }
+_REVEALING = {"trace-table", "tree-levels", "search-tree"}
 
 
 _EPISODE_TEXT = {
@@ -229,9 +364,9 @@ def process_file(path: Path, *, check: bool, repo_root: Path) -> list[str]:
         params = dict(item.split("=", 1) for item in match.group(2).split())
         current = "\n".join(lines[start + 1 : end])
         try:
-            if kind == "trace-table" and in_lessons and params.get("example") in EXERCISE_EXAMPLES:
+            if kind in _REVEALING and in_lessons and params.get("example") in EXERCISE_EXAMPLES:
                 raise BlockError(
-                    f"trace tables for {params.get('example')!r} would reveal Part A answers"
+                    f"{kind} blocks for {params.get('example')!r} would reveal Part A answers"
                 )
             rendered = render_block(kind, params, repo_root=Path(repo_root))
         except BlockError as error:

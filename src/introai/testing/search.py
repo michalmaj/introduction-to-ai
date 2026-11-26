@@ -7,7 +7,7 @@ continues from the current path, a graph search expands each state once.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 from introai.search.core import Node, Problem, State
 from introai.trace import Trace
@@ -33,6 +33,21 @@ def first_depth_decrease(nodes: Sequence[Node]) -> tuple[int, Node, Node] | None
     """The first ``i`` where the next expanded node is shallower than ``nodes[i]``."""
     for i, (current, following) in enumerate(zip(nodes, nodes[1:])):
         if following.depth < current.depth:
+            return i, current, following
+    return None
+
+
+def first_decrease(
+    nodes: Sequence[Node], key: Callable[[Node], float]
+) -> tuple[int, Node, Node] | None:
+    """The first ``i`` where ``key`` of the next expanded node is lower than of ``nodes[i]``.
+
+    UCS expands nodes in order of non-decreasing path cost, and A* with a
+    consistent heuristic in order of non-decreasing f = g + h. Differences
+    below 1e-9 are rounding, not a decrease.
+    """
+    for i, (current, following) in enumerate(zip(nodes, nodes[1:])):
+        if key(following) < key(current) - 1e-9:
             return i, current, following
     return None
 

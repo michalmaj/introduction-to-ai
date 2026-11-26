@@ -26,6 +26,7 @@ class GraphProblem(Problem):
         self.adjacency = {state: list(neighbours) for state, neighbours in adjacency.items()}
         self.goal = goal
         self.directed = directed
+        self.weights: dict[tuple[str, str], float] = {}
 
     @classmethod
     def undirected(
@@ -38,6 +39,24 @@ class GraphProblem(Problem):
             neighbours.setdefault(b, set()).add(a)
         adjacency = {state: sorted(neighbours[state]) for state in sorted(neighbours)}
         return cls(adjacency, initial, goal, directed=False)
+
+    @classmethod
+    def undirected_weighted(
+        cls, edges: Iterable[tuple[str, str, float]], initial: str, goal: str | None
+    ) -> GraphProblem:
+        """Build an undirected graph whose edges have costs (weights)."""
+        edges = list(edges)
+        problem = cls.undirected([(a, b) for a, b, _ in edges], initial, goal)
+        for a, b, weight in edges:
+            problem.weights[(a, b)] = problem.weights[(b, a)] = weight
+        return problem
+
+    def weight(self, a: str, b: str) -> float:
+        """The cost of the edge from ``a`` to ``b`` (1 in an unweighted graph)."""
+        return self.weights.get((a, b), 1.0)
+
+    def action_cost(self, state: str, action: str, next_state: str) -> float:
+        return self.weight(state, next_state)
 
     def actions(self, state: str) -> list[str]:
         return list(self.adjacency.get(state, ()))

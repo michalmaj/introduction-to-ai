@@ -91,6 +91,16 @@ def test_actions_moves_and_pick(impl, cell, parcels, expected):
     assert len(actions) == len(set(actions)), "list every action once"
 
 
+def test_actions_never_leave_the_map(impl):
+    borderless = WarehouseMap.from_text("RP.\n...\n..D")  # the edges are free floor
+    problem = make(impl, borderless)
+    actions = guarded(impl, problem.actions, ((0, 0), frozenset({(0, 1)})))
+    assert set(actions) == {"E", "S"}, (
+        "on a map without border walls, moves off the map are not possible — use "
+        "warehouse.is_free, which also checks the edges"
+    )
+
+
 def test_result_move(impl):
     problem = make(impl)
     state = ((1, 1), frozenset({A}))

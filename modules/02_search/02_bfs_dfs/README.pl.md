@@ -2,7 +2,7 @@
 
 # Lekcja 2.2 — BFS i DFS
 
-**Core** · Wymagania: 1.3 Typy agentów i sformułowanie problemu, 2.1 Przestrzeń stanów i drzewo przeszukiwania (zobacz [mapę kursu](../../../COURSE_MAP.pl.md)). Najważniejsze pojęcia z tych lekcji krótko przypominamy w sekcji „Problem”.
+**Core** · Wymagania: 1.3 Typy agentów i sformułowanie problemu, 2.1 Przestrzeń stanów i drzewo przeszukiwania (zobacz [mapę kursu](../../../COURSE_MAP.pl.md)).
 
 ## Cele lekcji
 
@@ -28,15 +28,7 @@ Robot stoi w polu `R` i ma dojechać do rampy `D`. Przeszkody, czyli ściany i r
 
 Robot może jechać na północ, wschód, południe lub zachód (`N`, `E`, `S`, `W`), a każdy ruch kosztuje tyle samo. Jak znaleźć trasę? A jeśli się da, to najkrótszą?
 
-Komputer nie „widzi” tej mapy tak jak my. Widzi **problem przeszukiwania**, który w kodzie kursu jest obiektem klasy `Problem`:
-
-- `problem.initial` to stan początkowy; w magazynie jest to komórka `(wiersz, kolumna)`, w której stoi robot;
-- `problem.actions(s)` zwraca akcje dostępne w stanie `s`, czyli ruchy na wolne pola;
-- `problem.result(s, a)` zwraca stan, do którego prowadzi akcja `a` (to model przejść);
-- `problem.is_goal(s)` mówi, czy `s` jest celem (test celu);
-- `problem.action_cost(s, a, s2)` podaje koszt kroku; w tej lekcji każdy krok kosztuje 1.
-
-Algorytm przeszukiwania buduje **drzewo przeszukiwania** z węzłów (`Node`). Węzeł pamięta stan, rodzica, akcję, która do niego doprowadziła, koszt ścieżki (`path_cost`) i głębokość (`depth`). Wywołanie `node.states()` zwraca stany na ścieżce od korzenia do tego węzła. Funkcja `expand(problem, node)` tworzy dzieci węzła, po jednym dla każdej akcji. Nazywamy to **rozwinięciem** węzła. Węzły, które czekają na rozwinięcie, tworzą **frontier**.
+Dla komputera to **problem przeszukiwania** (`Problem`): stan początkowy, akcje, model przejść, test celu i koszt kroku, jak w [lekcji 1.3](../../01_agents/03_problem_formulation/README.pl.md). Algorytm buduje z niego **drzewo przeszukiwania** z węzłów (`Node`), tworzy dzieci węzła funkcją `expand(problem, node)`, a węzły czekające na rozwinięcie trzyma we **frontier**, jak w [lekcji 2.1](../01_state_space/README.pl.md).
 
 Cała ta lekcja odpowiada na jedno pytanie: **który węzeł zdjąć z frontier jako następny?**
 
