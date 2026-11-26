@@ -162,3 +162,19 @@ def test_step_events_carry_costs():
     first = t.of_kind("step")[0].data
     assert (first["g"], first["f"], first["frontier"]) == (0, 0, [("A", 1), ("B", 6)])
     assert first["reached"] == [("A", 1), ("B", 6), ("S", 0)]
+
+
+def test_count_tree_nodes_counts_every_path():
+    from introai.search.examples import binary_tree, cyclic, worked_example
+    from introai.search.reference import count_tree_nodes
+
+    assert count_tree_nodes(binary_tree(), 4) == [1, 2, 4, 8, 0]
+    assert count_tree_nodes(worked_example(), 3) == [1, 2, 5, 12]
+    assert count_tree_nodes(cyclic(), 0) == [1]
+    assert count_tree_nodes(cyclic(), 2) == [1, 2, 6]  # A -> B, C -> (A, C, D), (A, B, D)
+
+
+def test_reference_expand_is_the_course_expand():
+    from introai.search import expand, reference
+
+    assert reference.expand is expand

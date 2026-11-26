@@ -1,11 +1,11 @@
-"""Reference implementations of breadth-first and depth-first search.
+"""Reference implementations of the search algorithms in module 2.
 
 These are the course's own versions of the algorithms you implement in the
 lessons. Experiments use them, and lesson tests compare your hand-traced
 answers with them. Your ``task.py`` must not import this module.
 
 Besides the ``"expand"`` events reported by :func:`introai.search.expand`,
-both functions emit ``"step"`` events that describe the frontier after every
+the search functions emit ``"step"`` events that describe the frontier after every
 step; the lesson pages turn them into step-by-step tables.
 """
 
@@ -192,3 +192,23 @@ def _best_first_step(
         frontier=[(n.state, priority) for priority, _, n in sorted(frontier)],
         reached=[(state, reached[state]) for state in _sorted_states(reached)],
     )
+
+
+def count_tree_nodes(problem: Problem, depth: int) -> list[int]:
+    """The number of search tree nodes at each depth 0, 1, ..., ``depth`` (lesson 2.1).
+
+    The tree keeps every path and has no goal test. Nodes at the same depth with
+    the same state have identical subtrees, so it is enough to count, for each
+    state, how many nodes at the current depth hold it.
+    """
+    level = {problem.initial: 1}
+    counts = [1]
+    for _ in range(depth):
+        next_level: dict[State, int] = {}
+        for state, paths in level.items():
+            for action in problem.actions(state):
+                child = problem.result(state, action)
+                next_level[child] = next_level.get(child, 0) + paths
+        level = next_level
+        counts.append(sum(level.values()))
+    return counts

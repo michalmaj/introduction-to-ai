@@ -192,3 +192,56 @@ def test_a_star_and_greedy_trace_tables():
         "trace-table", {"algorithm": "greedy", "example": "weighted_example", "lang": "en"}
     )
     assert greedy.endswith("Goal **G** reached at cost 12. Path: S → B → G.")
+
+
+TREE_PL = """\
+| Głębokość | Węzły (ich stany) | Liczba węzłów | Różne stany |
+|---|---|---|---|
+| 0 | S | 1 | 1 |
+| 1 | A, B | 2 | 2 |
+| 2 | C, S, C, D, S | 5 | 3 |"""
+
+
+def test_tree_levels_block():
+    params = {"example": "worked_example", "depth": "2", "lang": "pl"}
+    assert render_block("tree-levels", params) == TREE_PL
+    english = render_block("tree-levels", {**params, "lang": "en"})
+    assert english.splitlines()[0] == "| Depth | Nodes (their states) | Nodes | Distinct states |"
+
+
+def test_tree_levels_of_an_exercise_are_rejected_in_lessons(tmp_path):
+    lesson = tmp_path / "modules/02/01/README.md"
+    lesson.parent.mkdir(parents=True)
+    block = "<!-- generated:tree-levels example=exercise depth=2 lang=en -->"
+    lesson.write_text(f"{block}\n<!-- /generated -->\n")
+    problems = process_file(lesson, check=False, repo_root=tmp_path)
+    assert any("would reveal Part A answers" in p for p in problems)
+
+
+TREE_DIAGRAM = """\
+```mermaid
+graph TD
+    n0[S] --> n1[A]
+    n0[S] --> n2[B]
+    n1[A] --> n3[C]
+    n1[A] --> n4[S]
+    n2[B] --> n5[C]
+    n2[B] --> n6[D]
+    n2[B] --> n7[S]
+    classDef repeated stroke-dasharray: 5 4
+    class n4,n5,n7 repeated
+```"""
+
+
+def test_search_tree_block_dashes_repeated_states():
+    assert render_block("search-tree", {"example": "worked_example", "depth": "2"}) == TREE_DIAGRAM
+
+
+def test_tree_blocks_need_a_whole_depth():
+    for kind in ("search-tree", "tree-levels"):
+        try:
+            render_block(kind, {"example": "worked_example", "depth": "two", "lang": "en"})
+        except ValueError as error:
+            assert "depth" in str(error)
+        else:
+            raise AssertionError(f"{kind} accepted a depth that is not a number")
