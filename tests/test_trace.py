@@ -59,3 +59,9 @@ def test_record_can_filter_kinds():
     with record() as everything:
         assert wants("anything")
     assert everything.events == []
+
+
+def test_record_rejects_a_string_of_kinds():
+    with pytest.raises(TypeError, match="not a string"):
+        with record(kinds="expand"):
+            pass

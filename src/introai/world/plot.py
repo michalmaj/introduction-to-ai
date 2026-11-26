@@ -33,6 +33,7 @@ def plot_map(
     expanded: Iterable[Cell] = (),
     title: str | None = None,
     ax: Axes | None = None,
+    expanded_label: str = "expanded",
 ) -> Axes:
     """Draw the map, the expanded cells and the path; return the axes."""
     import matplotlib.pyplot as plt
@@ -79,7 +80,7 @@ def plot_map(
 
     handles = [Patch(facecolor=OBSTACLE, label="obstacle")]
     if expanded_cells:
-        handles.append(Patch(facecolor=EXPANDED, label="expanded"))
+        handles.append(Patch(facecolor=EXPANDED, label=expanded_label))
     if path:
         handles.append(Patch(facecolor=PATH, label="path"))
     ax.legend(
