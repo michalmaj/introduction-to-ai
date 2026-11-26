@@ -10,6 +10,7 @@ level of the search tree. The lesson's "What the tests do not check" section
 lists what is left for you to judge.
 """
 
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -39,6 +40,8 @@ def guarded(impl, call, *args):
         with record(limit=200_000, kinds={"expand"}) as trace:
             with step_budget(impl.__file__, STEP_BUDGET):
                 result = call(*args)
+                if isinstance(result, Iterator):
+                    result = list(result)  # a generator runs only now: keep it guarded
     except (StepBudgetExceeded, TraceLimitExceeded):
         failure = f"{name} ran for too long — is there a loop that never ends?"
     except RecursionError:

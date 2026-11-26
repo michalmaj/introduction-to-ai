@@ -114,9 +114,11 @@ def reference_answers():
     return greedy.states(), [n.state for n in expanded_nodes(trace)], node.states()
 
 
-def check_part_a(value, expected, name):
+def check_part_a(value, expected, name, tell_length=True):
     # pytrace=False: no traceback at all, so pytest cannot print `expected` as a frame
-    # argument or local variable. The message must never reveal the answer.
+    # argument or local variable. The message must never reveal the answer. The exercise
+    # graph has only two paths from A to G, so for paths even the length would give the
+    # answer away (tell_length=False).
     if value is None:
         pytest.fail(f"Part A: fill in {name} in task.py", pytrace=False)
     if not isinstance(value, list | tuple):
@@ -126,15 +128,16 @@ def check_part_a(value, expected, name):
             pytrace=False,
         )
     if list(value) != expected:
+        length = f" (the correct list has {len(expected)} states)" if tell_length else ""
         pytest.fail(
-            f"Part A: {name} is not right yet (the correct list has {len(expected)} states). "
+            f"Part A: {name} is not right yet{length}. "
             "Trace the exercise graph again, following the rules in the lesson.",
             pytrace=False,
         )
 
 
 def test_part_a_greedy_path(impl):
-    check_part_a(impl.GREEDY_PATH, reference_answers()[0], "GREEDY_PATH")
+    check_part_a(impl.GREEDY_PATH, reference_answers()[0], "GREEDY_PATH", tell_length=False)
 
 
 def test_part_a_astar_expansion_order(impl):
@@ -142,7 +145,7 @@ def test_part_a_astar_expansion_order(impl):
 
 
 def test_part_a_astar_path(impl):
-    check_part_a(impl.ASTAR_PATH, reference_answers()[2], "ASTAR_PATH")
+    check_part_a(impl.ASTAR_PATH, reference_answers()[2], "ASTAR_PATH", tell_length=False)
 
 
 # --- Part B: the Manhattan distance ----------------------------------------------------

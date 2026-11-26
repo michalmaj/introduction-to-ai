@@ -94,12 +94,7 @@ def weighted_exercise() -> GraphProblem:
 
 
 def astar_exercise() -> GraphProblem:
-    """The weighted graph students trace with greedy best-first and A* in lesson 2.4.
-
-    With ``ASTAR_EXERCISE_HEURISTIC`` the three best-first searches part ways:
-    UCS expands 6 nodes, A* only 4 (it never looks at C and E, which lie the
-    wrong way), and greedy best-first returns a more expensive path.
-    """
+    """The weighted graph students trace with greedy best-first search and A* in lesson 2.4."""
     edges = [
         ("A", "B", 2),
         ("A", "C", 1),
