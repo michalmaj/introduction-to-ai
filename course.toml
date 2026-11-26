@@ -62,7 +62,7 @@ id = "2.1"
 dir = "01_state_space"
 title = { pl = "Przestrzeń stanów i drzewo przeszukiwania", en = "State spaces and search trees" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["1.3"]
 
 [[module.lesson]]
@@ -78,7 +78,7 @@ id = "2.3"
 dir = "03_uniform_cost_search"
 title = { pl = "Przeszukiwanie kosztowe (UCS)", en = "Uniform-cost search (UCS)" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["2.2"]
 
 [[module.lesson]]
@@ -86,7 +86,7 @@ id = "2.4"
 dir = "04_heuristics_and_a_star"
 title = { pl = "Heurystyki, greedy best-first i A*", en = "Heuristics, greedy best-first search and A*" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["2.3"]
 
 [[module.lesson]]
