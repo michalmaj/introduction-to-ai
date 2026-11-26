@@ -74,4 +74,6 @@ BFS na wzorcowym sformułowaniu. Mapa `aisles` ma 155 wolnych pól. Paczki dokł
 | 7 | 19 840 | 16 901 | 66 |
 | 8 | 39 680 | 36 140 | 73 |
 
+Twoje sformułowanie może dać nieco inne liczby rozwinięć, jeśli zwraca akcje w innej kolejności (na przykład `PICK` na początku listy), ale długość planu będzie taka sama.
+
 Od trzech paczek liczba rozwinięć mniej więcej podwaja się z każdą kolejną, tak jak liczba stanów. Długość planu rośnie przy tym powoli. Plan jest krótki, ale jego znalezienie robi się bardzo drogie. Przy 20 paczkach przestrzeń ma ponad 162 miliony stanów. Moduł 2 pokazuje mądrzejsze przeszukiwanie (heurystyki, A*), a moduł 4 metody przybliżone.

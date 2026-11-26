@@ -8,7 +8,7 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 0.1 | [Setup and how to use this course](modules/00_start/01_setup/README.md) | core | — | ready |
+| 0.1 | [Setup and how to use the course](modules/00_start/01_setup/README.md) | core | — | ready |
 
 ## M1 · Agents and problem representation
 

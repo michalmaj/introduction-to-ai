@@ -10,7 +10,7 @@ title = { pl = "Start", en = "Getting started" }
 [[module.lesson]]
 id = "0.1"
 dir = "01_setup"
-title = { pl = "Instalacja i praca z samouczkiem", en = "Setup and how to use this course" }
+title = { pl = "Instalacja i praca z samouczkiem", en = "Setup and how to use the course" }
 kind = "core"
 status = "ready"
 requires = []
