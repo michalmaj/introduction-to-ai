@@ -2,7 +2,7 @@
 
 # Lesson 2.2 — BFS and DFS
 
-**Core** · Prerequisites: 1.3 Agent types and problem formulation, 2.1 State spaces and search trees (see the [course map](../../../COURSE_MAP.md)). The key ideas from those lessons are recapped briefly in the "Problem" section.
+**Core** · Prerequisites: 1.3 Agent types and problem formulation, 2.1 State spaces and search trees (see the [course map](../../../COURSE_MAP.md)).
 
 ## Learning goals
 
@@ -28,15 +28,7 @@ The robot stands on the cell `R` and has to reach the dock `D`. Obstacles, meani
 
 The robot can move north, east, south or west (`N`, `E`, `S`, `W`), and every move costs the same. How do we find a route? And if possible, the shortest one?
 
-A computer does not "see" this map the way we do. It sees a **search problem**, which in the course's code is an object of the class `Problem`:
-
-- `problem.initial` is the initial state; in the warehouse it is the cell `(row, col)` where the robot stands;
-- `problem.actions(s)` returns the actions available in state `s`, that is, moves onto free cells;
-- `problem.result(s, a)` returns the state that action `a` leads to (the transition model);
-- `problem.is_goal(s)` says whether `s` is a goal (the goal test);
-- `problem.action_cost(s, a, s2)` gives the cost of a step; in this lesson every step costs 1.
-
-A search algorithm builds a **search tree** of nodes (`Node`). A node remembers its state, its parent, the action that led to it, the path cost (`path_cost`) and its depth (`depth`). Calling `node.states()` returns the states on the path from the root to that node. The function `expand(problem, node)` creates a node's children, one for each action. This is called **expanding** the node. The nodes waiting to be expanded form the **frontier**.
+To a computer this is a **search problem** (`Problem`): an initial state, actions, a transition model, a goal test and a step cost, as in [lesson 1.3](../../01_agents/03_problem_formulation/README.md). A search algorithm builds a **search tree** of nodes (`Node`) from it, creates a node's children with `expand(problem, node)`, and keeps the nodes waiting to be expanded in the **frontier**, as in [lesson 2.1](../01_state_space/README.md).
 
 This whole lesson answers one question: **which node should we take from the frontier next?**
 
