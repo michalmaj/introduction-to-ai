@@ -80,3 +80,13 @@ def test_assert_valid_solution_rejects_wrong_cost():
     bad = Node("G", node.parent, "G", 99.0, node.depth)
     with pytest.raises(AssertionError, match="path_cost is 99.0"):
         assert_valid_solution(worked_example(), bad)
+
+
+def test_first_decrease_finds_the_first_drop_in_a_key():
+    from introai.search import Node
+    from introai.testing.search import first_decrease
+
+    a, b, c, d = Node("A", path_cost=1), Node("B", path_cost=3), Node("C", path_cost=2), Node("D")
+    assert first_decrease([a, b, c, d], key=lambda node: node.path_cost) == (1, b, c)
+    assert first_decrease([a, b], key=lambda node: node.path_cost) is None
+    assert first_decrease([b, Node("E", path_cost=3 - 1e-12)], key=lambda n: n.path_cost) is None
