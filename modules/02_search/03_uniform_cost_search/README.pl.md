@@ -28,7 +28,7 @@ W magazynie pojawiły się **strefy wolnego ruchu**, oznaczone `~`. To zwykła p
 ##############################
 ```
 
-Najmniej kroków wymaga jazda prosto korytarzem: 18 kroków, ale 17 z nich prowadzi przez strefę wolnego ruchu, więc trasa kosztuje 17 · 3 + 1 = 52. Objazd górną albo dolną alejką ma 22 kroki, ale tylko jedno wolne pole, więc kosztuje 24.
+Najmniej kroków wymaga jazda prosto korytarzem: 18 kroków, ale 17 z nich prowadzi przez strefę wolnego ruchu, więc trasa kosztuje 17 · 3 + 1 = 52. Objazd górną albo dolną alejką ma 22 kroki, ale tylko jedno pole strefy wolnego ruchu, więc kosztuje 24.
 
 BFS z lekcji 2.2 liczy kroki, a nie koszt, więc wybierze korytarz. Jak znaleźć trasę **najtańszą**?
 

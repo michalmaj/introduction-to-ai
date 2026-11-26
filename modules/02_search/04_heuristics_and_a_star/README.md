@@ -108,7 +108,7 @@ With a consistent heuristic *f* never decreases along a path: *f*(*n′*) = *g*(
 
 ### Why A* is optimal
 
-Let *C*\* be the cost of the cheapest solution, and let the heuristic be admissible. Suppose A\* removes a goal with cost *C* > *C*\* from the frontier. Some node *n* on the cheapest path to the goal is still in the frontier (the start certainly lies on that path). For it
+Let *C*\* be the cost of the cheapest solution, and let the heuristic be admissible. Suppose A\* removes a goal with cost *C* > *C*\* from the frontier. Some node *n* on the cheapest path to the goal is still in the frontier, and already with its cheapest cost *g*(*n*). Why? The root is in the frontier from the start, and when A\* expands a node of the cheapest path, its successor on that path enters the frontier with its cheapest cost, because there is no cheaper way to it. For such an *n*
 
 $$f(n) = g(n) + h(n) \le g(n) + h^*(n) = C^* < C.$$
 
@@ -218,7 +218,7 @@ Notation as in lesson 2.3: *b* is the branching factor, *m* is the maximum depth
 
 | | Greedy best-first | A* |
 |---|---|---|
-| Complete | yes as a graph search on a finite state space | yes, if step costs are positive and *b* is finite |
+| Complete | yes as a graph search on a finite state space | yes, if every step costs at least *ε* > 0 and *b* is finite |
 | Optimal | no | yes, if the heuristic is admissible |
 | Time | O(*b*<sup>*m*</sup>) in the worst case; very fast with a good heuristic | depends on the heuristic; expands every node with *f* < *C*\* |
 | Memory | O(*b*<sup>*m*</sup>) in the worst case | all generated nodes, which is usually a lot |

@@ -34,7 +34,7 @@ graph TD
 
 Odpowiedzi: `TREE_NODES_AT_DEPTH_2 = 6` i `STATES_AT_DEPTH_2 = 5`.
 
-`A` ma dwóch sąsiadów, więc na głębokości 1 leżą `B` i `C`. `B` ma trzech sąsiadów (`A`, `C`, `D`), `C` też trzech (`A`, `B`, `F`), więc na głębokości 2 jest 3 + 3 = 6 węzłów. Stan `A` występuje wśród nich dwa razy (cykle A → B → A i A → C → A), a pozostałe stany po razie: `A`, `B`, `C`, `D`, `F`, czyli 5 różnych stanów. Typowe pomyłki to pominięcie powrotów do `A`, bo „tam już byliśmy” (wtedy wychodzą 4 węzły), albo pomijanie wszystkich stanów, które pojawiły się wyżej w drzewie, jak w przeszukiwaniu grafu (wtedy na głębokości 2 zostają tylko `D` i `F`).
+`A` ma dwóch sąsiadów, więc na głębokości 1 leżą `B` i `C`. `B` ma trzech sąsiadów (`A`, `C`, `D`), `C` też trzech (`A`, `B`, `F`), więc na głębokości 2 jest 3 + 3 = 6 węzłów. Stan `A` występuje wśród nich dwa razy (cykle A → B → A i A → C → A), a stany `B`, `C`, `D` i `F` po razie. Różnych stanów jest więc 5: `A`, `B`, `C`, `D`, `F`. Typowe pomyłki to pominięcie powrotów do `A`, bo „tam już byliśmy” (wtedy wychodzą 4 węzły), albo pomijanie wszystkich stanów, które pojawiły się wyżej w drzewie, jak w przeszukiwaniu grafu (wtedy na głębokości 2 zostają tylko `D` i `F`).
 
 ## Część B
 

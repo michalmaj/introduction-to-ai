@@ -108,7 +108,7 @@ Dla spójnej heurystyki *f* nie maleje wzdłuż żadnej ścieżki: *f*(*n′*) =
 
 ### Dlaczego A* jest optymalny
 
-Niech *C*\* będzie kosztem najtańszego rozwiązania, a heurystyka dopuszczalna. Przypuśćmy, że A\* zdejmuje z frontier cel o koszcie *C* > *C*\*. Na najtańszej ścieżce do celu jakiś węzeł *n* wciąż leży we frontier (start na pewno do niej należy). Dla niego
+Niech *C*\* będzie kosztem najtańszego rozwiązania, a heurystyka dopuszczalna. Przypuśćmy, że A\* zdejmuje z frontier cel o koszcie *C* > *C*\*. Na najtańszej ścieżce do celu jakiś węzeł *n* wciąż leży we frontier, i to już z najtańszym kosztem *g*(*n*). Dlaczego? Korzeń jest we frontier od początku, a gdy A\* rozwija węzeł z najtańszej ścieżki, jego następnik na tej ścieżce trafia do frontier z najtańszym kosztem, bo tańszej drogi do niego nie ma. Dla takiego *n*
 
 $$f(n) = g(n) + h(n) \le g(n) + h^*(n) = C^* < C.$$
 
@@ -218,7 +218,7 @@ Oznaczenia jak w lekcji 2.3: *b* to współczynnik rozgałęzienia, *m* to najwi
 
 | | Greedy best-first | A* |
 |---|---|---|
-| Kompletność | tak w przeszukiwaniu grafu na skończonej przestrzeni stanów | tak, jeśli koszty kroków są dodatnie, a *b* skończone |
+| Kompletność | tak w przeszukiwaniu grafu na skończonej przestrzeni stanów | tak, jeśli każdy krok kosztuje co najmniej *ε* > 0, a *b* jest skończone |
 | Optymalność | nie | tak, jeśli heurystyka jest dopuszczalna |
 | Czas | O(*b*<sup>*m*</sup>) w najgorszym razie; z dobrą heurystyką bardzo szybki | zależy od heurystyki; rozwija każdy węzeł o *f* < *C*\* |
 | Pamięć | O(*b*<sup>*m*</sup>) w najgorszym razie | wszystkie wygenerowane węzły, czyli zwykle dużo |

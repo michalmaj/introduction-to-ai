@@ -34,7 +34,7 @@ graph TD
 
 Answers: `TREE_NODES_AT_DEPTH_2 = 6` and `STATES_AT_DEPTH_2 = 5`.
 
-`A` has two neighbours, so `B` and `C` lie at depth 1. `B` has three neighbours (`A`, `C`, `D`) and so does `C` (`A`, `B`, `F`), so there are 3 + 3 = 6 nodes at depth 2. The state `A` appears twice among them (the cycles A → B → A and A → C → A) and the other states once each: `A`, `B`, `C`, `D`, `F`, that is 5 different states. Typical mistakes are leaving out the returns to `A` because "we have been there already" (which gives 4 nodes), or leaving out every state that appeared higher up in the tree, as a graph search would (which leaves only `D` and `F` at depth 2).
+`A` has two neighbours, so `B` and `C` lie at depth 1. `B` has three neighbours (`A`, `C`, `D`) and so does `C` (`A`, `B`, `F`), so there are 3 + 3 = 6 nodes at depth 2. The state `A` appears twice among them (the cycles A → B → A and A → C → A), and the states `B`, `C`, `D` and `F` once each. So there are 5 different states: `A`, `B`, `C`, `D`, `F`. Typical mistakes are leaving out the returns to `A` because "we have been there already" (which gives 4 nodes), or leaving out every state that appeared higher up in the tree, as a graph search would (which leaves only `D` and `F` at depth 2).
 
 ## Part B
 
