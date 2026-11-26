@@ -20,7 +20,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from introai.search import reference
-from introai.search.examples import EXAMPLES, EXERCISE_EXAMPLES
+from introai.search.examples import EXAMPLES, EXERCISE_EXAMPLES, HEURISTICS
 from introai.trace import Trace, record
 
 _OPEN = re.compile(r"^<!-- generated:(\S+)((?:\s+[\w-]+=\S+)*)\s*-->\s*$")
@@ -39,6 +39,11 @@ _TEXT = {
         "initial_goal": "Stan początkowy **{goal}** jest celem. Ścieżka: {path}.",
         "path": "Ścieżka: {path}.",
         "unreachable": "Frontier jest pusty: cel jest nieosiągalny.",
+        "best_header": (
+            "| Krok | Zdjęty | g | f | Wynik | Frontier: stan f, w kolejności zdejmowania "
+            "| Najlepsze znane g |"
+        ),
+        "reached_cost": "Cel **{goal}** osiągnięty kosztem {cost}. Ścieżka: {path}.",
     },
     "en": {
         "bfs_header": "| Step | Expanded node | Frontier (in removal order) | Reached set |",
@@ -48,6 +53,9 @@ _TEXT = {
         "initial_goal": "The initial state **{goal}** is a goal. Path: {path}.",
         "path": "Path: {path}.",
         "unreachable": "The frontier is empty: the goal cannot be reached.",
+        "best_header": "| Step | Popped | g | f | Outcome | Frontier: state f, in removal order "
+        "| Best known g |",
+        "reached_cost": "Goal **{goal}** reached at cost {cost}. Path: {path}.",
     },
 }
 
@@ -82,8 +90,52 @@ def _example(params: dict[str, str]):
     return EXAMPLES[name]()
 
 
+def _number(value: float) -> str:
+    return f"{value:g}"
+
+
+def _pairs(pairs) -> str:
+    return ", ".join(f"{state} {_number(value)}" for state, value in pairs) if pairs else "—"
+
+
+def _render_best_first_table(params: dict[str, str]) -> str:
+    algorithm, lang = params["algorithm"], params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    problem = _example(params)
+    text = _TEXT[lang]
+    with record() as trace:
+        if algorithm == "ucs":
+            result = reference.ucs(problem)
+        else:
+            name = params.get("heuristic", params["example"])
+            if name not in HEURISTICS:
+                raise BlockError(f"unknown heuristic {name!r}")
+            table = HEURISTICS[name]
+            search = reference.a_star if algorithm == "astar" else reference.greedy_best_first
+            result = search(problem, lambda state: table[state])
+    rows = [
+        f"| {i} | {e.data['popped']} | {_number(e.data['g'])} | {_number(e.data['f'])} "
+        f"| {text['outcomes'][e.data['outcome']]} | {_pairs(e.data['frontier'])} "
+        f"| {_pairs(e.data['reached'])} |"
+        for i, e in enumerate(trace.of_kind("step"), start=1)
+    ]
+    header = text["best_header"]
+    separator = "|" + "---|" * (header.count("|") - 1)
+    if result is None:
+        summary = text["unreachable"]
+    else:
+        path = " → ".join(str(state) for state in result.states())
+        summary = text["reached_cost"].format(
+            goal=result.state, cost=_number(result.path_cost), path=path
+        )
+    return "\n".join([header, separator, *rows]) + "\n\n" + summary
+
+
 def _render_trace_table(params: dict[str, str]) -> str:
     algorithm = params.get("algorithm")
+    if algorithm in ("ucs", "greedy", "astar"):
+        return _render_best_first_table(params)
     if algorithm not in _ALGORITHMS:
         raise BlockError(f"unknown algorithm {algorithm!r}")
     lang = params.get("lang")

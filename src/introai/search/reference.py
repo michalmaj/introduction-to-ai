@@ -11,8 +11,10 @@ step; the lesson pages turn them into step-by-step tables.
 
 from __future__ import annotations
 
+import heapq
+import itertools
 from collections import deque
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 
 from introai.search.core import Node, Problem, State, expand
 from introai.trace import emit, wants
@@ -112,4 +114,81 @@ def _dfs_step(node: Node, outcome: str, frontier: list[Node], expanded: set[Stat
         outcome=outcome,
         frontier=[n.state for n in reversed(frontier)],
         expanded=_sorted_states(expanded),
+    )
+
+
+# --- Best-first search: UCS, greedy best-first and A* ----------------------------------
+
+Heuristic = Callable[[State], float]
+
+
+def ucs(problem: Problem) -> Node | None:
+    """Uniform-cost search: always expand the node with the lowest path cost g."""
+    return _best_first(problem, lambda node: node.path_cost)
+
+
+def greedy_best_first(problem: Problem, h: Heuristic) -> Node | None:
+    """Greedy best-first search: always expand the node that looks closest, by h alone."""
+    return _best_first(problem, lambda node: h(node.state))
+
+
+def a_star(problem: Problem, h: Heuristic) -> Node | None:
+    """A* search: always expand the node with the lowest f = g + h."""
+    return _best_first(problem, lambda node: node.path_cost + h(node.state))
+
+
+def _best_first(problem: Problem, priority: Callable[[Node], float]) -> Node | None:
+    """The shared core of UCS, greedy best-first and A*.
+
+    Rules (they also define the expected answers of hand-traced exercises):
+
+    - the frontier is a priority queue ordered by ``priority``; ties are broken
+      by insertion order (the node added first is removed first);
+    - ``reached`` maps every state to the lowest path cost found so far; a child
+      is added only if its state is new or reached more cheaply than before;
+    - a removed node whose path cost is higher than the best known one is a
+      stale entry and is skipped;
+    - the goal is tested when a node is removed from the frontier.
+    """
+    root = Node(problem.initial)
+    counter = itertools.count()
+    frontier: list[tuple[float, int, Node]] = [(priority(root), next(counter), root)]
+    reached: dict[State, float] = {root.state: root.path_cost}
+
+    while frontier:
+        f, _, node = heapq.heappop(frontier)
+        if node.path_cost > reached[node.state]:
+            if wants("step"):
+                _best_first_step(node, f, "skipped", frontier, reached)
+            continue
+        if problem.is_goal(node.state):
+            if wants("step"):
+                _best_first_step(node, f, "goal", frontier, reached)
+            emit("goal", node=node)
+            return node
+        for child in expand(problem, node):
+            if child.state not in reached or child.path_cost < reached[child.state]:
+                reached[child.state] = child.path_cost
+                heapq.heappush(frontier, (priority(child), next(counter), child))
+        if wants("step"):
+            _best_first_step(node, f, "expanded", frontier, reached)
+
+    return None
+
+
+def _best_first_step(
+    node: Node,
+    f: float,
+    outcome: str,
+    frontier: list[tuple[float, int, Node]],
+    reached: dict[State, float],
+) -> None:
+    emit(
+        "step",
+        popped=node.state,
+        outcome=outcome,
+        g=node.path_cost,
+        f=f,
+        frontier=[(n.state, priority) for priority, _, n in sorted(frontier)],
+        reached=[(state, reached[state]) for state in _sorted_states(reached)],
     )

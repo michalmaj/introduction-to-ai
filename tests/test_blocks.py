@@ -158,3 +158,37 @@ def test_episode_table_reflex_agent(tmp_path):
 def test_graph_block_shows_weights():
     text = render_block("graph", {"example": "weighted_example"})
     assert "    A ---|2| B" in text and "    S ---|6| B" not in text and "    B ---|6| S" in text
+
+
+UCS_PL = """\
+| Krok | Zdjęty | g | f | Wynik | Frontier: stan f, w kolejności zdejmowania | Najlepsze znane g |
+|---|---|---|---|---|---|---|
+| 1 | S | 0 | 0 | rozwinięty | A 1, B 6 | A 1, B 6, S 0 |
+| 2 | A | 1 | 1 | rozwinięty | B 3, B 6, D 8 | A 1, B 3, D 8, S 0 |
+| 3 | B | 3 | 3 | rozwinięty | C 5, B 6, D 8, G 9 | A 1, B 3, C 5, D 8, G 9, S 0 |
+| 4 | C | 5 | 5 | rozwinięty | B 6, G 7, D 8, G 9 | A 1, B 3, C 5, D 8, G 7, S 0 |
+| 5 | B | 6 | 6 | pominięty | G 7, D 8, G 9 | A 1, B 3, C 5, D 8, G 7, S 0 |
+| 6 | G | 7 | 7 | cel | D 8, G 9 | A 1, B 3, C 5, D 8, G 7, S 0 |
+
+Cel **G** osiągnięty kosztem 7. Ścieżka: S → A → B → C → G."""
+
+
+def test_ucs_trace_table():
+    params = {"algorithm": "ucs", "example": "weighted_example", "lang": "pl"}
+    assert render_block("trace-table", params) == UCS_PL
+    english = render_block("trace-table", {**params, "lang": "en"})
+    assert english.splitlines()[0] == (
+        "| Step | Popped | g | f | Outcome | Frontier: state f, in removal order | Best known g |"
+    )
+    assert english.endswith("Goal **G** reached at cost 7. Path: S → A → B → C → G.")
+
+
+def test_a_star_and_greedy_trace_tables():
+    astar = render_block(
+        "trace-table", {"algorithm": "astar", "example": "weighted_example", "lang": "en"}
+    )
+    assert "| 1 | S | 0 | 5 | expanded | A 6, B 9 |" in astar
+    greedy = render_block(
+        "trace-table", {"algorithm": "greedy", "example": "weighted_example", "lang": "en"}
+    )
+    assert greedy.endswith("Goal **G** reached at cost 12. Path: S → B → G.")

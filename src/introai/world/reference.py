@@ -1,6 +1,6 @@
 """Reference problem formulations over the warehouse world.
 
-These are the course's own versions of what lessons 0.1 and 1.3 ask you to write.
+These are the course's own versions of what lessons 0.1, 1.3 and 2.4 ask you to write.
 Your ``task.py`` must not import this module.
 """
 
@@ -11,6 +11,11 @@ from introai.world.warehouse import Cell, WarehouseMap
 
 State = tuple[Cell, frozenset[Cell]]
 _MOVES: dict[str, tuple[int, int]] = {"N": (-1, 0), "E": (0, 1), "S": (1, 0), "W": (0, -1)}
+
+
+def manhattan(cell: Cell, goal: Cell) -> int:
+    """Rows plus columns between two cells (reference for lesson 2.4)."""
+    return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
 
 
 def free_neighbours(warehouse: WarehouseMap, cell: Cell) -> list[Cell]:
