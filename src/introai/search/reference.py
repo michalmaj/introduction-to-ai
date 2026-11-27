@@ -284,3 +284,43 @@ def _is_cycle(node: Node) -> bool:
             return True
         ancestor = ancestor.parent
     return False
+
+
+# --- Properties of the strategies (lesson 2.5) -----------------------------------------
+
+STRATEGY_PROPERTIES: dict[str, dict[str, bool]] = {
+    # Graph searches as written in this course. Assumptions, as in lesson 2.5:
+    # complete_finite: finite state space; complete_infinite: infinite state space,
+    # finite branching factor, every step costs at least some eps > 0, a solution
+    # exists; A* uses an admissible heuristic; optimal_any_costs: positive step costs.
+    "BFS": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": False,
+    },
+    "DFS": {
+        "complete_finite": True,
+        "complete_infinite": False,
+        "optimal_unit_costs": False,
+        "optimal_any_costs": False,
+    },
+    "UCS": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": True,
+    },
+    "greedy": {
+        "complete_finite": True,
+        "complete_infinite": False,
+        "optimal_unit_costs": False,
+        "optimal_any_costs": False,
+    },
+    "A*": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": True,
+    },
+}

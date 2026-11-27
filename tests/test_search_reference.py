@@ -280,3 +280,16 @@ def test_frontier_events_report_the_frontier_size():
     with record(kinds={"expand"}) as t:
         bfs(worked_example())
     assert max_frontier(t) == 0
+
+
+def test_strategy_properties_table_is_consistent():
+    from introai.search.reference import STRATEGY_PROPERTIES
+
+    assert list(STRATEGY_PROPERTIES) == ["BFS", "DFS", "UCS", "greedy", "A*"]
+    names = ["complete_finite", "complete_infinite", "optimal_unit_costs", "optimal_any_costs"]
+    for row in STRATEGY_PROPERTIES.values():
+        assert list(row) == names and all(isinstance(v, bool) for v in row.values())
+        assert row["complete_finite"] or not row["complete_infinite"]
+        assert row["optimal_unit_costs"] or not row["optimal_any_costs"]
+    assert STRATEGY_PROPERTIES["UCS"]["optimal_any_costs"]
+    assert not STRATEGY_PROPERTIES["BFS"]["optimal_any_costs"]
