@@ -17,7 +17,13 @@ After this module you will be able to:
 
 The module's lessons, their dependencies and their status are listed in the [course map](../../COURSE_MAP.md).
 
+The path through the module:
+
+- **core lessons:** 2.1 → 2.2 → 2.3 → 2.4 → 2.5. After lesson 2.5 you know five search strategies and when to use each;
+- **optional lessons:** 2.6 on iterative deepening and 2.7 on designing heuristics. Both need only lesson 2.5 and can be done in either order.
+
 ## Where this leads
 
+- **Module 3, games and constraint satisfaction.** Search in which an opponent moves too. The evaluation function of a game position is a close relative of the heuristics of lessons 2.4 and 2.7.
 - **Module 4, nature-inspired algorithms.** When the robot has to collect many parcels, the state space grows exponentially and exact search is no longer enough. You will see how to find a good, though not necessarily the best, route in reasonable time.
 - **Module 8, reinforcement learning.** A* assumes we know the model of the world. Q-learning teaches the robot to reach its goal without that knowledge.

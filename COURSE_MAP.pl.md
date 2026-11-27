@@ -27,9 +27,9 @@ Plik generowany z `course.toml` — nie edytuj go ręcznie. Lekcje **core** twor
 | 2.2 | [BFS i DFS](modules/02_search/02_bfs_dfs/README.pl.md) | core | 2.1 | gotowa |
 | 2.3 | [Przeszukiwanie kosztowe (UCS)](modules/02_search/03_uniform_cost_search/README.pl.md) | core | 2.2 | gotowa |
 | 2.4 | [Heurystyki, greedy best-first i A*](modules/02_search/04_heuristics_and_a_star/README.pl.md) | core | 2.3 | gotowa |
-| 2.5 | Porównanie strategii przeszukiwania | core | 2.4 | w przygotowaniu |
-| 2.6 | Iteracyjne pogłębianie | opcjonalna | 2.5 | w przygotowaniu |
-| 2.7 | Projektowanie heurystyk | opcjonalna | 2.5 | w przygotowaniu |
+| 2.5 | [Porównanie strategii przeszukiwania](modules/02_search/05_comparing_strategies/README.pl.md) | core | 2.4 | gotowa |
+| 2.6 | [Iteracyjne pogłębianie](modules/02_search/06_iterative_deepening/README.pl.md) | opcjonalna | 2.5 | gotowa |
+| 2.7 | [Projektowanie heurystyk](modules/02_search/07_designing_heuristics/README.pl.md) | opcjonalna | 2.5 | gotowa |
 
 ## M3 · Gry i problemy z ograniczeniami
 
