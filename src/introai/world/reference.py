@@ -6,6 +6,8 @@ Your ``task.py`` must not import this module.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from introai.search.core import Problem
 from introai.world.warehouse import Cell, WarehouseMap
 
@@ -57,3 +59,55 @@ class ParcelPickupProblem(Problem):
 
     def is_goal(self, state: State) -> bool:
         return not state[1]
+
+
+# --- Heuristics for collecting parcels (lesson 2.7) ------------------------------------
+
+
+def parcel_heuristic(state: State) -> int:
+    """Manhattan distance to the farthest parcel plus the number of parcels left.
+
+    The robot has to drive at least to the farthest parcel, and every parcel takes
+    one PICK, so this never overestimates (reference for lesson 2.7).
+    """
+    cell, parcels = state
+    return max((manhattan(cell, parcel) for parcel in parcels), default=0) + len(parcels)
+
+
+def _parcels_left(state: State) -> int:
+    return len(state[1])
+
+
+def _nearest(state: State) -> int:
+    cell, parcels = state
+    return min((manhattan(cell, p) for p in parcels), default=0) + len(parcels)
+
+
+def _sum_of_distances(state: State) -> int:
+    cell, parcels = state
+    return sum(manhattan(cell, p) for p in parcels) + len(parcels)
+
+
+def _twice_parcels_left(state: State) -> int:
+    return 2 * len(state[1])
+
+
+CANDIDATE_HEURISTICS: dict[str, Callable[[WarehouseMap], Callable[[State], float]]] = {
+    "h1": lambda warehouse: _parcels_left,
+    "h2": lambda warehouse: _nearest,
+    "h3": lambda warehouse: parcel_heuristic,
+    "h4": lambda warehouse: _sum_of_distances,
+    "h5": lambda warehouse: lambda state: manhattan(state[0], warehouse.dock),
+    "h6": lambda warehouse: _twice_parcels_left,
+}
+"""The six candidate heuristics of lesson 2.7, Part A, each built for a given map."""
+
+CANDIDATE_ADMISSIBLE: dict[str, bool] = {
+    "h1": True,
+    "h2": True,
+    "h3": True,
+    "h4": False,
+    "h5": False,
+    "h6": False,
+}
+"""Which of the candidates never overestimate (the answers of lesson 2.7, Part A)."""
