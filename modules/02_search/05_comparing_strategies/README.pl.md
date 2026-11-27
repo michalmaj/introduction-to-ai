@@ -15,7 +15,7 @@ Po tej lekcji:
 
 ## Problem
 
-Robot zna już pięć sposobów szukania trasy. Który z nich ma zabrać do pracy? Na to pytanie nie ma jednej odpowiedzi. Gdy wszystkie ruchy kosztują tyle samo, BFS w zupełności wystarczy. Gdy w magazynie są strefy wolnego ruchu, BFS zaczyna przepłacać. A\* jest zwykle najlepszy, ale tylko wtedy, gdy mamy dobrą heurystykę. Greedy bywa bardzo szybki, za to nie daje żadnej gwarancji.
+Robot zna już pięć sposobów szukania trasy. Którego z nich powinien używać? Na to pytanie nie ma jednej odpowiedzi. Gdy wszystkie ruchy kosztują tyle samo, BFS w zupełności wystarczy. Gdy w magazynie są strefy wolnego ruchu, BFS zaczyna przepłacać. A\* jest zwykle najlepszy, ale tylko wtedy, gdy mamy dobrą heurystykę. Greedy bywa bardzo szybki, ale nie gwarantuje najtańszej trasy.
 
 W tej lekcji nie piszesz nowego algorytmu. Zbierasz to, co już wiesz, w jedną tabelę, a potem sprawdzasz ją w eksperymentach na własnym kodzie z lekcji 2.2–2.4.
 
@@ -33,12 +33,12 @@ Przypomina to wybór środka transportu: najszybszy, najtańszy i najwygodniejsz
 
 ## Porównywane własności
 
-Wszystkie algorytmy rozumiemy tak, jak napisaliśmy je w kursie: jako przeszukiwanie grafu, które pamięta osiągnięte albo rozwinięte stany. Heurystyka w A\* jest dopuszczalna. Porównujemy cztery własności:
+Wszystkie algorytmy rozumiemy tak, jak napisaliśmy je w kursie: jako przeszukiwanie grafu, które pamięta osiągnięte albo rozwinięte stany. Koszty kroków są zawsze dodatnie. Heurystyka w A\* jest dopuszczalna, a w greedy może być dowolna. Porównujemy cztery własności:
 
 | Klucz w `task.py` | Własność | Założenia |
 |---|---|---|
-| `complete_finite` | **zupełność na skończonej przestrzeni stanów**: jeśli rozwiązanie istnieje, algorytm je znajdzie; jeśli nie istnieje, zatrzyma się i zwróci `None` | stanów jest skończenie wiele |
-| `complete_infinite` | **zupełność na nieskończonej przestrzeni stanów**: algorytm na pewno znajdzie rozwiązanie | stanów może być nieskończenie wiele, ale każdy stan ma skończenie wiele akcji, każdy krok kosztuje co najmniej pewne *ε* > 0, a rozwiązanie istnieje |
+| `complete_finite` | **kompletność na skończonej przestrzeni stanów**: jeśli rozwiązanie istnieje, algorytm je znajdzie; jeśli nie istnieje, zatrzyma się i zwróci `None` | stanów jest skończenie wiele |
+| `complete_infinite` | **kompletność na nieskończonej przestrzeni stanów**: algorytm na pewno znajdzie rozwiązanie | stanów może być nieskończenie wiele, ale każdy stan ma skończenie wiele akcji, każdy krok kosztuje co najmniej pewne *ε* > 0, a rozwiązanie istnieje |
 | `optimal_unit_costs` | **optymalność przy jednakowych kosztach**: zwrócona trasa ma najmniej kroków | każdy krok kosztuje tyle samo |
 | `optimal_any_costs` | **optymalność przy dowolnych kosztach**: zwrócona trasa jest najtańsza | koszty kroków są dodatnie, ale mogą się różnić |
 
@@ -72,14 +72,14 @@ Uwaga na DFS. Jego mała pamięć O(*b*·*m*) to zaleta tylko wtedy, gdy *m*, cz
 
 ### Przykład rozwiązany
 
-Nie ma tu śladu krok po kroku, bo żaden algorytm nie jest nowy. Ćwiczymy za to rozumowanie o własnościach. Weźmy szósty algorytm, którego nie ma w tabeli: **DFS bez pamiętania stanów**, czyli przeszukiwanie drzewa w głąb z lekcji 2.1.
+Nie ma tu śladu krok po kroku, bo żaden algorytm nie jest nowy. Ćwiczymy za to uzasadnianie własności. Weźmy szósty algorytm, którego nie ma w tabeli: **DFS bez pamiętania stanów**, czyli przeszukiwanie drzewa w głąb z lekcji 2.1.
 
-- **Zupełność na skończonej przestrzeni: nie.** Kontrprzykład: graf z cyklem A–B–A. DFS bez pamięci może chodzić tam i z powrotem w nieskończoność i nigdy nie zbadać reszty grafu.
-- **Zupełność na nieskończonej przestrzeni: nie.** Skoro zawodzi już na skończonym grafie z cyklem, tym bardziej zawodzi na nieskończonym.
-- **Optymalność przy jednakowych kosztach: nie.** Kontrprzykład z lekcji 2.2: na grafie z przykładu DFS znalazł trasę S → A → C → B → D → G, a istnieje trasa trzykrokowa S → A → C → G.
+- **Kompletność na skończonej przestrzeni: nie.** Kontrprzykład: graf z cyklem A–B–A. DFS bez pamięci może chodzić tam i z powrotem w nieskończoność i nigdy nie zbadać reszty grafu.
+- **Kompletność na nieskończonej przestrzeni: nie.** Ten sam kontrprzykład działa i tutaj, bo definicja dopuszcza też skończoną przestrzeń: w grafie z cyklem, w którym rozwiązanie istnieje, DFS bez pamięci może krążyć w cyklu i nigdy do rozwiązania nie dojść.
+- **Optymalność przy jednakowych kosztach: nie.** Kontrprzykład bez cykli: ze startu `S` prowadzą krawędzie do `A` i `B`, z `A` do `C`, a z `C` i z `B` do celu `G`. DFS, który najpierw próbuje `A`, zwraca S → A → C → G (3 kroki), choć istnieje S → B → G (2 kroki).
 - **Optymalność przy dowolnych kosztach: nie.** Jeśli algorytm nie jest optymalny nawet wtedy, gdy wszystkie koszty są równe, nie będzie optymalny także przy kosztach różnych.
 
-Zwróć uwagę na ostatni krok. Dwie własności wynikają tu z innych: zupełność na nieskończonej przestrzeni pociąga zupełność na skończonej, a optymalność przy dowolnych kosztach pociąga optymalność przy kosztach jednakowych.
+Zwróć uwagę na ostatni krok. Optymalność przy dowolnych kosztach pociąga optymalność przy kosztach jednakowych, bo jednakowe koszty to szczególny przypadek dowolnych. Z kompletnością tak prosto nie jest. Na skończonej przestrzeni algorytm musi się też zatrzymać, gdy rozwiązania nie ma, a tego definicja kompletności na nieskończonej przestrzeni nie wymaga. Każdą z tych dwóch własności trzeba więc sprawdzić osobno.
 
 ### Twoja kolej
 
@@ -87,10 +87,10 @@ Wypełnij tabelę `PROPERTIES` w części A pliku `task.py` dla pięciu algorytm
 
 ## Częste błędy
 
-1. **DFS gubi się w cyklach.** To prawda tylko dla DFS bez pamięci stanów. DFS z lekcji 2.2 pamięta rozwinięte stany, więc na skończonej przestrzeni zawsze się zatrzymuje.
-2. **Zupełność wszędzie taka sama.** Algorytm zupełny na skończonej przestrzeni wcale nie musi być zupełny na nieskończonej. DFS może tam zejść w nieskończenie długą gałąź.
-3. **Greedy pędzi do celu, więc jest optymalny.** Greedy patrzy tylko na oszacowanie odległości do celu i nie liczy, ile już zapłacił. Nawet przy jednakowych kosztach może wybrać okrężną drogę.
-4. **Najkrótsza trasa jest najtańsza.** BFS minimalizuje liczbę kroków, a nie koszt. W magazynie ze strefami wolnego ruchu to dwie różne rzeczy.
+1. **Mylenie DFS z przeszukiwaniem drzewa.** DFS z przykładu rozwiązanego nie pamięta żadnych stanów, a DFS z lekcji 2.2 pamięta rozwinięte stany. To dwa różne algorytmy o różnych własnościach. Sprawdź, o który chodzi w tabeli.
+2. **Jedna odpowiedź dla obu rodzajów przestrzeni.** Kompletność na skończonej i na nieskończonej przestrzeni to dwie różne własności. Algorytm może mieć jedną, a nie mieć drugiej, więc dla każdej szukaj osobnego argumentu albo kontrprzykładu.
+3. **Mylenie szybkości z optymalnością.** To, że algorytm szybko dociera do celu, nic nie mówi o koszcie znalezionej trasy. Optymalność trzeba uzasadnić osobno.
+4. **Mylenie liczby kroków z kosztem.** Gdy kroki mają różne koszty, trasa o najmniejszej liczbie kroków nie musi być najtańsza. Sprawdź, co dokładnie minimalizuje każdy algorytm.
 
 Testy lekcji wykrywają każdy z tych błędów.
 
@@ -134,9 +134,9 @@ Otwórz [experiments.pl.ipynb](experiments.pl.ipynb). W trybie `"mine"` notebook
 
 ## Pytania kontrolne
 
-1. Wyjaśnij, dlaczego DFS z lekcji 2.2 jest zupełny na skończonej przestrzeni stanów, choć DFS z przykładu rozwiązanego nie jest.
-2. Podaj przykład nieskończonej przestrzeni stanów, na której DFS nie znajduje istniejącego rozwiązania, a BFS je znajduje.
-3. Dlaczego A\* wymaga dopuszczalnej heurystyki, żeby być optymalny, a greedy nie jest optymalny nawet z najlepszą heurystyką?
+1. Czym różni się DFS z lekcji 2.2 od DFS z przykładu rozwiązanego? Jak ta różnica wpływa na kompletność na skończonej przestrzeni stanów?
+2. Zbuduj nieskończoną przestrzeń stanów, w której istnieje rozwiązanie. Które z pięciu algorytmów na pewno je znajdą? Uzasadnij jedno „tak” i jedno „nie”.
+3. Która część argumentu optymalności A\* korzysta z dopuszczalności heurystyki? Czy ten argument da się przenieść na greedy?
 4. Na mapie `open_floor.txt` DFS ma większy frontier niż BFS. Jak to pogodzić z tym, że DFS „zużywa mało pamięci”?
 5. Masz mapę magazynu bez stref wolnego ruchu i bardzo mało pamięci. Który algorytm wybierzesz i dlaczego?
 
@@ -159,16 +159,16 @@ Zacznij od kolumny UCS. Wszystkie jej własności udowodniliśmy w lekcji 2.3. P
 <details>
 <summary>Podpowiedź 3: własności zależą od siebie</summary>
 
-Algorytm zupełny na nieskończonej przestrzeni jest też zupełny na skończonej. Algorytm optymalny przy dowolnych kosztach jest też optymalny przy kosztach jednakowych. Te zależności pozwalają sprawdzić, czy wiersz jest spójny.
+Algorytm optymalny przy dowolnych kosztach jest też optymalny przy kosztach jednakowych. To pozwala sprawdzić, czy dwie ostatnie kolumny są spójne. Z kompletnością tak prosto nie jest: na skończonej przestrzeni algorytm musi się też zatrzymać, gdy rozwiązania nie ma.
 
 </details>
 
 ## Co zapamiętać
 
 - Pięć algorytmów różni się tylko tym, który węzeł zdejmują z frontier jako następny.
-- Zupełność i optymalność zależą od założeń: skończona czy nieskończona przestrzeń, jednakowe czy różne koszty, dopuszczalna czy dowolna heurystyka.
-- BFS jest optymalny tylko przy jednakowych kosztach; UCS i A\* także przy różnych.
-- Greedy i DFS nie gwarantują optymalności, ale bywają bardzo szybkie.
+- Kompletność i optymalność zależą od założeń: skończona czy nieskończona przestrzeń, jednakowe czy różne koszty, dopuszczalna czy dowolna heurystyka.
+- Żeby wpisać „tak”, potrzebny jest argument; żeby wpisać „nie”, wystarczy jeden kontrprzykład.
+- Szybkość, optymalność i pamięć to trzy różne kryteria. Żaden algorytm nie wygrywa we wszystkich.
 - Pamięć to osobny zasób: mierzymy ją największym frontier i zbiorem osiągniętych stanów.
 - Przy wielu paczkach przestrzeń stanów rośnie wykładniczo i przeszukiwanie dokładne przestaje wystarczać.
 

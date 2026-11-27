@@ -2,7 +2,7 @@
 
 Violated requirement: a graph search that remembers expanded states stops on every
 finite state space.
-Common mistake in the lesson: "DFS gets lost in cycles".
+Common mistake in the lesson: "Confusing DFS with tree search".
 """
 
 CAUGHT_BY = ("test_part_a_complete_finite",)

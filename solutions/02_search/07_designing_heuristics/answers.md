@@ -35,14 +35,15 @@ A good answer includes:
 - the observation that every real plan is also a relaxed plan;
 - the conclusion that the relaxed optimum is no larger than the real one.
 
-### 2. Relaxed problems for "number of parcels" and *h*<sub>3</sub>
+### 2. An argument for an admissible heuristic
 
-"Number of parcels" is the cost of a problem in which the robot picks parcels up without driving, for example from anywhere. *h*<sub>3</sub> comes from a problem in which the robot drives on a grid without walls and has to reach only the farthest parcel, while it may pick up the others from afar. The cheapest plan is to drive there along the shortest path without walls (*M* moves) and pick up all the parcels.
+Each of the three admissible heuristics has a simple argument. *h*<sub>1</sub> is the cost of a relaxed problem in which the robot picks parcels up without driving, for example from anywhere. For *h*<sub>2</sub> and *h*<sub>3</sub> a lower bound is the simplest. Before the robot is done, it has to stand on every parcel, so it has to drive at least the Manhattan distance to the nearest parcel (*h*<sub>2</sub>), and even to the farthest one (*h*<sub>3</sub>), because there is no shorter way on the grid even without walls. Add one `PICK` per parcel. A relaxed problem for *h*<sub>3</sub> would depend on the state, because the farthest parcel changes as the robot drives, which is why the lower-bound argument is simpler here.
 
 A good answer includes:
 
-- for the number of parcels: removing the need to drive;
-- for *h*<sub>3</sub>: removing the walls and the need to visit every parcel except the farthest.
+- the choice of a heuristic that really is admissible;
+- a relaxed problem or a lower bound on the cost;
+- the `PICK` actions taken into account.
 
 ### 3. Combining heuristics
 
@@ -54,14 +55,19 @@ A good answer includes:
 - a justification of admissibility and dominance;
 - optionally: a warning against the sum.
 
-### 4. A state in which *h*<sub>6</sub> overestimates
+### 4. A state in which a heuristic overestimates
 
-The robot stands on the cell of the last parcel. The true cost is 1, a single `PICK`. *h*<sub>6</sub> gives 2.
+For each of the three heuristics that are not admissible, one state is enough:
+
+- *h*<sub>4</sub>: the robot at (1, 1), parcels at (1, 2) and (1, 3). Four actions are enough, while the heuristic gives 5;
+- *h*<sub>5</sub>: a goal state (all parcels collected) with the robot far from the dock. The true cost is 0, while the heuristic is positive;
+- *h*<sub>6</sub>: the robot stands on the cell of the last parcel. The true cost is 1, a single `PICK`, while the heuristic gives 2.
 
 A good answer includes:
 
+- the choice of a heuristic that really is not admissible;
 - a concrete state;
-- the true cost and the value of the heuristic.
+- the true cost and the value of the heuristic in that state.
 
 ### 5. When a stronger heuristic slows things down
 

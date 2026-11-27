@@ -23,7 +23,7 @@ Czy da się połączyć pamięć DFS z gwarancją BFS? Da się, i to bardzo pros
 
 Wyobraź sobie psa na smyczy, który szuka piłki w krzakach. Na krótkiej smyczy przeszuka dokładnie najbliższą okolicę. Jeśli piłki tam nie ma, wracasz i puszczasz go na smyczy dłuższej o metr. Pies za każdym razem obiega też miejsca, które już widział, ale za to nigdy nie odbiegnie dalej, niż trzeba.
 
-Tak działa iteracyjne pogłębianie. Przeszukuje w głąb, ale z limitem głębokości. Najpierw z limitem 0, potem 1, potem 2 i tak dalej, aż znajdzie cel. Każda runda to zwykłe DFS, więc pamięć jest mała. Rundy idą w kolejności rosnącej głębokości, więc pierwszy znaleziony cel leży najpłycej, tak jak w BFS.
+Tak działa iteracyjne pogłębianie. Przeszukuje w głąb, ale z limitem głębokości. Najpierw z limitem 0, potem 1, potem 2 i tak dalej, aż znajdzie cel. Każda runda to zwykły DFS, więc pamięć jest mała. Rundy idą w kolejności rosnącej głębokości, więc pierwszy znaleziony cel leży najpłycej, tak jak w BFS.
 
 ## Model formalny i pseudokod
 
@@ -56,6 +56,8 @@ Stałą `CUTOFF` importujesz z `introai.search`.
 
 **Cykle.** DLS nie pamięta odwiedzonych stanów, bo cała jego zaleta to mała pamięć. Sprawdza tylko, czy stan węzła nie występuje już na jego własnej ścieżce: wystarczy przejść po rodzicach. Taki węzeł tworzy cykl i nie jest rozwijany. Bez tego sprawdzania DLS w magazynie jeździłby tam i z powrotem aż do limitu.
 
+**Uwaga dla czytających podręcznik.** W pseudokodzie Russella i Norviga warunek odcięcia ma postać *głębokość* > ℓ, więc tam limit ℓ pozwala rozwinąć jeszcze węzły na głębokości ℓ. W tym kursie limit ℓ oznacza, że węzły na głębokości ℓ są już odcinane, stąd warunek ≥. Oba zapisy opisują ten sam algorytm, tylko z limitem przesuniętym o jeden.
+
 ### Iteracyjne pogłębianie
 
 ```text
@@ -69,11 +71,11 @@ IDS kończy się, gdy DLS znajdzie cel albo zwróci `None`. To drugie oznacza, �
 
 ### Ile pracy się powtarza?
 
-Każda runda zaczyna od nowa, od korzenia. Węzły z płytkich poziomów są więc rozwijane wiele razy. Ile to kosztuje? W pełnym drzewie o współczynniku rozgałęzienia *b* z celem na głębokości *d* węzeł z głębokości *k* jest rozwijany w każdej rundzie z limitem większym niż *k*, czyli *d* − *k* razy. Na najgłębszym poziomie, gdzie jest najwięcej węzłów, IDS pracuje tylko raz.
+Każda runda zaczyna od nowa, od korzenia. Węzły z płytkich poziomów są więc rozwijane wiele razy. Ile to kosztuje? W pełnym drzewie o współczynniku rozgałęzienia *b* z celem na głębokości *d* węzeł z głębokości *k* jest rozwijany w każdej rundzie z limitem większym niż *k*, czyli *d* − *k* razy, a generowany *d* − *k* + 1 razy, bo powstaje już wtedy, gdy rozwijany jest jego rodzic. Węzły z najgłębszego poziomu, których jest najwięcej, IDS generuje tylko raz.
 
 Przykład dla *b* = 10 i *d* = 5. Liczymy węzły **wygenerowane**:
 
-| Poziom | Węzłów na poziomie | Generacji w BFS | Generacji w IDS |
+| Poziom | Węzłów na poziomie | Wygenerowane w BFS | Wygenerowane w IDS |
 |---|---|---|---|
 | 1 | 10 | 10 | 5 · 10 = 50 |
 | 2 | 100 | 100 | 4 · 100 = 400 |
@@ -171,7 +173,7 @@ Oznaczenia: *b* to współczynnik rozgałęzienia, *d* to głębokość najpłyt
 
 | | IDS |
 |---|---|
-| Zupełność | tak, jeśli *b* jest skończone |
+| Kompletność | tak, jeśli *b* jest skończone |
 | Optymalność | tak, jeśli każdy krok kosztuje tyle samo |
 | Czas | O(*b*<sup>*d*</sup>) |
 | Pamięć | O(*b*·*d*) |
@@ -182,7 +184,7 @@ Oznaczenia: *b* to współczynnik rozgałęzienia, *d* to głębokość najpłyt
 
 ## Częste błędy
 
-1. **Brak sprawdzania cykli.** DLS bez sprawdzania cykli na grafie bez celu zawsze dochodzi do limitu i zwraca `CUTOFF`, więc IDS nigdy się nie kończy.
+1. **Brak sprawdzania cykli.** DLS bez sprawdzania cykli na grafie z cyklami i bez celu zawsze dochodzi do limitu i zwraca `CUTOFF`, więc IDS nigdy się nie kończy.
 2. **Odcięcie zgłoszone jako porażka.** Gdy DLS zwraca `None` zamiast `CUTOFF`, IDS po pierwszej rundzie uznaje, że celu nie ma, i się poddaje.
 3. **Błąd o jeden na granicy limitu.** Warunek `depth > limit` zamiast `depth >= limit` rozwija także węzły na samej granicy. DLS sięga wtedy o poziom głębiej, niż obiecuje limit.
 
@@ -266,7 +268,7 @@ Sprawdź dwie rzeczy. Czy DLS zwraca `None`, gdy przy danym limicie nic nie zost
 ## Co zapamiętać
 
 - DLS to DFS z limitem głębokości. Ma trzy wyniki: cel, `CUTOFF` (cel może być głębiej) i `None` (celu nie ma).
-- IDS uruchamia DLS z limitami 0, 1, 2, … i łączy pamięć DFS, O(*b*·*d*), z zupełnością i optymalnością BFS przy jednakowych kosztach.
+- IDS uruchamia DLS z limitami 0, 1, 2, … i łączy pamięć DFS, O(*b*·*d*), z kompletnością i optymalnością BFS przy jednakowych kosztach.
 - Powtórzona praca kosztuje niewiele, około *b*/(*b* − 1) razy więcej niż BFS, bo najwięcej węzłów leży na najgłębszym poziomie.
 - IDS sprawdza tylko cykle na bieżącej ścieżce, więc w przestrzeniach z wieloma ścieżkami nadmiarowymi przegrywa z BFS.
 

@@ -2,7 +2,7 @@
 
 Violated requirement: an admissible heuristic never overestimates; one drive can
 pass several parcels, so the sum counts some of the way more than once.
-Common mistake in the lesson: "Summing the distances".
+Common mistake in the lesson: "Counting the same drive twice".
 """
 
 CAUGHT_BY = ("test_heuristic_is_admissible",)

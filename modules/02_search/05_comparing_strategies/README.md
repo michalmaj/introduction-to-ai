@@ -15,7 +15,7 @@ After this lesson you will be able to:
 
 ## The problem
 
-The robot now knows five ways to look for a route. Which one should it take to work? There is no single answer. When all moves cost the same, BFS is perfectly good. When the warehouse has slow zones, BFS starts to overpay. A\* is usually the best, but only with a good heuristic. Greedy can be very fast, but it guarantees nothing.
+The robot now knows five ways to look for a route. Which one should it take to work? There is no single answer. When all moves cost the same, BFS is perfectly good. When the warehouse has slow zones, BFS starts to overpay. A\* is usually the best, but only with a good heuristic. Greedy can be very fast, but it does not guarantee the cheapest route.
 
 In this lesson you do not write a new algorithm. You gather what you already know into one table, and then test it in experiments on your own code from lessons 2.2–2.4.
 
@@ -33,7 +33,7 @@ It is like choosing a means of transport: the fastest, the cheapest and the most
 
 ## Properties to compare
 
-We take all the algorithms as written in this course: as graph searches that remember reached or expanded states. The heuristic of A\* is admissible. We compare four properties:
+We take all the algorithms as written in this course: as graph searches that remember reached or expanded states. Step costs are always positive. The heuristic of A\* is admissible, while the heuristic of greedy may be any heuristic. We compare four properties:
 
 | Key in `task.py` | Property | Assumptions |
 |---|---|---|
@@ -72,14 +72,14 @@ Watch out with DFS. Its small memory, O(*b*·*m*), is an advantage only when *m*
 
 ### Worked example
 
-There is no step-by-step trace here, because none of the algorithms is new. Instead we practise reasoning about properties. Take a sixth algorithm that is not in the table: **DFS that does not remember states**, the depth-first tree search of lesson 2.1.
+There is no step-by-step trace here, because none of the algorithms is new. Instead we practise justifying properties. Take a sixth algorithm that is not in the table: **DFS that does not remember states**, the depth-first tree search of lesson 2.1.
 
 - **Completeness on a finite space: no.** Counterexample: a graph with the cycle A–B–A. DFS without memory can go back and forth forever and never explore the rest of the graph.
-- **Completeness on an infinite space: no.** If it already fails on a finite graph with a cycle, it fails on an infinite one all the more.
-- **Optimality with equal costs: no.** A counterexample from lesson 2.2: on the example graph DFS found the route S → A → C → B → D → G, while the three-step route S → A → C → G exists.
+- **Completeness on an infinite space: no.** The same counterexample works here, because the definition also allows a finite space: in a graph with a cycle in which a solution exists, DFS without memory can go round the cycle and never reach the solution.
+- **Optimality with equal costs: no.** A counterexample without cycles: from the start `S` edges lead to `A` and `B`, from `A` to `C`, and from `C` and from `B` to the goal `G`. DFS that tries `A` first returns S → A → C → G (3 steps), although S → B → G (2 steps) exists.
 - **Optimality with any costs: no.** If an algorithm is not optimal even when all costs are equal, it will not be optimal when costs differ either.
 
-Notice the last step. Two properties follow from others here: completeness on an infinite space implies completeness on a finite one, and optimality with any costs implies optimality with equal costs.
+Notice the last step. Optimality with any costs implies optimality with equal costs, because equal costs are a special case of any costs. Completeness is not that simple. On a finite space the algorithm must also stop when there is no solution, and the definition of completeness on an infinite space does not require that. Each of these two properties has to be checked separately.
 
 ### Your turn
 
@@ -87,10 +87,10 @@ Fill in the table `PROPERTIES` in Part A of `task.py` for the five algorithms of
 
 ## Common mistakes
 
-1. **DFS gets lost in cycles.** This is true only of DFS without a memory of states. The DFS of lesson 2.2 remembers expanded states, so on a finite space it always stops.
-2. **Completeness is the same everywhere.** An algorithm that is complete on a finite space need not be complete on an infinite one. There DFS can go down an infinitely long branch.
-3. **Greedy heads straight for the goal, so it is optimal.** Greedy looks only at the estimated distance to the goal and does not count what it has already paid. Even with equal costs it can take a roundabout way.
-4. **The shortest route is the cheapest.** BFS minimises the number of steps, not the cost. In a warehouse with slow zones these are two different things.
+1. **Confusing DFS with tree search.** The DFS of the worked example remembers no states, while the DFS of lesson 2.2 remembers expanded states. They are two different algorithms with different properties. Check which one the table asks about.
+2. **One answer for both kinds of space.** Completeness on a finite and on an infinite space are two different properties. An algorithm can have one and not the other, so look for a separate argument or counterexample for each.
+3. **Mistaking speed for optimality.** That an algorithm reaches the goal quickly says nothing about the cost of the route it finds. Optimality has to be justified separately.
+4. **Confusing steps with cost.** When steps have different costs, the route with the fewest steps need not be the cheapest. Check what exactly each algorithm minimises.
 
 The lesson's tests catch each of these mistakes.
 
@@ -134,9 +134,9 @@ Open [experiments.ipynb](experiments.ipynb). In `"mine"` mode the notebook runs 
 
 ## Review questions
 
-1. Explain why the DFS of lesson 2.2 is complete on a finite state space, although the DFS of the worked example is not.
-2. Give an example of an infinite state space on which DFS does not find an existing solution, while BFS does.
-3. Why does A\* need an admissible heuristic to be optimal, while greedy is not optimal even with the best heuristic?
+1. How does the DFS of lesson 2.2 differ from the DFS of the worked example? How does that difference affect completeness on a finite state space?
+2. Build an infinite state space in which a solution exists. Which of the five algorithms are sure to find it? Justify one "yes" and one "no".
+3. Which part of the optimality argument for A\* uses the admissibility of the heuristic? Can the argument be carried over to greedy?
 4. On the map `open_floor.txt` DFS has a larger frontier than BFS. How does that square with DFS "using little memory"?
 5. You have a warehouse map without slow zones and very little memory. Which algorithm do you choose, and why?
 
@@ -159,7 +159,7 @@ To answer "no", one graph on which the algorithm fails is enough. Good sources o
 <details>
 <summary>Hint 3: the properties depend on each other</summary>
 
-An algorithm complete on an infinite space is also complete on a finite one. An algorithm optimal with any costs is also optimal with equal costs. These dependencies let you check whether a row is consistent.
+An algorithm optimal with any costs is also optimal with equal costs. That lets you check whether the last two columns are consistent. Completeness is not that simple: on a finite space the algorithm must also stop when there is no solution.
 
 </details>
 
@@ -167,8 +167,8 @@ An algorithm complete on an infinite space is also complete on a finite one. An 
 
 - The five algorithms differ only in which node they take off the frontier next.
 - Completeness and optimality depend on assumptions: a finite or infinite space, equal or different costs, an admissible or arbitrary heuristic.
-- BFS is optimal only with equal costs; UCS and A\* also with different ones.
-- Greedy and DFS do not guarantee optimality, but they can be very fast.
+- To write "yes" you need an argument; to write "no" one counterexample is enough.
+- Speed, optimality and memory are three different criteria. No algorithm wins on all of them.
 - Memory is a separate resource: we measure it by the largest frontier and the set of reached states.
 - With many parcels the state space grows exponentially and exact search stops being enough.
 

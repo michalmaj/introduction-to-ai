@@ -1,7 +1,7 @@
 """Mutant: DFS is believed to find a goal in any state space.
 
 Violated requirement: on an infinite state space DFS can follow an endless branch.
-Common mistake in the lesson: "Completeness is the same everywhere".
+Common mistake in the lesson: "One answer for both kinds of space".
 """
 
 CAUGHT_BY = ("test_part_a_complete_infinite",)

@@ -44,13 +44,13 @@ A good answer includes:
 
 ### 2. An infinite space
 
-Example: the state is an integer *n*. Two actions lead out of every state: "+1" and "goal", where "goal" leads to the goal state. If DFS tries "+1" first, it goes down the infinite branch 0, 1, 2, 3, … and never comes back. BFS expands layer by layer, so it finds the goal already at depth 1. The same pattern fits a warehouse whose state holds a counter of cells driven.
+Example: the state is an integer *n*. Two actions lead out of every state: "+1" and "goal", where "goal" leads to the goal state. BFS, UCS and A\* are sure to find the solution, DFS and greedy are not. "Yes" for BFS: it explores the space layer by layer, and the goal lies at depth 1. "No" for DFS: if it tries "+1" first, it goes down the infinite branch 0, 1, 2, 3, … and never comes back. The same pattern fits a warehouse whose state holds a counter of cells driven.
 
 A good answer includes:
 
-- an infinite branch in which states never repeat;
-- an explanation of why DFS never comes back from it;
-- an explanation of why BFS finds the shallow goal.
+- a space with an infinite branch in which states never repeat;
+- the split: BFS, UCS and A\* are sure to find the solution, DFS and greedy are not;
+- a justification of one "yes" and one "no".
 
 ### 3. A\* and greedy
 
@@ -110,4 +110,4 @@ Results of the reference implementations. Your implementations may expand a slig
   | `depot` | 6 | 23 |
 
   DFS has the smaller frontier only on `congested.txt`, where its route is short. On the open floor it goes 138 steps deep and keeps on the stack the siblings of almost every node on that path.
-- **Experiment 3.** The number of expansions roughly doubles with every parcel: from 101 with one parcel to 7377 with six (with *h* = 0). On the logarithmic chart that is almost a straight line. With 20 parcels it would be of the order of 155 · 2<sup>20</sup>, more than 160 million states. The heuristic "number of parcels" helps hardly at all (6844 instead of 7377), because it is tiny compared with the true cost, which consists mostly of driving. You will design better heuristics in lesson 2.7. Really large problems, though, need other methods, described in module 4.
+- **Experiment 3.** The number of expansions roughly doubles with every parcel: from 101 with one parcel to 7377 with six (with *h* = 0). On the logarithmic chart that is almost a straight line. The map with aisles has 155 free cells, and each parcel is either still on the floor or already collected. With 20 parcels there are therefore 155 · 2<sup>20</sup> states, more than 160 million, and A\* would have to expand a good part of them. The heuristic "number of parcels" helps hardly at all (6844 instead of 7377), because it is tiny compared with the true cost, which consists mostly of driving. You will design better heuristics in lesson 2.7. Really large problems, though, need other methods, described in module 4.

@@ -16,8 +16,8 @@ Zajrzyj tutaj dopiero po własnej próbie. Treść zadań znajdziesz w [lekcji](
 
 Uzasadnienia, kolumna po kolumnie:
 
-- **Zupełność na skończonej przestrzeni.** Wszystkie pięć algorytmów to przeszukiwanie grafu: każdy stan rozwijają najwyżej raz (albo, w UCS i A\*, ponownie tylko wtedy, gdy znajdą do niego tańszą drogę, a takich poprawek jest skończenie wiele). Na skończonej przestrzeni każdy z nich w końcu albo znajdzie cel, albo opróżni frontier i zwróci `None`.
-- **Zupełność na nieskończonej przestrzeni.**
+- **Kompletność na skończonej przestrzeni.** Wszystkie pięć algorytmów to przeszukiwanie grafu: każdy stan rozwijają najwyżej raz (albo, w UCS i A\*, ponownie tylko wtedy, gdy znajdą do niego tańszą drogę, a takich poprawek jest skończenie wiele). Na skończonej przestrzeni każdy z nich w końcu albo znajdzie cel, albo opróżni frontier i zwróci `None`.
+- **Kompletność na nieskończonej przestrzeni.**
   - BFS bada przestrzeń warstwami. Cel leży na skończonej głębokości *d*, a każda warstwa jest skończona, bo *b* jest skończone, więc BFS do niego dotrze.
   - UCS rozwija węzły w kolejności kosztu. Węzłów tańszych niż *C*\* jest skończenie wiele, bo każdy krok kosztuje co najmniej *ε*.
   - A\* rozwija tylko węzły o *f* ≤ *C*\*, a ponieważ *f* ≥ *g*, jest ich też skończenie wiele.
@@ -44,13 +44,13 @@ Dobra odpowiedź zawiera:
 
 ### 2. Nieskończona przestrzeń
 
-Przykład: stan to liczba całkowita *n*. Z każdego stanu prowadzą dwie akcje: „+1” i „cel”, gdzie „cel” prowadzi do stanu docelowego. Jeśli DFS najpierw próbuje akcji „+1”, schodzi w nieskończoną gałąź 0, 1, 2, 3, … i nigdy nie wraca. BFS rozwija warstwami, więc już na głębokości 1 znajdzie cel. Ten sam schemat pasuje do magazynu, w którym stan zawiera licznik przejechanych pól.
+Przykład: stan to liczba całkowita *n*. Z każdego stanu prowadzą dwie akcje: „+1” i „cel”, gdzie „cel” prowadzi do stanu docelowego. Na pewno znajdą rozwiązanie BFS, UCS i A\*, a DFS i greedy nie. „Tak” dla BFS: przestrzeń bada warstwami, a cel leży na głębokości 1. „Nie” dla DFS: jeśli najpierw próbuje akcji „+1”, schodzi w nieskończoną gałąź 0, 1, 2, 3, … i nigdy nie wraca. Ten sam schemat pasuje do magazynu, w którym stan zawiera licznik przejechanych pól.
 
 Dobra odpowiedź zawiera:
 
-- nieskończoną gałąź, w której stany się nie powtarzają;
-- wyjaśnienie, dlaczego DFS z niej nie wraca;
-- wyjaśnienie, dlaczego BFS znajduje płytki cel.
+- przestrzeń z nieskończoną gałęzią, w której stany się nie powtarzają;
+- podział: BFS, UCS i A\* na pewno znajdą rozwiązanie, DFS i greedy nie;
+- uzasadnienie jednego „tak” i jednego „nie”.
 
 ### 3. A\* a greedy
 
@@ -110,4 +110,4 @@ Wyniki implementacji wzorcowych. Twoje implementacje mogą rozwinąć nieco inn�
   | `depot` | 6 | 23 |
 
   DFS ma mniejszy frontier tylko na `congested.txt`, gdzie jego trasa jest krótka. Na otwartej podłodze schodzi na głębokość 138 kroków i trzyma na stosie rodzeństwo prawie każdego węzła na tej ścieżce.
-- **Eksperyment 3.** Liczba rozwinięć rośnie mniej więcej dwukrotnie z każdą paczką: od 101 przy jednej paczce do 7377 przy sześciu (z *h* = 0). Na wykresie logarytmicznym to prawie prosta. Przy 20 paczkach byłoby to rzędu 155 · 2<sup>20</sup>, czyli ponad 160 milionów stanów. Heurystyka „liczba paczek” prawie nic nie daje (6844 zamiast 7377), bo jest bardzo mała w porównaniu z prawdziwym kosztem, który składa się głównie z jazdy. Lepsze heurystyki zaprojektujesz w lekcji 2.7. Na naprawdę duże problemy potrzeba jednak innych metod, opisanych w module 4.
+- **Eksperyment 3.** Liczba rozwinięć rośnie mniej więcej dwukrotnie z każdą paczką: od 101 przy jednej paczce do 7377 przy sześciu (z *h* = 0). Na wykresie logarytmicznym to prawie prosta. Mapa z alejkami ma 155 wolnych pól, a każda paczka albo jeszcze leży, albo jest już zebrana. Przy 20 paczkach stanów jest więc 155 · 2<sup>20</sup>, czyli ponad 160 milionów, a A\* musiałby rozwinąć sporą ich część. Heurystyka „liczba paczek” prawie nic nie daje (6844 zamiast 7377), bo jest bardzo mała w porównaniu z prawdziwym kosztem, który składa się głównie z jazdy. Lepsze heurystyki zaprojektujesz w lekcji 2.7. Na naprawdę duże problemy potrzeba jednak innych metod, opisanych w module 4.

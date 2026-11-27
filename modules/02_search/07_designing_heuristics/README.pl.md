@@ -33,19 +33,19 @@ Tak liczymy w życiu codziennym. „Do sklepu jest co najmniej dziesięć minut,
 
 $$h^*_{\text{zrelaksowany}}(n) \le h^*(n),$$
 
-więc dokładny koszt rozwiązania problemu zrelaksowanego jest heurystyką dopuszczalną. Co więcej, jest spójny: w problemie zrelaksowanym dokładne koszty spełniają nierówność trójkąta, a każda akcja prawdziwego problemu jest też akcją zrelaksowanego.
+więc dokładny koszt rozwiązania problemu zrelaksowanego jest heurystyką dopuszczalną. Co więcej, taka heurystyka jest spójna: w problemie zrelaksowanym dokładne koszty spełniają nierówność trójkąta, a każda akcja prawdziwego problemu jest też akcją zrelaksowanego.
 
 Żeby to się opłacało, problem zrelaksowany musi dać się rozwiązać **szybko**, najlepiej wzorem. Inaczej liczenie heurystyki kosztuje więcej, niż oszczędza.
 
 ### Dominacja
 
-Heurystyka *h*<sub>2</sub> **dominuje** heurystykę *h*<sub>1</sub>, jeśli obie są dopuszczalne i dla każdego stanu *h*<sub>2</sub>(*n*) ≥ *h*<sub>1</sub>(*n*). Wtedy A\* z *h*<sub>2</sub> nie rozwija więcej węzłów niż z *h*<sub>1</sub>, nie licząc remisów. Uzasadnienie: przy spójnej heurystyce A\* rozwija każdy węzeł o *f*(*n*) < *C*\*, czyli o *h*(*n*) < *C*\* − *g*(*n*). Im większe *h*, tym mniej węzłów spełnia ten warunek.
+Heurystyka *h*<sub>2</sub> **dominuje** heurystykę *h*<sub>1</sub>, jeśli obie są dopuszczalne i dla każdego stanu *h*<sub>2</sub>(*n*) ≥ *h*<sub>1</sub>(*n*). Jeśli obie są też spójne, A\* z *h*<sub>2</sub> nie rozwija więcej węzłów niż z *h*<sub>1</sub>, nie licząc remisów. Uzasadnienie: przy spójnej heurystyce A\* rozwija każdy węzeł o *f*(*n*) < *C*\*, czyli o *h*(*n*) < *C*\* − *g*(*n*). Im większe *h*, tym mniej węzłów spełnia ten warunek.
 
 **Maksimum heurystyk.** Gdy masz kilka dopuszczalnych heurystyk i żadna nie dominuje pozostałych, weź ich maksimum: *h*(*n*) = max(*h*<sub>1</sub>(*n*), …, *h*<sub>k</sub>(*n*)). Maksimum też nie przeszacowuje, bo żadna ze składowych tego nie robi, a dominuje każdą z nich.
 
 ### Koszt heurystyki
 
-Silniejsza heurystyka oszczędza rozwinięcia, ale sama też kosztuje: liczysz ją przy każdym wygenerowanym węźle. Heurystyka, która przegląda wszystkie pary paczek, przy dziesięciu paczkach wykonuje sto porównań na węzeł. Zwykle to się opłaca, bo każde zaoszczędzone rozwinięcie to wiele wygenerowanych węzłów mniej, ale warto to zmierzyć, a nie zakładać.
+Silniejsza heurystyka oszczędza rozwinięcia, ale sama też kosztuje: liczysz ją przy każdym wygenerowanym węźle. Heurystyka, która przegląda wszystkie pary paczek (*p*, *q*), przy dziesięciu paczkach liczy sto odległości na każdy węzeł. Zwykle to się opłaca, bo każde zaoszczędzone rozwinięcie to wiele wygenerowanych węzłów mniej, ale warto to zmierzyć, a nie zakładać.
 
 ## Prześledź ręcznie
 
@@ -63,7 +63,7 @@ Każdy kolejny problem zrelaksowany jest bliższy prawdziwemu, więc daje więks
 
 Wróć do problemu zbierania paczek z lekcji 1.3. Stan to para (pole robota, zbiór paczek, które jeszcze leżą). Ruch na sąsiednie wolne pole kosztuje 1 i podniesienie paczki (`PICK`) też kosztuje 1. Cel: zebrać wszystkie paczki. Odległość Manhattan między polami oznaczamy *M*.
 
-Oto sześć kandydatów na heurystykę:
+Oto sześciu kandydatów na heurystykę:
 
 | Klucz | Heurystyka |
 |---|---|
@@ -80,10 +80,10 @@ Dla heurystyki dopuszczalnej znajdź problem zrelaksowany, z którego ona wynika
 
 ## Częste błędy
 
-1. **Suma odległości.** Dodanie odległości do wszystkich paczek liczy część drogi wielokrotnie: jadąc do dalszej paczki, robot często mija bliższe. Taka heurystyka przeszacowuje.
+1. **Ta sama droga liczona kilka razy.** Jeśli heurystyka składa się z części, z których każda zakłada osobny przejazd, łatwo policzyć jeden odcinek drogi wielokrotnie. Jadąc do jednej paczki, robot często mija inne. Taka heurystyka przeszacowuje.
 2. **Mnożenie przez liczbę paczek.** Odległość do najbliższej paczki razy liczba paczek wygląda rozsądnie, ale gdy paczki leżą obok siebie, robot nie musi jechać tak daleko do każdej z nich.
-3. **Sama liczba paczek.** Jest dopuszczalna, ale prawie nic nie wnosi, bo pomija jazdę, czyli największą część kosztu.
-4. **Brak przypadku bez paczek.** `max()` ani `min()` ze zbioru pustego nie działa. W stanie celu heurystyka musi zwrócić 0, a nie zgłosić błąd.
+3. **Heurystyka bez odległości.** Heurystyka, która pomija jazdę, czyli największą część kosztu, prawie nie pomaga A\*. Testy wymagają, żeby Twoja oszczędzała więcej pracy niż samo liczenie paczek.
+4. **Pominięty stan bez paczek.** `max()` ani `min()` ze zbioru pustego nie działa. W stanie celu heurystyka musi zwrócić 0, a nie zgłosić błąd.
 
 Testy lekcji wykrywają każdy z tych błędów.
 
@@ -130,15 +130,15 @@ Test dopuszczalności liczy dokładny koszt dla każdego osiągalnego stanu na t
 Otwórz [experiments.pl.ipynb](experiments.pl.ipynb). Przed każdym eksperymentem zapisz swoje przewidywanie, a potem je sprawdź:
 
 1. Ile rozwinięć potrzebuje A\* z każdą heurystyką, także z Twoją, przy 1–6 paczkach? Która heurystyka daje za długi plan?
-2. Czy *h*<sub>3</sub> dominuje *h*<sub>2</sub> we wszystkich stanach? Czy Twoja heurystyka dominuje którąś z nich?
+2. Czy *h*<sub>3</sub> jest większa lub równa *h*<sub>2</sub> we wszystkich stanach? Jak wypada w tym porównaniu Twoja heurystyka?
 3. Czy heurystyka, która oszczędza najwięcej rozwinięć, jest też najszybsza?
 
 ## Pytania kontrolne
 
 1. Dlaczego dokładny koszt problemu zrelaksowanego nigdy nie przeszacowuje kosztu prawdziwego problemu?
-2. Z jakiego problemu zrelaksowanego wynika heurystyka „liczba paczek”? A heurystyka *h*<sub>3</sub>?
+2. Wybierz z części A heurystykę, którą uznałeś za dopuszczalną, i podaj problem zrelaksowany albo inny argument, z którego to wynika.
 3. Masz dwie dopuszczalne heurystyki, z których żadna nie dominuje drugiej. Jak je połączyć, żeby nadal była dopuszczalna i nie gorsza od żadnej z nich?
-4. Podaj stan, w którym *h*<sub>6</sub> przeszacowuje.
+4. Wybierz z części A heurystykę, którą uznałeś za niedopuszczalną, i podaj stan, w którym przeszacowuje.
 5. Kiedy silniejsza heurystyka może spowolnić przeszukiwanie, choć zmniejsza liczbę rozwinięć?
 
 ## Jeśli utkniesz

@@ -70,13 +70,13 @@ Dobra odpowiedź zawiera:
 
 ### 3. DFS na nieskończonej przestrzeni stanów
 
-Jeśli stan zawiera licznik, który może rosnąć bez końca, każdy krok prowadzi do nowego stanu. DFS może wtedy schodzić coraz głębiej jedną gałęzią i nigdy nie wrócić, nawet jeśli płytki cel istnieje w innej gałęzi. Zbiór odwiedzonych stanów nie pomaga, bo stany się nie powtarzają. DFS nie jest więc zupełny. BFS znajdzie cel na skończonej głębokości, o ile współczynnik rozgałęzienia jest skończony. Lekarstwem jest ograniczenie głębokości albo iteracyjne pogłębianie (lekcja 2.6).
+Jeśli stan zawiera licznik, który może rosnąć bez końca, każdy krok prowadzi do nowego stanu. DFS może wtedy schodzić coraz głębiej jedną gałęzią i nigdy nie wrócić, nawet jeśli płytki cel istnieje w innej gałęzi. Zbiór odwiedzonych stanów nie pomaga, bo stany się nie powtarzają. DFS nie jest więc kompletny. BFS znajdzie cel na skończonej głębokości, o ile współczynnik rozgałęzienia jest skończony. Lekarstwem jest ograniczenie głębokości albo iteracyjne pogłębianie (lekcja 2.6).
 
 Dobra odpowiedź zawiera:
 
 - opis nieskończonej gałęzi, w której stany się nie powtarzają;
 - uwagę, że zbiór odwiedzonych stanów tu nie pomaga;
-- wniosek, że DFS nie jest zupełny, a BFS jest;
+- wniosek, że DFS nie jest kompletny, a BFS jest;
 - przynajmniej jeden sposób zaradzenia.
 
 ### 4. Kluczące trasy DFS

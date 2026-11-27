@@ -39,13 +39,13 @@ To pay off, the relaxed problem must be **quick** to solve, ideally with a formu
 
 ### Dominance
 
-A heuristic *h*<sub>2</sub> **dominates** a heuristic *h*<sub>1</sub> if both are admissible and *h*<sub>2</sub>(*n*) ≥ *h*<sub>1</sub>(*n*) for every state. Then A\* with *h*<sub>2</sub> expands no more nodes than with *h*<sub>1</sub>, apart from ties. The reason: with a consistent heuristic A\* expands every node with *f*(*n*) < *C*\*, that is with *h*(*n*) < *C*\* − *g*(*n*). The larger *h*, the fewer nodes meet this condition.
+A heuristic *h*<sub>2</sub> **dominates** a heuristic *h*<sub>1</sub> if both are admissible and *h*<sub>2</sub>(*n*) ≥ *h*<sub>1</sub>(*n*) for every state. If both are also consistent, A\* with *h*<sub>2</sub> expands no more nodes than with *h*<sub>1</sub>, apart from ties. The reason: with a consistent heuristic A\* expands every node with *f*(*n*) < *C*\*, that is with *h*(*n*) < *C*\* − *g*(*n*). The larger *h*, the fewer nodes meet this condition.
 
 **The maximum of heuristics.** When you have several admissible heuristics and none dominates the others, take their maximum: *h*(*n*) = max(*h*<sub>1</sub>(*n*), …, *h*<sub>k</sub>(*n*)). The maximum does not overestimate either, because none of its parts does, and it dominates each of them.
 
 ### The cost of a heuristic
 
-A stronger heuristic saves expansions, but it costs something itself: you compute it for every generated node. A heuristic that looks at every pair of parcels makes a hundred comparisons per node with ten parcels. Usually that pays off, because every expansion saved means many fewer generated nodes, but it is worth measuring rather than assuming.
+A stronger heuristic saves expansions, but it costs something itself: you compute it for every generated node. A heuristic that looks at every pair of parcels (*p*, *q*) computes a hundred distances for every node with ten parcels. Usually that pays off, because every expansion saved means many fewer generated nodes, but it is worth measuring rather than assuming.
 
 ## Trace it by hand
 
@@ -80,9 +80,9 @@ For an admissible heuristic, find the relaxed problem it comes from. For one tha
 
 ## Common mistakes
 
-1. **Summing the distances.** Adding up the distances to all parcels counts part of the way several times: driving to a farther parcel, the robot often passes closer ones. Such a heuristic overestimates.
+1. **Counting the same drive twice.** If a heuristic is made of parts that each assume a separate drive, it is easy to count one stretch of the way several times. Driving to one parcel, the robot often passes others. Such a heuristic overestimates.
 2. **Multiplying by the number of parcels.** The distance to the nearest parcel times the number of parcels looks reasonable, but when parcels lie next to each other, the robot does not have to drive that far for each of them.
-3. **Counting parcels only.** It is admissible, but adds almost nothing, because it leaves out driving, the largest part of the cost.
+3. **A heuristic without distances.** A heuristic that leaves out driving, the largest part of the cost, hardly helps A\*. The tests require yours to save more work than just counting parcels.
 4. **No case for zero parcels.** Neither `max()` nor `min()` works on an empty set. In a goal state the heuristic must return 0, not raise an error.
 
 The lesson's tests catch each of these mistakes.
@@ -130,15 +130,15 @@ The admissibility test computes the exact cost of every reachable state on three
 Open [experiments.ipynb](experiments.ipynb). Before each experiment write down your prediction, then check it:
 
 1. How many expansions does A\* need with each heuristic, yours included, for 1–6 parcels? Which heuristic gives a plan that is too long?
-2. Does *h*<sub>3</sub> dominate *h*<sub>2</sub> in every state? Does your heuristic dominate either of them?
+2. Is *h*<sub>3</sub> greater than or equal to *h*<sub>2</sub> in every state? How does your heuristic compare?
 3. Is the heuristic that saves the most expansions also the fastest?
 
 ## Review questions
 
 1. Why does the exact cost of a relaxed problem never overestimate the cost of the real problem?
-2. Which relaxed problem does the heuristic "number of parcels" come from? And the heuristic *h*<sub>3</sub>?
+2. Pick a heuristic from Part A that you judged admissible, and give the relaxed problem, or another argument, that it follows from.
 3. You have two admissible heuristics, neither of which dominates the other. How do you combine them so that the result is still admissible and no worse than either?
-4. Give a state in which *h*<sub>6</sub> overestimates.
+4. Pick a heuristic from Part A that you judged not admissible, and give a state in which it overestimates.
 5. When can a stronger heuristic slow the search down, even though it reduces the number of expansions?
 
 ## If you get stuck

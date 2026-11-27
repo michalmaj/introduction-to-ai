@@ -35,14 +35,15 @@ Dobra odpowiedź zawiera:
 - uwagę, że każdy prawdziwy plan jest też planem zrelaksowanym;
 - wniosek, że optimum zrelaksowane jest nie większe niż prawdziwe.
 
-### 2. Problemy zrelaksowane dla „liczby paczek” i *h*<sub>3</sub>
+### 2. Argument dla heurystyki dopuszczalnej
 
-„Liczba paczek” to koszt problemu, w którym robot podnosi paczki bez jazdy, na przykład z dowolnego miejsca. *h*<sub>3</sub> wynika z problemu, w którym robot jeździ po siatce bez ścian i musi dojechać tylko do najdalszej paczki, a pozostałe może podnieść z daleka. Najtańszy plan to dojazd po najkrótszej drodze bez ścian (*M* ruchów) i podniesienie wszystkich paczek.
+Każda z trzech dopuszczalnych heurystyk ma prosty argument. *h*<sub>1</sub> to koszt problemu zrelaksowanego, w którym robot podnosi paczki bez jazdy, na przykład z dowolnego miejsca. Dla *h*<sub>2</sub> i *h*<sub>3</sub> najprościej podać dolne oszacowanie. Zanim robot skończy, musi stanąć na każdej paczce, więc musi przejechać co najmniej odległość Manhattan do najbliższej paczki (*h*<sub>2</sub>), a nawet do najdalszej (*h*<sub>3</sub>), bo krótszej drogi po siatce nie ma nawet bez ścian. Do tego dochodzi jedna akcja `PICK` na paczkę. Problem zrelaksowany dla *h*<sub>3</sub> zależałby od stanu, bo najdalsza paczka zmienia się, gdy robot jedzie, dlatego argument przez dolne oszacowanie jest tu prostszy.
 
 Dobra odpowiedź zawiera:
 
-- dla liczby paczek: usunięcie potrzeby jazdy;
-- dla *h*<sub>3</sub>: usunięcie ścian i wymogu odwiedzenia wszystkich paczek poza najdalszą.
+- wybór heurystyki, która rzeczywiście jest dopuszczalna;
+- problem zrelaksowany albo dolne oszacowanie kosztu;
+- uwzględnienie akcji `PICK`.
 
 ### 3. Łączenie heurystyk
 
@@ -54,14 +55,19 @@ Dobra odpowiedź zawiera:
 - uzasadnienie dopuszczalności i dominacji;
 - opcjonalnie: ostrzeżenie przed sumą.
 
-### 4. Stan, w którym *h*<sub>6</sub> przeszacowuje
+### 4. Stan, w którym heurystyka przeszacowuje
 
-Robot stoi na polu ostatniej paczki. Prawdziwy koszt to 1, czyli jedna akcja `PICK`. *h*<sub>6</sub> daje 2.
+Dla każdej z trzech niedopuszczalnych heurystyk wystarczy jeden stan:
+
+- *h*<sub>4</sub>: robot w polu (1, 1), paczki w (1, 2) i (1, 3). Wystarczą 4 akcje, a heurystyka daje 5;
+- *h*<sub>5</sub>: stan celu (wszystkie paczki zebrane), w którym robot stoi daleko od rampy. Prawdziwy koszt to 0, a heurystyka jest dodatnia;
+- *h*<sub>6</sub>: robot stoi na polu ostatniej paczki. Prawdziwy koszt to 1, czyli jedna akcja `PICK`, a heurystyka daje 2.
 
 Dobra odpowiedź zawiera:
 
+- wybór heurystyki, która rzeczywiście nie jest dopuszczalna;
 - konkretny stan;
-- prawdziwy koszt i wartość heurystyki.
+- prawdziwy koszt i wartość heurystyki w tym stanie.
 
 ### 5. Kiedy silniejsza heurystyka spowalnia
 

@@ -56,6 +56,8 @@ You import the constant `CUTOFF` from `introai.search`.
 
 **Cycles.** DLS does not remember visited states, because its whole advantage is small memory. It only checks whether the state of a node already appears on the node's own path: walking up the parents is enough. Such a node forms a cycle and is not expanded. Without this check DLS in the warehouse would drive back and forth up to the limit.
 
+**A note for readers of the textbook.** In Russell and Norvig's pseudocode the cutoff condition reads *depth* > ℓ, so there a limit ℓ still lets nodes at depth ℓ be expanded. In this course a limit ℓ means that nodes at depth ℓ are already cut off, hence the condition ≥. Both describe the same algorithm, only with the limit shifted by one.
+
 ### Iterative deepening
 
 ```text
@@ -69,11 +71,11 @@ IDS ends when DLS finds a goal or returns `None`. The latter means that nothing 
 
 ### How much work is repeated?
 
-Every round starts again from the root. Nodes on shallow levels are therefore expanded many times. What does that cost? In a full tree with branching factor *b* and the goal at depth *d*, a node at depth *k* is expanded in every round whose limit is greater than *k*, that is *d* − *k* times. On the deepest level, where most of the nodes are, IDS works only once.
+Every round starts again from the root. Nodes on shallow levels are therefore expanded many times. What does that cost? In a full tree with branching factor *b* and the goal at depth *d*, a node at depth *k* is expanded in every round whose limit is greater than *k*, that is *d* − *k* times, and generated *d* − *k* + 1 times, because it is created as soon as its parent is expanded. The nodes of the deepest level, the most numerous, are generated only once.
 
 An example for *b* = 10 and *d* = 5. We count **generated** nodes:
 
-| Level | Nodes on the level | Generations in BFS | Generations in IDS |
+| Level | Nodes on the level | Generated in BFS | Generated in IDS |
 |---|---|---|---|
 | 1 | 10 | 10 | 5 · 10 = 50 |
 | 2 | 100 | 100 | 4 · 100 = 400 |
@@ -182,7 +184,7 @@ Notation: *b* is the branching factor, *d* is the depth of the shallowest goal.
 
 ## Common mistakes
 
-1. **No cycle check.** Without a cycle check, DLS on a graph with no goal always reaches the limit and returns `CUTOFF`, so IDS never ends.
+1. **No cycle check.** Without a cycle check, DLS on a graph with cycles and no goal always reaches the limit and returns `CUTOFF`, so IDS never ends.
 2. **A cutoff reported as failure.** When DLS returns `None` instead of `CUTOFF`, IDS decides after the first round that there is no goal and gives up.
 3. **Off by one at the limit.** The condition `depth > limit` instead of `depth >= limit` also expands the nodes on the limit itself. DLS then reaches one level deeper than the limit promises.
 

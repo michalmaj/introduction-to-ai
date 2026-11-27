@@ -17,7 +17,7 @@ Po tym module:
 
 Listę lekcji modułu, ich zależności i stan przygotowania znajdziesz w [mapie kursu](../../COURSE_MAP.pl.md).
 
-Ścieżka przez moduł:
+Kolejność lekcji w module:
 
 - **lekcje core:** 2.1 → 2.2 → 2.3 → 2.4 → 2.5. Po lekcji 2.5 znasz pięć strategii przeszukiwania i wiesz, kiedy której użyć;
 - **lekcje opcjonalne:** 2.6 o iteracyjnym pogłębianiu i 2.7 o projektowaniu heurystyk. Obie wymagają tylko lekcji 2.5 i można je robić w dowolnej kolejności.

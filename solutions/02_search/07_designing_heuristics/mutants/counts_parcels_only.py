@@ -1,7 +1,7 @@
 """Mutant: the heuristic only counts the parcels left.
 
 Violated requirement: the heuristic must save A* work compared with counting parcels.
-Common mistake in the lesson: "Counting parcels only".
+Common mistake in the lesson: "A heuristic without distances".
 """
 
 CAUGHT_BY = ("test_heuristic_beats_counting_parcels",)

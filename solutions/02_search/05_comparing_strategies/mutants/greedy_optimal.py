@@ -1,7 +1,7 @@
 """Mutant: greedy best-first search is believed to find the cheapest route.
 
 Violated requirement: greedy follows the heuristic alone and ignores the cost so far.
-Common mistake in the lesson: "Greedy heads straight for the goal, so it is optimal".
+Common mistake in the lesson: "Mistaking speed for optimality".
 """
 
 CAUGHT_BY = ("test_part_a_optimal_unit_costs",)

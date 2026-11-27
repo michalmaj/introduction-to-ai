@@ -1,7 +1,7 @@
 """Mutant: BFS is believed to find the cheapest route whatever the step costs.
 
 Violated requirement: BFS minimises the number of steps, not the cost.
-Common mistake in the lesson: "The shortest route is the cheapest".
+Common mistake in the lesson: "Confusing steps with cost".
 """
 
 CAUGHT_BY = ("test_part_a_optimal_any_costs",)
