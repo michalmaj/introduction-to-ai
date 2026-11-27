@@ -94,7 +94,7 @@ id = "2.5"
 dir = "05_comparing_strategies"
 title = { pl = "Porównanie strategii przeszukiwania", en = "Comparing search strategies" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["2.4"]
 
 [[module.lesson]]
@@ -102,7 +102,7 @@ id = "2.6"
 dir = "06_iterative_deepening"
 title = { pl = "Iteracyjne pogłębianie", en = "Iterative deepening" }
 kind = "optional"
-status = "planned"
+status = "ready"
 requires = ["2.5"]
 
 [[module.lesson]]
@@ -110,7 +110,7 @@ id = "2.7"
 dir = "07_designing_heuristics"
 title = { pl = "Projektowanie heurystyk", en = "Designing heuristics" }
 kind = "optional"
-status = "planned"
+status = "ready"
 requires = ["2.5"]
 
 [[module]]

@@ -117,3 +117,18 @@ def test_astar_exercise():
         ("F", "G"),
     ]
     assert HEURISTICS["astar_exercise"] == {"A": 7, "B": 6, "C": 8, "D": 4, "E": 9, "F": 2, "G": 0}
+
+
+def test_complete_tree():
+    from introai.search.examples import complete_tree
+
+    tree = complete_tree(3, 2)
+    assert tree.initial == "r" and tree.goal is None and tree.directed
+    assert tree.actions("r") == ["r0", "r1", "r2"]
+    assert tree.actions("r12") == []
+    states, frontier = {"r"}, ["r"]
+    while frontier:
+        for child in tree.actions(frontier.pop()):
+            states.add(child)
+            frontier.append(child)
+    assert len(states) == 13

@@ -78,3 +78,26 @@ def test_congested_map_shows_why_costs_matter():
         found = a_star(problem, lambda cell: manhattan(cell, problem.warehouse.dock))
     assert found.path_cost == cheapest.path_cost
     assert len(by_a_star.events) < len(by_ucs.events)
+
+
+AISLES_PARCELS = [(3, 1), (5, 4), (9, 21)]
+
+
+def test_parcel_heuristic_is_farthest_parcel_plus_parcels_left():
+    from introai.world.reference import parcel_heuristic
+
+    assert parcel_heuristic(((1, 1), frozenset())) == 0
+    assert parcel_heuristic(((1, 1), frozenset({(1, 3), (1, 5), (3, 3)}))) == 4 + 3
+
+
+def test_candidate_heuristics_match_their_admissibility():
+    from introai.testing.search import first_inadmissible
+    from introai.world.reference import CANDIDATE_ADMISSIBLE, CANDIDATE_HEURISTICS
+
+    assert list(CANDIDATE_HEURISTICS) == ["h1", "h2", "h3", "h4", "h5", "h6"]
+    assert list(CANDIDATE_ADMISSIBLE) == list(CANDIDATE_HEURISTICS)
+    aisles = WarehouseMap.from_file(MAP_DIR / "aisles.txt").with_parcels(AISLES_PARCELS)
+    problem = ParcelPickupProblem(aisles)
+    for name, make in CANDIDATE_HEURISTICS.items():
+        found = first_inadmissible(problem, make(aisles))
+        assert (found is None) == CANDIDATE_ADMISSIBLE[name], (name, found)

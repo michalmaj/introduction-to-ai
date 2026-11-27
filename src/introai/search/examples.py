@@ -49,6 +49,21 @@ def binary_tree() -> GraphProblem:
     return GraphProblem(adjacency, "R", None)
 
 
+def complete_tree(branching: int, depth: int) -> GraphProblem:
+    """A complete tree with no goal; each state names its path from the root ("r", "r0", ...)."""
+    adjacency: dict[str, list[str]] = {}
+    level = ["r"]
+    for _ in range(depth):
+        next_level = []
+        for state in level:
+            adjacency[state] = [f"{state}{i}" for i in range(branching)]
+            next_level += adjacency[state]
+        level = next_level
+    for state in level:
+        adjacency[state] = []
+    return GraphProblem(adjacency, "r", None)
+
+
 def cyclic() -> GraphProblem:
     """A small graph full of cycles and with no goal."""
     edges = [("A", "B"), ("A", "C"), ("B", "C"), ("B", "D"), ("C", "D")]

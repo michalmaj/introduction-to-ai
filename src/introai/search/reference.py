@@ -16,7 +16,7 @@ import itertools
 from collections import deque
 from collections.abc import Callable, Iterable
 
-from introai.search.core import Node, Problem, State, expand
+from introai.search.core import CUTOFF, Node, Problem, State, expand
 from introai.trace import emit, wants
 
 
@@ -52,6 +52,8 @@ def bfs(problem: Problem) -> Node | None:
             frontier.append(child)
         if wants("step"):  # building step data costs time: only when recorded
             _bfs_step(node, frontier, reached)
+        if wants("frontier"):
+            emit("frontier", size=len(frontier))
 
     return None
 
@@ -86,6 +88,8 @@ def dfs(problem: Problem) -> Node | None:
         frontier.extend(reversed(children))
         if wants("step"):
             _dfs_step(node, "expanded", frontier, expanded)
+        if wants("frontier"):
+            emit("frontier", size=len(frontier))
 
     return None
 
@@ -172,6 +176,8 @@ def _best_first(problem: Problem, priority: Callable[[Node], float]) -> Node | N
                 heapq.heappush(frontier, (priority(child), next(counter), child))
         if wants("step"):
             _best_first_step(node, f, "expanded", frontier, reached)
+        if wants("frontier"):
+            emit("frontier", size=len(frontier))
 
     return None
 
@@ -212,3 +218,109 @@ def count_tree_nodes(problem: Problem, depth: int) -> list[int]:
         level = next_level
         counts.append(sum(level.values()))
     return counts
+
+
+# --- Depth-limited search and iterative deepening (lesson 2.6) ------------------------
+
+
+def depth_limited_search(problem: Problem, limit: int) -> Node | None | str:
+    """Depth-first tree search that does not go deeper than ``limit``.
+
+    Rules (they also define the expected answers of hand-traced exercises):
+
+    - the frontier is a LIFO stack; children are pushed in reverse order, so the
+      child of the first action is removed first;
+    - a removed node is goal-tested first; then a node at depth ``limit`` or
+      deeper is cut off, and a node whose state appears among its ancestors (a
+      cycle) is not expanded; any other node is expanded;
+    - returns the goal node, ``CUTOFF`` if some node was cut off, otherwise ``None``.
+    """
+    frontier: list[Node] = [Node(problem.initial)]
+    result: Node | None | str = None
+    while frontier:
+        node = frontier.pop()
+        if problem.is_goal(node.state):
+            outcome = "goal"
+        elif node.depth >= limit:
+            outcome = "cutoff"
+            result = CUTOFF
+        elif _is_cycle(node):
+            outcome = "cycle"
+        else:
+            outcome = "expanded"
+            frontier.extend(reversed(expand(problem, node)))
+        if wants("step"):
+            emit(
+                "step",
+                limit=limit,
+                popped=node.state,
+                depth=node.depth,
+                outcome=outcome,
+                stack=[n.state for n in reversed(frontier)],
+            )
+        if outcome == "goal":
+            emit("goal", node=node)
+            return node
+        if wants("frontier"):
+            emit("frontier", size=len(frontier))
+    return result
+
+
+def iterative_deepening_search(problem: Problem) -> Node | None:
+    """Depth-limited search with the limits 0, 1, 2, ... until the result is not ``CUTOFF``."""
+    limit = 0
+    while True:
+        result = depth_limited_search(problem, limit)
+        emit("iteration", limit=limit, result=result)
+        if result is not CUTOFF:
+            return result
+        limit += 1
+
+
+def _is_cycle(node: Node) -> bool:
+    ancestor = node.parent
+    while ancestor is not None:
+        if ancestor.state == node.state:
+            return True
+        ancestor = ancestor.parent
+    return False
+
+
+# --- Properties of the strategies (lesson 2.5) -----------------------------------------
+
+STRATEGY_PROPERTIES: dict[str, dict[str, bool]] = {
+    # Graph searches as written in this course. Assumptions, as in lesson 2.5:
+    # complete_finite: finite state space; complete_infinite: infinite state space,
+    # finite branching factor, every step costs at least some eps > 0, a solution
+    # exists; A* uses an admissible heuristic; optimal_any_costs: positive step costs.
+    "BFS": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": False,
+    },
+    "DFS": {
+        "complete_finite": True,
+        "complete_infinite": False,
+        "optimal_unit_costs": False,
+        "optimal_any_costs": False,
+    },
+    "UCS": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": True,
+    },
+    "greedy": {
+        "complete_finite": True,
+        "complete_infinite": False,
+        "optimal_unit_costs": False,
+        "optimal_any_costs": False,
+    },
+    "A*": {
+        "complete_finite": True,
+        "complete_infinite": True,
+        "optimal_unit_costs": True,
+        "optimal_any_costs": True,
+    },
+}

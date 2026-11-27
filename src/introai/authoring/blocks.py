@@ -45,6 +45,15 @@ _TEXT = {
             "| Najlepsze znane g |"
         ),
         "reached_cost": "Cel **{goal}** osiągnięty kosztem {cost}. Ścieżka: {path}.",
+        "ids_header": "| Krok | Limit | Zdjęty (głębokość) | Wynik | Stos (od wierzchu) |",
+        "ids_outcomes": {
+            "expanded": "rozwinięty",
+            "cutoff": "odcięty",
+            "cycle": "cykl",
+            "goal": "cel",
+        },
+        "ids_found": "Cel **{goal}** znaleziony przy limicie {limit}. Ścieżka: {path}.",
+        "ids_none": "Przeszukiwanie zakończone bez celu: żaden węzeł nie został odcięty.",
     },
     "en": {
         "bfs_header": "| Step | Expanded node | Frontier (in removal order) | Reached set |",
@@ -57,6 +66,15 @@ _TEXT = {
         "best_header": "| Step | Popped | g | f | Outcome | Frontier: state f, in removal order "
         "| Best known g |",
         "reached_cost": "Goal **{goal}** reached at cost {cost}. Path: {path}.",
+        "ids_header": "| Step | Limit | Popped (depth) | Outcome | Stack (top first) |",
+        "ids_outcomes": {
+            "expanded": "expanded",
+            "cutoff": "cut off",
+            "cycle": "cycle",
+            "goal": "goal",
+        },
+        "ids_found": "Goal **{goal}** found with limit {limit}. Path: {path}.",
+        "ids_none": "The search ended without a goal: no node was cut off.",
     },
 }
 
@@ -205,10 +223,39 @@ def _render_search_tree(params: dict[str, str]) -> str:
     return "\n".join(lines)
 
 
+def _render_ids_table(params: dict[str, str]) -> str:
+    """Iterative deepening, one row per node removed from the stack, over all limits."""
+    lang = params.get("lang")
+    if lang not in _LANGS:
+        raise BlockError(f"unknown lang {lang!r}")
+    problem = _example(params)
+    text = _TEXT[lang]
+    with record(kinds={"step"}) as trace:
+        result = reference.iterative_deepening_search(problem)
+    steps = trace.of_kind("step")
+    rows = [
+        f"| {i} | {e.data['limit']} | {e.data['popped']} ({e.data['depth']}) "
+        f"| {text['ids_outcomes'][e.data['outcome']]} | {_states(e.data['stack'])} |"
+        for i, e in enumerate(steps, start=1)
+    ]
+    header = text["ids_header"]
+    separator = "|" + "---|" * (header.count("|") - 1)
+    if result is None:
+        summary = text["ids_none"]
+    else:
+        path = " → ".join(str(state) for state in result.states())
+        summary = text["ids_found"].format(
+            goal=result.state, limit=steps[-1].data["limit"], path=path
+        )
+    return "\n".join([header, separator, *rows]) + "\n\n" + summary
+
+
 def _render_trace_table(params: dict[str, str]) -> str:
     algorithm = params.get("algorithm")
     if algorithm in ("ucs", "greedy", "astar"):
         return _render_best_first_table(params)
+    if algorithm == "ids":
+        return _render_ids_table(params)
     if algorithm not in _ALGORITHMS:
         raise BlockError(f"unknown algorithm {algorithm!r}")
     lang = params.get("lang")
