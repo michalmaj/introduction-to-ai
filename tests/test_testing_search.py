@@ -90,3 +90,53 @@ def test_first_decrease_finds_the_first_drop_in_a_key():
     assert first_decrease([a, b, c, d], key=lambda node: node.path_cost) == (1, b, c)
     assert first_decrease([a, b], key=lambda node: node.path_cost) is None
     assert first_decrease([b, Node("E", path_cost=3 - 1e-12)], key=lambda n: n.path_cost) is None
+
+
+def test_true_costs_of_the_parcel_problem():
+    from pathlib import Path
+
+    from introai.testing.search import true_costs
+    from introai.world.reference import ParcelPickupProblem
+    from introai.world.warehouse import WarehouseMap
+
+    maps = Path(__file__).resolve().parents[1] / "data" / "maps"
+    problem = ParcelPickupProblem(WarehouseMap.from_file(maps / "parcels.txt"))
+    costs = true_costs(problem)
+    assert len(costs) == 96 and costs[problem.initial] == 11
+    assert all(cost == 0 for state, cost in costs.items() if problem.is_goal(state))
+    with pytest.raises(ValueError, match="more than 10 states"):
+        true_costs(problem, limit=10)
+
+
+def test_true_costs_of_a_dead_end_is_infinite():
+    from introai.search.problems import GraphProblem
+    from introai.testing.search import true_costs
+
+    problem = GraphProblem({"A": ["B", "C"], "B": [], "C": []}, "A", "C")
+    assert true_costs(problem) == {"A": 1, "B": float("inf"), "C": 0}
+
+
+def test_first_inadmissible_finds_an_overestimate():
+    from pathlib import Path
+
+    from introai.testing.search import first_inadmissible
+    from introai.world.reference import ParcelPickupProblem, manhattan
+    from introai.world.warehouse import WarehouseMap
+
+    maps = Path(__file__).resolve().parents[1] / "data" / "maps"
+    cells = [(3, 1), (5, 4), (9, 21)]
+    problem = ParcelPickupProblem(WarehouseMap.from_file(maps / "aisles.txt").with_parcels(cells))
+
+    def total(state):
+        cell, parcels = state
+        return sum(manhattan(cell, p) for p in parcels) + len(parcels)
+
+    def farthest(state):
+        cell, parcels = state
+        return max((manhattan(cell, p) for p in parcels), default=0) + len(parcels)
+
+    found = first_inadmissible(problem, total)
+    assert found is not None
+    state, h, true = found
+    assert h == total(state) and h > true
+    assert first_inadmissible(problem, farthest) is None

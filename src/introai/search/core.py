@@ -17,6 +17,13 @@ from introai.trace import emit
 State = Hashable
 Action = Hashable
 
+CUTOFF = "cutoff"
+"""What depth-limited search returns when it stopped at the limit (lesson 2.6).
+
+It means "no goal within the limit, but there may be one deeper", unlike ``None``,
+which means "no goal at all".
+"""
+
 
 class Problem(ABC):
     """A search problem: where we start, what we can do and when we are done."""

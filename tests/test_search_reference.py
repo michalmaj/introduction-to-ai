@@ -194,3 +194,89 @@ def test_astar_exercise_separates_ucs_a_star_and_greedy():
         node = greedy_best_first(astar_exercise(), h_of("astar_exercise"))
     assert expanded(t) == ["A", "D"]
     assert node.states() == ["A", "D", "G"] and node.path_cost == 9
+
+
+# --- Depth-limited search and iterative deepening -------------------------------------
+
+from introai.search import CUTOFF  # noqa: E402
+from introai.search.examples import cyclic, disconnected, exercise  # noqa: E402
+from introai.search.reference import (  # noqa: E402
+    depth_limited_search,
+    iterative_deepening_search,
+)
+
+
+def expansions_per_iteration(problem):
+    """Run IDS; return the number of expansions in each iteration and the result."""
+    with record(kinds={"expand", "iteration"}) as t:
+        node = iterative_deepening_search(problem)
+    counts, current = [], 0
+    for event in t.events:
+        if event.kind == "expand":
+            current += 1
+        else:
+            counts.append(current)
+            current = 0
+    return counts, node
+
+
+@pytest.mark.parametrize(
+    "make, counts, path",
+    [
+        (worked_example, [0, 1, 3, 3], ["S", "A", "C", "G"]),
+        (exercise, [0, 1, 3, 7], ["A", "C", "F", "H"]),
+        (binary_tree, [0, 1, 3, 7, 15], None),
+        (cyclic, [0, 1, 3, 7, 11, 11], None),
+    ],
+    ids=["worked_example", "exercise", "binary_tree", "cyclic"],
+)
+def test_iterative_deepening_expansions_per_iteration(make, counts, path):
+    found, node = expansions_per_iteration(make())
+    assert found == counts
+    assert (node.states() if node else None) == path
+
+
+def test_depth_limited_search_results():
+    assert depth_limited_search(worked_example(), 2) is CUTOFF
+    assert depth_limited_search(disconnected(), 5) is None
+    start_is_goal = GraphProblem.undirected([("A", "B")], "A", "A")
+    assert depth_limited_search(start_is_goal, 0).states() == ["A"]
+    assert iterative_deepening_search(start_is_goal).states() == ["A"]
+
+
+def test_depth_limited_search_steps():
+    with record() as t:
+        depth_limited_search(worked_example(), 3)
+    steps = [(e.data["popped"], e.data["depth"], e.data["outcome"]) for e in t.of_kind("step")]
+    assert steps == [
+        ("S", 0, "expanded"),
+        ("A", 1, "expanded"),
+        ("C", 2, "expanded"),
+        ("A", 3, "cutoff"),
+        ("B", 3, "cutoff"),
+        ("G", 3, "goal"),
+    ]
+    first = t.of_kind("step")[0].data
+    assert first["limit"] == 3 and first["stack"] == ["A", "B"]
+
+
+def test_frontier_events_report_the_frontier_size():
+    from introai.search.reference import a_star, dfs, ucs
+    from introai.testing.search import max_frontier
+
+    with record(kinds={"frontier"}) as t:
+        bfs(worked_example())
+    assert [e.data["size"] for e in t.of_kind("frontier")] == [2, 2, 2]
+    assert max_frontier(t) == 2
+    for run in (
+        lambda p: dfs(p),
+        lambda p: ucs(p),
+        lambda p: a_star(p, lambda s: 0),
+        lambda p: depth_limited_search(p, 3),
+    ):
+        with record(kinds={"frontier"}) as t:
+            run(worked_example())
+        assert max_frontier(t) > 0
+    with record(kinds={"expand"}) as t:
+        bfs(worked_example())
+    assert max_frontier(t) == 0

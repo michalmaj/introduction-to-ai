@@ -265,3 +265,36 @@ def test_heuristic_of_an_exercise_is_allowed_in_lessons(tmp_path):
     )
     assert process_file(lesson, check=False, repo_root=tmp_path) == []
     assert "| h | 7 | 6 | 8 | 4 | 9 | 2 | 0 |" in lesson.read_text()
+
+
+IDS_PL_START = """\
+| Krok | Limit | Zdjęty (głębokość) | Wynik | Stos (od wierzchu) |
+|---|---|---|---|---|
+| 1 | 0 | S (0) | odcięty | — |
+| 2 | 1 | S (0) | rozwinięty | A, B |
+| 3 | 1 | A (1) | odcięty | B |
+| 4 | 1 | B (1) | odcięty | — |"""
+
+
+def test_ids_trace_table():
+    table = render_block(
+        "trace-table", {"algorithm": "ids", "example": "worked_example", "lang": "pl"}
+    )
+    assert table.startswith(IDS_PL_START)
+    assert table.endswith("Cel **G** znaleziony przy limicie 3. Ścieżka: S → A → C → G.")
+    english = render_block(
+        "trace-table", {"algorithm": "ids", "example": "binary_tree", "lang": "en"}
+    )
+    assert (
+        english.splitlines()[0] == "| Step | Limit | Popped (depth) | Outcome | Stack (top first) |"
+    )
+    assert english.endswith("The search ended without a goal: no node was cut off.")
+
+
+def test_ids_trace_of_an_exercise_is_rejected_in_lessons(tmp_path):
+    lesson = tmp_path / "modules/02/06/README.md"
+    lesson.parent.mkdir(parents=True)
+    block = "<!-- generated:trace-table algorithm=ids example=exercise lang=en -->"
+    lesson.write_text(f"{block}\n<!-- /generated -->\n")
+    problems = process_file(lesson, check=False, repo_root=tmp_path)
+    assert any("would reveal Part A answers" in p for p in problems)

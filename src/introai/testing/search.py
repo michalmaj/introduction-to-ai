@@ -7,6 +7,10 @@ continues from the current path, a graph search expands each state once.
 
 from __future__ import annotations
 
+import heapq
+import itertools
+import math
+from collections import defaultdict
 from collections.abc import Callable, Sequence
 
 from introai.search.core import Node, Problem, State
@@ -93,3 +97,58 @@ def assert_valid_solution(problem: Problem, node: object) -> None:
         raise AssertionError(f"path_cost is {node.path_cost}, but the steps cost {total}")
     if node.depth != len(path) - 1:
         raise AssertionError(f"depth is {node.depth}, but the path has {len(path) - 1} steps")
+
+
+def max_frontier(trace: Trace) -> int:
+    """The largest frontier size reported by ``"frontier"`` events (0 if there are none)."""
+    return max((event.data["size"] for event in trace.of_kind("frontier")), default=0)
+
+
+def true_costs(problem: Problem, limit: int = 100_000) -> dict[State, float]:
+    """The exact cheapest cost from every state reachable from the start to a goal.
+
+    Explores the whole reachable state space (raising ``ValueError`` beyond
+    ``limit`` states), then runs Dijkstra's algorithm backwards from the goal
+    states. A state from which no goal can be reached costs ``inf``.
+    """
+    reached = {problem.initial}
+    stack = [problem.initial]
+    predecessors: dict[State, list[tuple[State, float]]] = defaultdict(list)
+    while stack:
+        state = stack.pop()
+        for action in problem.actions(state):
+            child = problem.result(state, action)
+            predecessors[child].append((state, problem.action_cost(state, action, child)))
+            if child not in reached:
+                if len(reached) >= limit:
+                    raise ValueError(f"the state space has more than {limit} states")
+                reached.add(child)
+                stack.append(child)
+
+    cost = {state: 0.0 for state in reached if problem.is_goal(state)}
+    counter = itertools.count()  # states are not always comparable
+    heap = [(0.0, next(counter), state) for state in cost]
+    while heap:
+        d, _, state = heapq.heappop(heap)
+        if d > cost[state]:
+            continue
+        for previous, step in predecessors[state]:
+            if d + step < cost.get(previous, math.inf):
+                cost[previous] = d + step
+                heapq.heappush(heap, (d + step, next(counter), previous))
+    return {state: cost.get(state, math.inf) for state in reached}
+
+
+def first_inadmissible(
+    problem: Problem, h: Callable[[State], float]
+) -> tuple[State, float, float] | None:
+    """A reachable state where ``h`` exceeds the true cost: ``(state, h, true cost)``.
+
+    States are tried in the order of their ``repr``, so the answer is the same
+    every time. Returns ``None`` if ``h`` never overestimates.
+    """
+    for state, true in sorted(true_costs(problem).items(), key=lambda item: repr(item[0])):
+        estimate = h(state)
+        if estimate > true + 1e-9:
+            return state, estimate, true
+    return None
