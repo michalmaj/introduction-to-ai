@@ -162,3 +162,32 @@ def test_render_text_round_trips_slow_zones():
 def test_congested_map_has_slow_zones():
     m = WarehouseMap.from_file(REPO_ROOT / "data" / "maps" / "congested.txt")
     assert m.slow and m.rows <= 15 and m.cols <= 30
+
+
+def test_depot_map_separates_the_strategies():
+    from introai.search.reference import a_star, bfs, dfs, greedy_best_first, ucs
+    from introai.trace import record
+    from introai.world.reference import manhattan
+
+    depot = WarehouseMap.from_file(Path(__file__).resolve().parents[1] / "data/maps/depot.txt")
+    assert depot.slow, "the depot has slow zones"
+
+    def h(cell):
+        return manhattan(cell, depot.dock)
+
+    results = {}
+    for name, search in [
+        ("bfs", bfs),
+        ("dfs", dfs),
+        ("ucs", ucs),
+        ("greedy", lambda p: greedy_best_first(p, h)),
+        ("astar", lambda p: a_star(p, h)),
+    ]:
+        with record(kinds={"expand"}) as trace:
+            node = search(RouteProblem(depot))
+        results[name] = (node.path_cost, len(node.solution()), len(trace.of_kind("expand")))
+    cost = {name: value[0] for name, value in results.items()}
+    assert cost["bfs"] > cost["ucs"], results
+    assert cost["greedy"] > cost["ucs"], results
+    assert cost["astar"] == cost["ucs"] and results["astar"][2] < results["ucs"][2], results
+    assert results["dfs"][1] == max(steps for _, steps, _ in results.values()), results
