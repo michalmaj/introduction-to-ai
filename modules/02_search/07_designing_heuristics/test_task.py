@@ -10,6 +10,7 @@ That is strong evidence, but not a proof for every possible map: the argument
 for admissibility is still yours to make.
 """
 
+import numbers
 from pathlib import Path
 
 import pytest
@@ -48,6 +49,8 @@ def checked(impl):
             value = impl.parcel_heuristic(state)
         except StepBudgetExceeded:
             raise
+        except NotImplementedError:
+            failure = "parcel_heuristic is not written yet: implement it in task.py"
         except Exception as error:  # the student's code may raise anything
             failure = (
                 f"parcel_heuristic crashed at the state ({describe(state)}) with "
@@ -56,7 +59,7 @@ def checked(impl):
             if not state[1]:
                 failure += " — with no parcels left, return 0"
         else:
-            if isinstance(value, bool) or not isinstance(value, int | float):
+            if isinstance(value, bool) or not isinstance(value, numbers.Real):
                 failure = f"parcel_heuristic must return a number, not {value!r}"
             elif value < 0:
                 failure = (

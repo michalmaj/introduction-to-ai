@@ -14,7 +14,14 @@ from pathlib import Path
 import pytest
 
 from introai.search import CUTOFF
-from introai.search.examples import binary_tree, cyclic, disconnected, exercise, worked_example
+from introai.search.examples import (
+    binary_tree,
+    complete_tree,
+    cyclic,
+    disconnected,
+    exercise,
+    worked_example,
+)
 from introai.search.problems import GraphProblem
 from introai.search.reference import bfs as reference_bfs
 from introai.search.reference import depth_limited_search as reference_dls
@@ -211,12 +218,18 @@ def test_ids_returns_none_when_goal_unreachable(impl):
 
 
 def test_ids_expansions_match_the_theory(impl):
-    _, nodes = ids(impl, binary_tree())
+    # A full binary tree of depth 4 with the goal in the last leaf that DFS reaches.
+    tree = GraphProblem(complete_tree(2, 4).adjacency, "r", "r1111")
+    result, nodes = ids(impl, tree)
+    if result is None or result == CUTOFF:
+        pytest.fail(
+            "iterative deepening did not find the goal of a full binary tree", pytrace=False
+        )
     expected = sum(2**limit - 1 for limit in range(5))
     assert len(nodes) == expected, (
-        f"on the 15-node binary tree iterative deepening should expand {expected} nodes: "
-        "with limit L it expands the 2^L - 1 nodes above depth L, for L = 0, 1, 2, 3, 4. "
-        f"Yours expanded {len(nodes)}"
+        f"on a full binary tree of depth 4, with the goal in the last leaf, iterative "
+        f"deepening should expand {expected} nodes in total (every round expands all the "
+        f"nodes above its limit). Yours expanded {len(nodes)}"
     )
 
 

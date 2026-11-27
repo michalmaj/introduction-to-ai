@@ -289,6 +289,8 @@ def test_strategy_properties_table_is_consistent():
     names = ["complete_finite", "complete_infinite", "optimal_unit_costs", "optimal_any_costs"]
     for row in STRATEGY_PROPERTIES.values():
         assert list(row) == names and all(isinstance(v, bool) for v in row.values())
+        # True of the five graph searches in the table, not of every algorithm: a tree
+        # search can be complete on infinite spaces yet never stop on a finite cyclic one.
         assert row["complete_finite"] or not row["complete_infinite"]
         assert row["optimal_unit_costs"] or not row["optimal_any_costs"]
     assert STRATEGY_PROPERTIES["UCS"]["optimal_any_costs"]
