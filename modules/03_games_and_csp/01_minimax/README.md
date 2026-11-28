@@ -278,5 +278,5 @@ Remember the move at the same moment you improve the best value: `if v2 > v: v, 
 
 ## References
 
-- S. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2020, sections 5.1–5.2 (games and minimax decisions).
+- S. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2020, sections 5.1–5.2.1 (games and the minimax search algorithm).
 - J. von Neumann, *Zur Theorie der Gesellschaftsspiele*, Mathematische Annalen 100, 1928, pp. 295–320.

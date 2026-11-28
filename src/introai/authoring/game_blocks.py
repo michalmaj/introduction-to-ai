@@ -33,6 +33,8 @@ _TEXT = {
         "return": "zwraca {v}",
         "cutoff_min": "odcięcie: v ≤ α, pominięte {skipped}",
         "cutoff_max": "odcięcie: v ≥ β, pominięte {skipped}",
+        "last_min": "odcięcie przy ostatnim dziecku (v ≤ α): nic do pominięcia",
+        "last_max": "odcięcie przy ostatnim dziecku (v ≥ β): nic do pominięcia",
         "summary": "Wartość korzenia: **{v}**, ruch: **{move}**. Pominięte liście: {pruned}.",
         "none": "brak",
     },
@@ -42,6 +44,8 @@ _TEXT = {
         "return": "returns {v}",
         "cutoff_min": "cutoff: v ≤ α, skipped {skipped}",
         "cutoff_max": "cutoff: v ≥ β, skipped {skipped}",
+        "last_min": "cutoff at the last child (v ≤ α): nothing to skip",
+        "last_max": "cutoff at the last child (v ≥ β): nothing to skip",
         "summary": "Root value: **{v}**, move: **{move}**. Pruned leaves: {pruned}.",
         "none": "none",
     },
@@ -213,7 +217,8 @@ def render_alpha_beta_table(params: dict[str, str]) -> str:
             if data["outcome"] == "return":
                 outcome = text["return"].format(v=_number(data["value"]))
             else:
-                key = "cutoff_max" if tree.to_move(node) == "MAX" else "cutoff_min"
+                side = "max" if tree.to_move(node) == "MAX" else "min"
+                key = f"cutoff_{side}" if data["skipped"] else f"last_{side}"
                 outcome = text[key].format(skipped=", ".join(data["skipped"]))
         rows.append(
             f"| {step} | {name} | {_number(data['alpha'])} | {_number(data['beta'])} "

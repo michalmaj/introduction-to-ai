@@ -182,6 +182,17 @@ def test_alpha_beta_equals_minimax_on_random_trees(seed):
     assert pruned(tree)
 
 
+def test_reference_alpha_beta_has_a_strict_variant():
+    tree = examples.ties_tree()
+    assert pruned(tree, lambda g, s: alpha_beta_search(g, s, strict=True)) == []
+    game = CountingGame()
+    assert alpha_beta_search(game, game.initial, strict=True) == (0, (0, 0))
+    assert game.calls == 146_119
+    for seed in range(3):
+        tree = examples.random_game_tree(3, 4, seed)
+        assert alpha_beta_search(tree, "r", strict=True) == alpha_beta_search(tree, "r")
+
+
 def test_alpha_beta_on_tic_tac_toe():
     game = CountingGame()
     assert alpha_beta_search(game, game.initial) == (0, (0, 0))

@@ -75,8 +75,11 @@ def memoized_minimax_search(game: Game, state: State):
     return value(state)
 
 
-def alpha_beta_search(game: Game, state: State):
+def alpha_beta_search(game: Game, state: State, *, strict: bool = False):
     """Minimax with alpha-beta pruning, cutting off at ``v >= β`` and ``v <= α`` (lesson 3.2).
+
+    With ``strict=True`` it cuts off only at ``v > β`` and ``v < α``: also correct,
+    but it prunes less when values tie.
 
     With a recording that keeps ``"alpha-beta"`` events, every leaf and every
     finished inner node is reported with α, β and v at that moment, the window
@@ -110,7 +113,7 @@ def alpha_beta_search(game: Game, state: State):
             if v2 > v:
                 v, move = v2, a
                 alpha = max(alpha, v)
-            if v >= beta:
+            if v > beta or (v == beta and not strict):
                 report(s, "cutoff", alpha, beta, v, window, actions[i + 1 :])
                 return v, move
         report(s, "return", alpha, beta, v, window)
@@ -129,7 +132,7 @@ def alpha_beta_search(game: Game, state: State):
             if v2 < v:
                 v, move = v2, a
                 beta = min(beta, v)
-            if v <= alpha:
+            if v < alpha or (v == alpha and not strict):
                 report(s, "cutoff", alpha, beta, v, window, actions[i + 1 :])
                 return v, move
         report(s, "return", alpha, beta, v, window)

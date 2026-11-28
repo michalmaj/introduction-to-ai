@@ -167,3 +167,13 @@ def test_game_blocks_that_reveal_part_a_are_refused_in_lessons_only(tmp_path, ma
     problems = process_file(lesson, check=False, repo_root=tmp_path)
     assert any("would reveal Part A answers" in p for p in problems) == refused
     assert process_file(answers, check=False, repo_root=tmp_path) == []
+
+
+def test_cutoff_at_the_last_child_skips_nothing():
+    pl = render_block("alpha-beta-table", {"example": "alpha_beta_exercise", "lang": "pl"})
+    assert (
+        "| 13 | ▼ C | 6 | 4 | 4 | odcięcie przy ostatnim dziecku (v ≤ α): nic do pominięcia |" in pl
+    )
+    en = render_block("alpha-beta-table", {"example": "alpha_beta_exercise", "lang": "en"})
+    assert "| 13 | ▼ C | 6 | 4 | 4 | cutoff at the last child (v ≤ α): nothing to skip |" in en
+    assert "| 17 | ▼ D | 6 | 2 | 2 | odcięcie: v ≤ α, pominięte J |" in pl

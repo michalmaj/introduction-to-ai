@@ -278,5 +278,5 @@ Zapamiętuj ruch w tej samej chwili, w której poprawiasz najlepszą wartość: 
 
 ## Bibliografia
 
-- S. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2020, rozdz. 5.1–5.2 (gry i decyzje minimaksowe).
+- S. Russell, P. Norvig, *Artificial Intelligence: A Modern Approach*, 4th ed., Pearson, 2020, rozdz. 5.1–5.2.1 (gry i algorytm minimax).
 - J. von Neumann, *Zur Theorie der Gesellschaftsspiele*, Mathematische Annalen 100, 1928, s. 295–320.
