@@ -19,6 +19,7 @@ import re
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from introai.authoring import game_blocks
 from introai.search import reference
 from introai.search.core import Node, expand
 from introai.search.examples import EXAMPLES, EXERCISE_EXAMPLES, HEURISTICS
@@ -302,8 +303,20 @@ def _dfs_rows(trace: Trace, text: dict) -> list[str]:
     ]
 
 
+def _game_block(render: Callable[[dict[str, str]], str]) -> Callable[[dict[str, str]], str]:
+    def wrapped(params: dict[str, str]) -> str:
+        try:
+            return render(params)
+        except game_blocks.GameBlockError as error:
+            raise BlockError(str(error)) from None
+
+    return wrapped
+
+
 _RENDERERS: dict[str, Callable[[dict[str, str]], str]] = {
     "graph": _render_graph,
+    "game-tree": _game_block(game_blocks.render_game_tree),
+    "alpha-beta-table": _game_block(game_blocks.render_alpha_beta_table),
     "trace-table": _render_trace_table,
     "tree-levels": _render_tree_levels,
     "search-tree": _render_search_tree,
@@ -411,7 +424,10 @@ def process_file(path: Path, *, check: bool, repo_root: Path) -> list[str]:
         params = dict(item.split("=", 1) for item in match.group(2).split())
         current = "\n".join(lines[start + 1 : end])
         try:
-            if kind in _REVEALING and in_lessons and params.get("example") in EXERCISE_EXAMPLES:
+            revealing = (
+                kind in _REVEALING and params.get("example") in EXERCISE_EXAMPLES
+            ) or game_blocks.reveals_answers(kind, params)
+            if revealing and in_lessons:
                 raise BlockError(
                     f"{kind} blocks for {params.get('example')!r} would reveal Part A answers"
                 )

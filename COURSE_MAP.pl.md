@@ -35,9 +35,9 @@ Plik generowany z `course.toml` — nie edytuj go ręcznie. Lekcje **core** twor
 
 | ID | Lekcja | Rodzaj | Wymaga | Status |
 |---|---|---|---|---|
-| 3.1 | Gry i minimax | core | 2.5 | w przygotowaniu |
-| 3.2 | Przycinanie alfa-beta | core | 3.1 | w przygotowaniu |
-| 3.3 | Funkcje oceny i ograniczona głębokość | core | 3.2 | w przygotowaniu |
+| 3.1 | [Gry i minimax](modules/03_games_and_csp/01_minimax/README.pl.md) | core | 2.5 | gotowa |
+| 3.2 | [Przycinanie alfa-beta](modules/03_games_and_csp/02_alpha_beta/README.pl.md) | core | 3.1 | gotowa |
+| 3.3 | [Funkcje oceny i ograniczona głębokość](modules/03_games_and_csp/03_evaluation_functions/README.pl.md) | core | 3.2 | gotowa |
 | 3.4 | Modelowanie problemów z ograniczeniami | core | 2.5 | w przygotowaniu |
 | 3.5 | Backtracking z heurystykami i forward checking | core | 3.4 | w przygotowaniu |
 | 3.6 | Propagacja ograniczeń AC-3 | opcjonalna | 3.5 | w przygotowaniu |

@@ -24,6 +24,6 @@ Kolejność lekcji w module:
 
 ## Dokąd to prowadzi
 
-- **Moduł 3, gry i problemy z ograniczeniami.** Przeszukiwanie, w którym ruchy wykonuje też przeciwnik. Funkcja oceny pozycji w grze to bliska krewna heurystyki z lekcji 2.4 i 2.7.
+- **[Moduł 3](../03_games_and_csp/README.pl.md), gry i problemy z ograniczeniami.** Przeszukiwanie, w którym ruchy wykonuje też przeciwnik. Funkcja oceny pozycji w grze to bliska krewna heurystyki z lekcji 2.4 i 2.7.
 - **Moduł 4, algorytmy inspirowane naturą.** Gdy robot ma odebrać wiele paczek, przestrzeń stanów rośnie wykładniczo i dokładne przeszukiwanie przestaje wystarczać. Zobaczysz, jak w rozsądnym czasie znaleźć dobrą, choć niekoniecznie najlepszą trasę.
 - **Moduł 8, uczenie ze wzmocnieniem.** A* zakłada, że znamy model świata. Q-learning uczy robota dojeżdżać do celu bez tej wiedzy.

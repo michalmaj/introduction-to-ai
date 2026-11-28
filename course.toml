@@ -123,7 +123,7 @@ id = "3.1"
 dir = "01_minimax"
 title = { pl = "Gry i minimax", en = "Games and minimax" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["2.5"]
 
 [[module.lesson]]
@@ -131,7 +131,7 @@ id = "3.2"
 dir = "02_alpha_beta"
 title = { pl = "Przycinanie alfa-beta", en = "Alpha-beta pruning" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["3.1"]
 
 [[module.lesson]]
@@ -139,7 +139,7 @@ id = "3.3"
 dir = "03_evaluation_functions"
 title = { pl = "Funkcje oceny i ograniczona głębokość", en = "Evaluation functions and depth limits" }
 kind = "core"
-status = "planned"
+status = "ready"
 requires = ["3.2"]
 
 [[module.lesson]]
