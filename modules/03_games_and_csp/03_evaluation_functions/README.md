@@ -85,7 +85,9 @@ The evaluation of Part A is a whole number: the difference of open lines can ran
 
 ### The horizon effect
 
-A depth-limited search sees nothing beyond its boundary, the horizon. If a loss cannot be avoided but can be delayed, for example by a series of checks, the program happily plays moves that push it past the horizon. It looks as if the problem has gone, though it has only become invisible. Any position in which an exchange is under way or a threat is hanging right at the boundary suffers from the same trouble. The usual cure is quiescence search: in unquiet positions the search goes on until things calm down.
+A depth-limited search sees nothing beyond its boundary, the horizon. If a loss cannot be avoided but can be delayed, for example by a series of checks, the program happily plays moves that push it past the horizon. It looks as if the problem has gone, though it has only become invisible. The horizon effect is hard to remove entirely. Russell and Norvig describe one way to soften it: singular extensions. A move that is clearly better than all the others is searched further, even where the search would normally stop.
+
+A related trouble concerns the evaluation itself. A position in which an exchange is under way or a threat is hanging right at the boundary cannot be judged by eye. That is why the evaluation function is applied only to quiet positions, and in unquiet ones the search goes on until things calm down. This is quiescence search.
 
 ### Depth and time
 
@@ -93,7 +95,7 @@ A program playing in a tournament has a time limit, not a depth limit. The answe
 
 ### The game "four in a row" on a 5 × 5 board
 
-The tests and the notebook use the game `KInARow(5, 5, 4)` from `introai.games`. The players place marks in turn, X starts, and the first to make four marks in a row horizontally, vertically or diagonally wins. The board has 28 such lines, and `game.lines` lists them as tuples of cells `(row, col)`. A state looks as in tic-tac-toe, only with five rows: `state[row][col]` is `"X"`, `"O"` or `"."`.
+The tests and the notebook use the game `KInARow(5, 5, 4)` from `introai.games`. The players place marks in turn, X starts, and the first to make four marks in a row horizontally, vertically or diagonally wins. There is no gravity: a mark can go on any empty cell, not only at the bottom of a column as in the well-known game with discs. The board has 28 such lines, and `game.lines` lists them as tuples of cells `(row, col)`. A state looks as in tic-tac-toe, only with five rows: `state[row][col]` is `"X"`, `"O"` or `"."`.
 
 ## Trace it by hand
 
@@ -180,10 +182,11 @@ On the empty 5 × 5 board a search with the weighted-lines evaluation visits 26 
 
 1. **A win that is only estimated.** The function checks the depth before checking whether the game is over. At the boundary a won position then gets an ordinary estimate instead of 1, and the search can miss a win in one move.
 2. **A depth that is never used.** The parameter `depth` is passed on, but nothing tests it. On a small board the result is right; on the 5 × 5 board the search never finishes.
-3. **An estimate from the wrong side.** At the boundary the call is `evaluate(game, s, game.to_move(s))`, which scores the position for the player to move in that state, not for the player of the start state. Every other layer then has the wrong sign.
+3. **An estimate from the wrong side.** At the boundary the call is `evaluate(game, s, game.to_move(s))`, and the result goes into the comparisons without a change of sign. The position is then scored for the player to move at the boundary, not for the player of the start state. At an odd depth that is the opponent, so every estimate has the wrong sign. In negamax such a call is correct, because the parent flips the sign of the result.
 4. **Off by one at the depth.** The search starts with `depth − 1` or stops at `d = 1`. The cutoff then comes one ply too early.
 5. **The wrong sign.** The evaluation function rewards positions that are good for the opponent. A player with such an evaluation helps the opponent.
 6. **A promise bigger than a win.** The evaluation function returns the raw sum of features, which can reach, say, 300. An unfinished position then looks better than a sure win.
+7. **Always from X's side.** In Part A, *e* is always computed from X's point of view, but `evaluate` must score the position for `player`. An evaluation that ignores this parameter leads the noughts to the positions that are best for the opponent.
 
 The lesson's tests catch each of these mistakes.
 
@@ -200,7 +203,7 @@ Implement two functions in `task.py`:
 - `h_alpha_beta_search(game, state, depth, evaluate)` is the alpha-beta of lesson 3.2 with a depth limit. A terminal state gets `game.utility(s, player)`, and a state at depth `depth` in which the game goes on gets `evaluate(game, s, player)`. In both cases `player` is the player to move at `state`. The function returns a pair `(value, move)`.
 - `evaluate(game, state, player)` is your evaluation function for "k in a row". It must work for any board, because it uses `game.lines`, and return a number from −1 to 1. A positive value means a position good for `player`.
 
-You design the evaluation function yourself. The tests check its range and whether you win with it. Your search, at depth 2, plays 12 games on the 5 × 5 board against the same search with an evaluation that always returns 0. Each of 6 fixed openings is played twice, once with crosses and once with noughts. To pass, win at least 6 games and win more than you lose. The games are deterministic, so the result of the match is always the same.
+You design the evaluation function yourself. The tests check its range, whether it scores the position for the right player, and whether you win with it. Your search, at depth 2, plays 12 games on the 5 × 5 board against the same search with an evaluation that always returns 0. Each of 6 fixed openings is played twice, once with crosses and once with noughts. To pass, win at least 6 games and win more than you lose. The games are deterministic, so the result of the match is always the same.
 
 `task.py` does not import `introai.games.reference`.
 

@@ -194,7 +194,7 @@ In tic-tac-toe from the empty board minimax visits 549,946 positions, and alpha-
 ## Common mistakes
 
 1. **Bounds without a cutoff.** The function updates α and β but never breaks off the loop. The result is right, but the work is the same as minimax's.
-2. **Bounds that stay at home.** Every child gets α = −∞ and β = +∞ afresh instead of its parent's bounds. Deeper nodes know nothing of what the players have secured higher up, so almost nothing is pruned.
+2. **Bounds that stay at home.** Every child gets α = −∞ and β = +∞ afresh instead of its parent's bounds. Deeper nodes know nothing of what the players have secured higher up, so nothing is pruned: what is left is plain minimax with extra parameters.
 3. **Swapped bounds.** The call passes `(β, α)` to the child instead of `(α, β)`. Cutoffs happen in the wrong places, and the root value no longer matches minimax.
 4. **Comparing with your own bound.** A MAX node compares v with α instead of β, and a MIN node with β instead of α. Every node then stops after its first child.
 

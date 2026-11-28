@@ -2,7 +2,7 @@
 
 # Moduł 3 — Gry i problemy z ograniczeniami
 
-W module 2 agent sam decydował o każdym kroku i szukał ciągu akcji, który prowadzi do celu. Ten moduł pokazuje dwa rodzaje problemów, w których takie przeszukiwanie nie wystarcza. W **grach** ruchy na zmianę wykonuje przeciwnik, który chce wygrać, więc agent potrzebuje strategii na każdą jego odpowiedź. W **problemach z ograniczeniami** (CSP, *constraint satisfaction problems*) liczy się nie droga do celu, lecz sam wynik: przypisanie wartości zmiennym, które spełnia wszystkie warunki naraz. Gry rozgrywamy w kółko i krzyżyk oraz w „cztery w rzędzie” na planszy 5 × 5. Problemy z ograniczeniami wracają do magazynu: trzeba ułożyć harmonogram dostaw.
+W module 2 agent sam decydował o każdym kroku i szukał ciągu akcji, który prowadzi do celu. Ten moduł pokazuje dwa rodzaje problemów, w których takie przeszukiwanie nie wystarcza. W **grach** ruchy na zmianę wykonuje przeciwnik, który chce wygrać, więc agent potrzebuje strategii na każdą jego odpowiedź. W **problemach z ograniczeniami** (CSP, *constraint satisfaction problems*) liczy się nie droga do celu, lecz sam wynik: przypisanie wartości zmiennym, które spełnia wszystkie warunki naraz. Gramy w kółko i krzyżyk oraz w „cztery w rzędzie” na planszy 5 × 5, w której znak można postawić na dowolnym wolnym polu. Problemy z ograniczeniami wracają do magazynu: trzeba ułożyć harmonogram dostaw.
 
 ## Cele modułu
 

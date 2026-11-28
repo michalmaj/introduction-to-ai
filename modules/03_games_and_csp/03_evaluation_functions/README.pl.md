@@ -85,7 +85,9 @@ Ocena z części A jest liczbą całkowitą: różnica linii otwartych może wyn
 
 ### Efekt horyzontu
 
-Przeszukiwanie z ograniczoną głębokością nie widzi niczego za swoją granicą, czyli za horyzontem. Jeśli strata jest nieunikniona, ale da się ją odwlec, na przykład kolejnymi szachami, program chętnie gra ruchy, które przesuwają ją za horyzont. Wygląda to tak, jakby problem zniknął, choć tylko przestał być widoczny. Na tę samą przypadłość cierpi każda pozycja, w której na granicy właśnie trwa wymiana albo wisi groźba. Typowe lekarstwo to przeszukiwanie stabilizujące (*quiescence search*): w pozycjach niespokojnych szuka się dalej, aż sytuacja się uspokoi.
+Przeszukiwanie z ograniczoną głębokością nie widzi niczego za swoją granicą, czyli za horyzontem. Jeśli strata jest nieunikniona, ale da się ją odwlec, na przykład kolejnymi szachami, program chętnie gra ruchy, które przesuwają ją za horyzont. Wygląda to tak, jakby problem zniknął, choć tylko przestał być widoczny. Efekt horyzontu trudno usunąć całkowicie. Russell i Norvig opisują jeden ze sposobów jego łagodzenia, po angielsku *singular extensions*: ruch wyraźnie lepszy od wszystkich innych sprawdza się dalej, nawet gdy przeszukiwanie normalnie by się tam zatrzymało.
+
+Pokrewny kłopot dotyczy samej oceny. Pozycja, w której na granicy trwa wymiana albo wisi groźba, nie nadaje się do oceniania na oko. Dlatego funkcję oceny stosuje się tylko w pozycjach spokojnych, a w niespokojnych szuka się dalej, aż sytuacja się uspokoi. To przeszukiwanie stabilizujące (*quiescence search*).
 
 ### Głębokość a czas
 
@@ -93,7 +95,7 @@ Program grający w turnieju ma limit czasu, a nie limit głębokości. Rozwiąza
 
 ### Gra „cztery w rzędzie” na planszy 5 × 5
 
-Testy i notebook używają gry `KInARow(5, 5, 4)` z `introai.games`. Gracze stawiają znaki na zmianę, zaczyna X, a wygrywa ten, kto pierwszy ułoży cztery znaki w poziomie, w pionie albo po skosie. Na planszy jest 28 takich linii, a `game.lines` podaje je jako krotki pól `(wiersz, kolumna)`. Stan wygląda jak w kółku i krzyżyku, tylko wierszy jest pięć: `state[wiersz][kolumna]` to `"X"`, `"O"` albo `"."`.
+Testy i notebook używają gry `KInARow(5, 5, 4)` z `introai.games`. Gracze stawiają znaki na zmianę, zaczyna X, a wygrywa ten, kto pierwszy ułoży cztery znaki w poziomie, w pionie albo po skosie. Nie ma tu grawitacji: znak można postawić na dowolnym wolnym polu, a nie tylko na dnie kolumny, jak w znanej grze z krążkami. Na planszy jest 28 takich linii, a `game.lines` podaje je jako krotki pól `(wiersz, kolumna)`. Stan wygląda jak w kółku i krzyżyku, tylko wierszy jest pięć: `state[wiersz][kolumna]` to `"X"`, `"O"` albo `"."`.
 
 ## Prześledź ręcznie
 
@@ -180,10 +182,11 @@ Na pustej planszy 5 × 5 przeszukiwanie z oceną przez linie ważone odwiedza 26
 
 1. **Wygrana tylko oszacowana.** Funkcja sprawdza głębokość przed sprawdzeniem końca gry. Na granicy pozycja wygrana dostaje wtedy zwykłe oszacowanie zamiast 1 i przeszukiwanie potrafi przegapić wygraną w jednym ruchu.
 2. **Głębokość, której nikt nie używa.** Parametr `depth` jest przekazywany, ale nic go nie sprawdza. Na małej planszy wynik jest dobry, a na planszy 5 × 5 przeszukiwanie nigdy się nie kończy.
-3. **Ocena z niewłaściwej strony.** Na granicy wywołanie ma postać `evaluate(game, s, game.to_move(s))`, czyli liczy ocenę dla gracza, który ma ruch w tym stanie, a nie dla gracza ze stanu początkowego. W co drugiej warstwie znak jest wtedy odwrócony.
+3. **Ocena z niewłaściwej strony.** Na granicy wywołanie ma postać `evaluate(game, s, game.to_move(s))`, a wynik trafia do porównań bez zmiany znaku. Ocena jest wtedy liczona dla gracza, który ma ruch na granicy, a nie dla gracza ze stanu początkowego. Przy nieparzystej głębokości to przeciwnik, więc każde oszacowanie ma odwrócony znak. W wersji negamax takie wywołanie jest poprawne, bo rodzic zmienia znak wyniku.
 4. **Błąd o jeden w głębokości.** Przeszukiwanie zaczyna od `depth − 1` albo kończy przy `d = 1`. Odcięcie wypada wtedy o jeden półruch za płytko.
 5. **Odwrócony znak oceny.** Funkcja oceny nagradza pozycje dobre dla przeciwnika. Gracz z taką oceną sam pomaga przeciwnikowi.
 6. **Obietnica większa od wygranej.** Funkcja oceny zwraca surową sumę cech, która może wynieść na przykład 300. Niezakończona pozycja wygląda wtedy lepiej niż pewna wygrana.
+7. **Ocena zawsze z perspektywy X.** W części A *e* liczymy zawsze z perspektywy X, ale `evaluate` ma oceniać pozycję dla gracza `player`. Ocena, która ten parametr pomija, prowadzi kółka do pozycji najlepszych dla przeciwnika.
 
 Testy lekcji wykrywają każdy z tych błędów.
 
@@ -200,7 +203,7 @@ Zaimplementuj w `task.py` dwie funkcje:
 - `h_alpha_beta_search(game, state, depth, evaluate)` to alfa-beta z lekcji 3.2 z limitem głębokości. Stan końcowy dostaje `game.utility(s, player)`, a stan na głębokości `depth`, w którym gra trwa, dostaje `evaluate(game, s, player)`. W obu przypadkach `player` to gracz, który ma ruch w `state`. Funkcja zwraca parę `(wartość, ruch)`.
 - `evaluate(game, state, player)` to Twoja funkcja oceny dla gry „k w rzędzie”. Ma działać dla dowolnej planszy, bo korzysta z `game.lines`, i zwracać liczbę od −1 do 1. Dodatnia wartość oznacza pozycję dobrą dla `player`.
 
-Funkcję oceny projektujesz sam. Testy sprawdzają jej zakres i to, czy z nią wygrywasz. Twoje przeszukiwanie na głębokość 2 rozgrywa 12 partii na planszy 5 × 5 z tym samym przeszukiwaniem, ale z oceną, która zawsze zwraca 0. Każde z 6 ustalonych otwarć jest grane dwa razy, raz krzyżykami i raz kółkami. Żeby test przeszedł, trzeba wygrać co najmniej 6 partii i wygrać więcej, niż się przegra. Partie są deterministyczne, więc wynik meczu jest zawsze taki sam.
+Funkcję oceny projektujesz sam. Testy sprawdzają jej zakres, to, czy ocenia pozycję dla właściwego gracza, i to, czy z nią wygrywasz. Twoje przeszukiwanie na głębokość 2 rozgrywa 12 partii na planszy 5 × 5 z tym samym przeszukiwaniem, ale z oceną, która zawsze zwraca 0. Każde z 6 ustalonych otwarć jest grane dwa razy, raz krzyżykami i raz kółkami. Żeby test przeszedł, trzeba wygrać co najmniej 6 partii i wygrać więcej, niż się przegra. Partie są deterministyczne, więc wynik meczu jest zawsze taki sam.
 
 `task.py` nie importuje `introai.games.reference`.
 

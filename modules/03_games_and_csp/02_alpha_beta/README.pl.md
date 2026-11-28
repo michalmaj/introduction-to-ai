@@ -194,7 +194,7 @@ W kółku i krzyżyku z pustej planszy minimax odwiedza 549 946 pozycji, a alfa-
 ## Częste błędy
 
 1. **Granice bez odcięcia.** Funkcja aktualizuje α i β, ale nigdy nie przerywa pętli. Wynik jest dobry, ale pracy tyle samo co w minimaksie.
-2. **Granice zostają w domu.** Każde dziecko dostaje od nowa α = −∞ i β = +∞ zamiast granic rodzica. Głębsze węzły nic nie wiedzą o tym, co gracze mają zapewnione wyżej, więc prawie nic się nie przycina.
+2. **Granice zostają w domu.** Każde dziecko dostaje od nowa α = −∞ i β = +∞ zamiast granic rodzica. Głębsze węzły nic nie wiedzą o tym, co gracze mają zapewnione wyżej, więc nic się nie przycina: zostaje zwykły minimaks z dodatkowymi parametrami.
 3. **Zamienione granice.** Wywołanie przekazuje dziecku `(β, α)` zamiast `(α, β)`. Odcięcia zachodzą w złych miejscach i wartość korzenia przestaje się zgadzać z minimaksem.
 4. **Porównanie z własną granicą.** Węzeł MAX porównuje v z α zamiast z β, a węzeł MIN z β zamiast z α. Każdy węzeł kończy wtedy pracę po pierwszym dziecku.
 

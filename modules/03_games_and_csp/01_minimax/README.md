@@ -180,7 +180,7 @@ Notation: *b* is the number of legal moves in a state (the branching factor), *m
 
 **Time.** Minimax walks the whole game tree. In tic-tac-toe that is 549,946 nodes, about two seconds on a laptop. In chess a position has about 35 legal moves on average, and a game often lasts 50 moves by each player. The tree therefore has about 35<sup>100</sup> ≈ 10<sup>154</sup> nodes, and no computer will ever walk it. Lessons 3.2 and 3.3 show how to cope.
 
-**Positions repeat.** Many move orders lead to the same position. A cross in a corner and a nought in the centre is the same board whatever order they were placed in. The tic-tac-toe tree has 549,946 nodes but only 5,478 distinct positions. It is the same situation as the redundant paths of lesson 2.1, with the same cure: remember the positions already solved. In games such a dictionary is called a transposition table.
+**Positions repeat.** Many move orders lead to the same position. Two crosses in opposite corners and a nought in the centre make the same board whichever corner X took first. The tic-tac-toe tree has 549,946 nodes but only 5,478 distinct positions. It is the same situation as the redundant paths of lesson 2.1, with the same cure: remember the positions already solved. In games such a dictionary is called a transposition table.
 
 ## Common mistakes
 

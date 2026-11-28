@@ -180,7 +180,7 @@ Oznaczenia: *b* to liczba ruchów dozwolonych w stanie (współczynnik rozgałę
 
 **Czas.** Minimax przechodzi całe drzewo gry. W kółku i krzyżyku to 549 946 węzłów, co na laptopie zajmuje około dwóch sekund. W szachach w każdej pozycji jest średnio około 35 dozwolonych ruchów, a partia często trwa po 50 ruchów każdego gracza. Drzewo ma więc około 35<sup>100</sup> ≈ 10<sup>154</sup> węzłów i nie przejdzie go żaden komputer. Lekcje 3.2 i 3.3 pokazują, jak sobie z tym poradzić.
 
-**Pozycje się powtarzają.** Do tej samej pozycji prowadzi wiele kolejności ruchów. Krzyżyk w rogu i kółko w środku to ta sama plansza, niezależnie od tego, w jakiej kolejności je postawiono. Drzewo kółka i krzyżyka ma 549 946 węzłów, ale tylko 5 478 różnych pozycji. To ta sama sytuacja co ścieżki nadmiarowe z lekcji 2.1 i to samo lekarstwo: zapamiętywać pozycje już policzone. W grach taki słownik nazywa się tablicą transpozycji (*transposition table*).
+**Pozycje się powtarzają.** Do tej samej pozycji prowadzi wiele kolejności ruchów. Dwa krzyżyki w przeciwległych rogach i kółko w środku to ta sama plansza, niezależnie od tego, który róg X zajął najpierw. Drzewo kółka i krzyżyka ma 549 946 węzłów, ale tylko 5 478 różnych pozycji. To ta sama sytuacja co ścieżki nadmiarowe z lekcji 2.1 i to samo lekarstwo: zapamiętywać pozycje już policzone. W grach taki słownik nazywa się tablicą transpozycji (*transposition table*).
 
 ## Częste błędy
 

@@ -2,7 +2,7 @@
 
 # Module 3 — Games and constraint satisfaction
 
-In module 2 the agent decided every step itself and looked for a sequence of actions leading to a goal. This module shows two kinds of problems where such a search is not enough. In **games** an opponent who wants to win moves in turn, so the agent needs a strategy for every reply. In **constraint satisfaction problems** (CSPs) what matters is not the path to a goal but the result itself: an assignment of values to variables that meets all the conditions at once. The games are tic-tac-toe and "four in a row" on a 5 × 5 board. Constraint satisfaction takes us back to the warehouse: a delivery schedule has to be drawn up.
+In module 2 the agent decided every step itself and looked for a sequence of actions leading to a goal. This module shows two kinds of problems where such a search is not enough. In **games** an opponent who wants to win moves in turn, so the agent needs a strategy for every reply. In **constraint satisfaction problems** (CSPs) what matters is not the path to a goal but the result itself: an assignment of values to variables that meets all the conditions at once. The games are tic-tac-toe and "four in a row" on a 5 × 5 board, where a mark can go on any empty cell. Constraint satisfaction takes us back to the warehouse: a delivery schedule has to be drawn up.
 
 ## Module goals
 

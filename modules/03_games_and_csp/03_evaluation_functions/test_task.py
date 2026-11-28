@@ -197,7 +197,9 @@ def test_h_search_with_full_depth_equals_minimax(impl, key):
         pytest.fail(
             f"with depth 9 nothing is cut off, so the search is plain alpha-beta. In "
             f"{' / '.join(state)} ({TIC_TAC_TOE.to_move(state)} to move) it returned "
-            f"({value!r}, {move!r}), but minimax gives the value {expected}.",
+            f"({value!r}, {move!r}), but minimax gives the value {expected}. The value is "
+            "for the player to move at `state` (game.to_move(state)): score leaves and "
+            "estimates for that player.",
             pytrace=False,
         )
 
@@ -251,6 +253,32 @@ def test_evaluation_stays_between_loss_and_win(impl):
                     "worse than a loss (−1): squeeze your score, e.g. x / (1 + |x|).",
                     pytrace=False,
                 )
+
+
+ONE_SIDED = [
+    # (rows, the strong player): three in a row with both ends free against scattered marks
+    (("O...O", ".....", ".XXX.", ".....", "....O"), "X"),
+    (("X...X", ".....", ".OOO.", ".....", "X...."), "O"),
+]
+
+
+@pytest.mark.parametrize("rows, strong", ONE_SIDED, ids=["x_is_ahead", "o_is_ahead"])
+def test_evaluation_is_for_the_given_player(impl, rows, strong):
+    state = BOARD.from_rows(rows)
+    weak = "O" if strong == "X" else "X"
+    mine = call_evaluate(impl, BOARD, state, strong)
+    theirs = call_evaluate(impl, BOARD, state, weak)
+    if not (isinstance(mine, numbers.Real) and isinstance(theirs, numbers.Real)):
+        pytest.fail("evaluate must return a number", pytrace=False)
+    if not (mine > 0 and mine > theirs):
+        pytest.fail(
+            f"in {' / '.join(rows)} {strong} has three in a row with both ends free and "
+            f"{weak} only scattered marks, so the position is good for {strong}. But "
+            f"evaluate(game, state, {strong!r}) returned {mine} and evaluate(game, state, "
+            f"{weak!r}) returned {theirs}. Score the position for `player`, whoever it is: "
+            "Part A's e is always from X's side, your evaluate is not.",
+            pytrace=False,
+        )
 
 
 def test_evaluation_beats_a_player_without_one(impl):

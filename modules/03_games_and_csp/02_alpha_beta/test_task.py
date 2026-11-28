@@ -129,9 +129,10 @@ def test_alpha_beta_value_equals_minimax_on_trees(impl, name):
         pytest.fail(
             f"alpha_beta_search returned a value different from minimax at {len(wrong)} of "
             f"the {len(tree.children)} inner nodes of {name}, for example {value!r} at "
-            f"{node!r} (a {tree.to_move(node)} node). Pruning must never change the value: "
-            "check which bound each node compares v with (β in MAX, α in MIN) and in what "
-            "order α and β are passed to the children.",
+            f"{node!r} (a {tree.to_move(node)} node). The value is for the player to move "
+            "at `state` (game.to_move(state)), and pruning must never change it: check whose "
+            "utility the leaves get, which bound each node compares v with (β in MAX, α in "
+            "MIN) and in what order α and β are passed to the children.",
             pytrace=False,
         )
 
