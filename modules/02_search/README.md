@@ -24,6 +24,6 @@ The order of lessons in the module:
 
 ## Where this leads
 
-- **Module 3, games and constraint satisfaction.** Search in which an opponent moves too. The evaluation function of a game position is a close relative of the heuristics of lessons 2.4 and 2.7.
+- **[Module 3](../03_games_and_csp/README.md), games and constraint satisfaction.** Search in which an opponent moves too. The evaluation function of a game position is a close relative of the heuristics of lessons 2.4 and 2.7.
 - **Module 4, nature-inspired algorithms.** When the robot has to collect many parcels, the state space grows exponentially and exact search is no longer enough. You will see how to find a good, though not necessarily the best, route in reasonable time.
 - **Module 8, reinforcement learning.** A* assumes we know the model of the world. Q-learning teaches the robot to reach its goal without that knowledge.

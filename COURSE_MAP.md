@@ -35,9 +35,9 @@ Generated from `course.toml` — do not edit by hand. **Core** lessons form the 
 
 | ID | Lesson | Type | Requires | Status |
 |---|---|---|---|---|
-| 3.1 | Games and minimax | core | 2.5 | planned |
-| 3.2 | Alpha-beta pruning | core | 3.1 | planned |
-| 3.3 | Evaluation functions and depth limits | core | 3.2 | planned |
+| 3.1 | [Games and minimax](modules/03_games_and_csp/01_minimax/README.md) | core | 2.5 | ready |
+| 3.2 | [Alpha-beta pruning](modules/03_games_and_csp/02_alpha_beta/README.md) | core | 3.1 | ready |
+| 3.3 | [Evaluation functions and depth limits](modules/03_games_and_csp/03_evaluation_functions/README.md) | core | 3.2 | ready |
 | 3.4 | Modelling constraint satisfaction problems | core | 2.5 | planned |
 | 3.5 | Backtracking with heuristics and forward checking | core | 3.4 | planned |
 | 3.6 | Constraint propagation with AC-3 | optional | 3.5 | planned |
