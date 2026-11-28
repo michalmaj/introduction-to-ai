@@ -53,11 +53,12 @@ def alpha_beta_search(game: Game, state: State):
     """Minimax with alpha-beta pruning, cutting off at ``v >= β`` and ``v <= α`` (lesson 3.2).
 
     With a recording that keeps ``"alpha-beta"`` events, every leaf and every
-    finished inner node is reported with α, β and v at that moment.
+    finished inner node is reported with α, β and v at that moment, the window
+    (α, β) it was entered with, and the moves it skipped after a cutoff.
     """
     player = game.to_move(state)
 
-    def report(s, outcome, alpha, beta, v, skipped=()):
+    def report(s, outcome, alpha, beta, v, window, skipped=()):
         if wants("alpha-beta"):
             emit(
                 "alpha-beta",
@@ -66,14 +67,16 @@ def alpha_beta_search(game: Game, state: State):
                 alpha=alpha,
                 beta=beta,
                 value=v,
+                window=window,
                 skipped=list(skipped),
             )
 
     def max_value(s, alpha, beta):
         if game.is_terminal(s):
             v = game.utility(s, player)
-            report(s, "leaf", alpha, beta, v)
+            report(s, "leaf", alpha, beta, v, (alpha, beta))
             return v, None
+        window = (alpha, beta)
         v, move = -math.inf, None
         actions = game.actions(s)
         for i, a in enumerate(actions):
@@ -82,16 +85,17 @@ def alpha_beta_search(game: Game, state: State):
                 v, move = v2, a
                 alpha = max(alpha, v)
             if v >= beta:
-                report(s, "cutoff", alpha, beta, v, actions[i + 1 :])
+                report(s, "cutoff", alpha, beta, v, window, actions[i + 1 :])
                 return v, move
-        report(s, "return", alpha, beta, v)
+        report(s, "return", alpha, beta, v, window)
         return v, move
 
     def min_value(s, alpha, beta):
         if game.is_terminal(s):
             v = game.utility(s, player)
-            report(s, "leaf", alpha, beta, v)
+            report(s, "leaf", alpha, beta, v, (alpha, beta))
             return v, None
+        window = (alpha, beta)
         v, move = math.inf, None
         actions = game.actions(s)
         for i, a in enumerate(actions):
@@ -100,9 +104,9 @@ def alpha_beta_search(game: Game, state: State):
                 v, move = v2, a
                 beta = min(beta, v)
             if v <= alpha:
-                report(s, "cutoff", alpha, beta, v, actions[i + 1 :])
+                report(s, "cutoff", alpha, beta, v, window, actions[i + 1 :])
                 return v, move
-        report(s, "return", alpha, beta, v)
+        report(s, "return", alpha, beta, v, window)
         return v, move
 
     return max_value(state, -math.inf, math.inf)

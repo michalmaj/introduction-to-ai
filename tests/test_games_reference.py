@@ -208,6 +208,9 @@ def test_alpha_beta_reports_its_steps():
         ("D", "cutoff", 4, 3, 3, ["D3"]),
         ("A", "return", 4, INF, 4, []),
     ]
+    windows = {event.data["node"]: event.data["window"] for event in trace.events}
+    assert windows["C"] == (4, INF)
+    assert windows["D2"] == (4, 5)
 
 
 def test_terminal_state_has_no_move():
