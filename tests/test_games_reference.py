@@ -8,6 +8,7 @@ from introai.games.kinarow import TIC_TAC_TOE, KInARow
 from introai.games.reference import (
     alpha_beta_search,
     h_alpha_beta_search,
+    memoized_minimax_search,
     minimax_search,
     minimax_value,
     open_lines,
@@ -95,6 +96,16 @@ def test_full_tic_tac_toe_tree():
     game = CountingGame()
     assert minimax_search(game, game.initial) == (0, (0, 0))
     assert game.calls == 549_945
+
+
+def test_memoized_minimax_solves_each_position_once():
+    game = CountingGame()
+    assert memoized_minimax_search(game, game.initial) == (0, (0, 0))
+    assert game.calls == 16_167
+    for key, state in TIC_TAC_TOE_POSITIONS.items():
+        assert memoized_minimax_search(TIC_TAC_TOE, state) == minimax_search(TIC_TAC_TOE, state)
+    tree = examples.minimax_exercise()
+    assert memoized_minimax_search(tree, "A") == minimax_search(tree, "A")
 
 
 @pytest.mark.parametrize(

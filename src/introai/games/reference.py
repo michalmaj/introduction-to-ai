@@ -49,6 +49,32 @@ def minimax_search(game: Game, state: State):
     return max_value(state)
 
 
+def memoized_minimax_search(game: Game, state: State):
+    """Minimax that remembers every position it has solved (a transposition table).
+
+    The same position reached by different move orders is solved only once,
+    like a state in the reached set of lesson 2.1.
+    """
+    player = game.to_move(state)
+    solved: dict = {}
+
+    def value(s):
+        if s not in solved:
+            if game.is_terminal(s):
+                solved[s] = game.utility(s, player), None
+            else:
+                maximizing = game.to_move(s) == player
+                v, move = (-math.inf if maximizing else math.inf), None
+                for a in game.actions(s):
+                    v2 = value(game.result(s, a))[0]
+                    if (v2 > v) if maximizing else (v2 < v):
+                        v, move = v2, a
+                solved[s] = v, move
+        return solved[s]
+
+    return value(state)
+
+
 def alpha_beta_search(game: Game, state: State):
     """Minimax with alpha-beta pruning, cutting off at ``v >= β`` and ``v <= α`` (lesson 3.2).
 
